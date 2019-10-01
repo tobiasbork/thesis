@@ -1,2 +1,2 @@
 # thesis
-Bachelor thesis at Rheinische Friedrich-Wilhelms-Universität Bonn
+Bachelor Thesis at Rheinische Friedrich-Wilhelms-Universität Bonn
