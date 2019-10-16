@@ -6,23 +6,25 @@
 
 \section{Motivation}
 
-Heutzutage gibt es viele unstrukturierte Daten. 
-Wir wollen Informationen aus diesen Daten gewinnen und Strukturen in den Daten erkennen. Bei der Hauptachsenanalyse wird Informationsgewinn durch Varianzzuwachs gekennzeichnet
+Die Hauptkomponentenanalyse ist ein weitverbreites multivariates statistisches Verfahren zur Dimensionsreduktion. Multivariate Verfahren zielen darauf ab, die in einem Datensatz enthaltene Zahl der Variablen zu verringern, ohne die darin enthaltene Information wesentlich zu reduzieren. Dadurch können umfangreiche Datensätze strukturiert, veranschaulicht und vereinfacht werden. Als Teil der explorativen Statistik ...
 
-WORT WÖRTLICH VON WEBSITE: Hauptkomponentenanalyse analysiert einen Datensatz mit verschiedenen abhängigen Variablen, die in der Regel interkorreliert sind. Ziel ist es, die wichtigste Information des Datensatzes zu extrahieren und diese Information in Form einer geringeren Anzahl an Variablen, den Hauptkomponenten, auszudrücken, die einen Großteil der Varianz des ursprünglichen Datensatzes erklären.
-
-VON WIKIPEDIA (sinnlich übernommen)
-Mit der Hauptkomponentenanalyse können umfangreiche Datensätze strukturiert, veranschaulicht und vereinfacht werden.
-WORT WÖRTLICH:
-Der zugrundeliegende Datensatz hat typischerweise die Struktur einer Matrix: An ${\displaystyle n}n$ Versuchspersonen oder Gegenständen wurden jeweils ${\displaystyle p}p$ Merkmale gemessen. Ein solcher Datensatz kann als Menge von ${\displaystyle n}n$ Punkten im ${\displaystyle p}p$-dimensionalen Raum ${\displaystyle \mathbb {R} ^{p}}\mathbb {R} ^{p}$ veranschaulicht werden. Ziel der Hauptkomponentenanalyse ist es, diese Datenpunkte so in einen ${\displaystyle q}q$-dimensionalen Unterraum ${\displaystyle \mathbb {R} ^{q}}\mathbb {R} ^{q}$ (${\displaystyle q<p}q<p$) zu projizieren, dass dabei möglichst wenig Information verloren geht und vorliegende Redundanz in Form von Korrelation in den Datenpunkten zusammengefasst wird.
-
-Die Hauptkomponentenanalyse ist ein weitverbreites multivariates statistisches Verfahren zur Dimensionsreduktion.
+Somit findet die Hauptkomponentenanalyse in vielen Bereichen Anwendung.
 Ein paar Beispiele (hand written zip code classification or human face recognition).
-Die zentrale Idee der Hauptkomponentenanalyse besteht darin, die bestehenden Variablen in neue, unkorrelierte Variablen zu überführen, die möglichst den gleichen Informationsgehalt vorweisen. Mit Information ist an dieser Stelle die Varianz gemeint, d.h. man versucht dass diese neue Variablen sich aus Linearkombinationen der Alten zusammensetzen, so dass ein möglichst hoher Grad an Varianz beibehalten werden kann. Die eigentliche Dimensionsreduktion findet dann durch Selektierung der wichtigsten neuen Variablen statt. So erhalten wir einen Datensatz mit meist deutlich weniger Variablen / Dimension, die aber trotzdem den Großteil an Informationen / Varianz beinhaltet.
 
-Das Problem kann auf mehrere Weisen betrachtet werden. Wir wollen zunächst die Hauptkomponentenanalyse so konstruieren und formulieren, dass die Varianzmaximierung im Vordergrund steht. Anschließend werden wir das Problem auf ein Singulärwertzerlegung zurückführen, die auch bei der Implementierung der Funktion genutzt wird. Zu guter letzt werden wir die Hauptkomponentenanalyse als Regressionsproblem umschreiben, und die geometrische Interpretation verdeutlichen. Ausgehend von der geometrischen Interpretation werden wir im nächsten Kapitel die Variante der dünnbesetzten Hauptkomponentenanalyse beschreiben. Des Weiteren werden wir die Äquivalenz dieser Formulierungen und einige theoretische Aussagen zeigen.
+Das dahinterstehende mathematische Problem kann auf mehrere Weisen beschrieben werden. Zunächst wollen wir die Hauptkomponentenanalyse so konstruieren, dass die Idee des minimalen Informationsverlust im Vordergrund steht. Anschließend werden wir das Problem auf ein Singulärwertzerlegung zurückführen, die auch zur effizienten Implementierung genutzt wird. Des Weiteren werden wir die Hauptkomponentenanalyse als Regressionsproblem betrachten, und die geometrische Interpretation weiter verdeutlichen. Zu Schluss werden wir die Äquivalenz dieser Formulierungen und einige theoretische Aussagen zeigen.
 
-Wie müssen die Daten aufbereitet sein? Zentriert und skaliert? Erklären verschiedener Methoden. Korrelationsmatrix oder Kovarianzmatrix?
+\section{Einführung}
+
+Die zentrale Idee der Hauptkomponentenanalyse besteht darin, die bestehenden Variablen in neue, unkorrelierte Variablen zu überführen, ohne dabei Information zu verlieren. Als Maß für den Informationsgehalt der Daten wird hierbei die Varianz verwendet. Konkret konstruieren wir Variablen, die sich aus Linerakombinationen der Alten zusammensetzen. Dabei sollen die neuen Variablen der Wichtigkeit nach sortiert sein. In anderen Worten enthält die erste Variable die meiste Information bzw. die größte Varianz, dann die zweite, usw.
+Die eigentliche Dimensionsreduktion findet dann durch Selektierung statt. Je nach Komplexität des Modells und Informationsverlust können so mehr oder weniger ausgewählt werden. Somit haben wir eine kleine, neue Menge an Variablen, die aber trotzdem den Großteil an Informationen / Varianz beinhaltet.
+
+
+
+
+Wie müssen die Daten aufbereitet sein? Zentriert und skaliert? Erklären verschiedener Methoden und deren Auswirkungen für die Daten. Korrelationsmatrix oder Kovarianzmatrix?
+
+
+
 
 \section{Konstruktion}
 
@@ -30,5 +32,6 @@ Wie müssen die Daten aufbereitet sein? Zentriert und skaliert? Erklären versch
 \subsection{Formulierung als Singulärwertzerlegung}
 \subsection{Formulierung als Regressionsproblem}
 \subsection{Formulierung als beste lineare Mannigfaltigkeit Approximation}
+Ausgehend von diesem Regressionsproblem werden wir im nächsten Kapitel die Variante der dünnbesetzten Hauptkomponentenanalyse beschreiben.
 
 \section{Theoretische Aussagen}
