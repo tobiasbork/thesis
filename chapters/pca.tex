@@ -15,6 +15,8 @@ Das dahinterstehende mathematische Problem kann auf mehrere Weisen beschrieben w
 
 \section{Einführung}
 
+Was heißt überhaupt Hauptkomponente und was ist eine Hauptachse vielleicht an dieser Stelle.
+
 Die zentrale Idee der Hauptkomponentenanalyse besteht darin, die bestehenden Variablen in neue, unkorrelierte Variablen zu überführen, ohne dabei Information zu verlieren. Als Maß für den Informationsgehalt der Daten wird hierbei die Varianz verwendet. Konkret konstruieren wir Variablen, die sich aus Linerakombinationen der Alten zusammensetzen. Dabei sollen die neuen Variablen der Wichtigkeit nach sortiert sein. In anderen Worten enthält die erste Variable die meiste Information bzw. die größte Varianz, dann die zweite, usw.
 Die eigentliche Dimensionsreduktion findet dann durch Selektierung statt. Je nach Komplexität des Modells und Informationsverlust können so mehr oder weniger ausgewählt werden. Somit haben wir eine kleine, neue Menge an Variablen, die aber trotzdem den Großteil an Informationen / Varianz beinhaltet.
 
@@ -28,10 +30,44 @@ Wie müssen die Daten aufbereitet sein? Zentriert und skaliert? Erklären versch
 
 \section{Konstruktion}
 
-\section{Problemformulierung}
+Gegeben sei eine Matrix $\mat{X} \in \mathbb{R}^{n\times p}$, wobei $n$ die Anzahl der Samples bzw. Beobachtungen und $p$ die Anzahl der Variablen. Ohne Beschränkung der Allgemeinheit nehmen wir im Folgenden an, dass die Spaltendurchschnitte der Matrix 0 sind, d.h. jede Variable einzeln zentriert ist. Falls dies nicht der Fall ist können wir die Variablen einfach zentrieren. (Eventuell erwähnen, was passiert wenn man die Variablen nicht zentriert)
+Aufgabe der Hauptkomponentenanalyse ist es nun
+
+\subsection{Problemformulierung als Varianzmaximierung}
+Die erste Hauptachse wird definiert als $$v_1 = \max_{\norm{v}_2 = 1} v^T \sum v$$. Die Hauptkomponente wird dann definiert durch $Z_1 = \sum_{j=1}^{p} \alpha_{1j}X_j$, wobei $\alpha_1 = (\alpha_{11}, \ldots, \alpha_{1p})^T$
+wobei $\sum = \dfrac{(\mat{X}^T\mat{X})}{n}$ die Kovarianzmatrix ist. Anschließend werden die restlichen Hauptachsen sequentiell definiert.
+$$\alpha_{k+1} = \argmax_{\norm{\alpha} = 1} \alpha^T\sum\alpha$$ unter der Bedingung, dass $\alpha^T\alpha_l = 0, \forall 1 \leq l \leq k$.
+
+\cite{zou_overview}
+
+Fasst man diese Schritte zusammen kann man eine Eigenwertzerlegung vornehmen. Theorem, dass die Eigenwerte von $X^TX$ die Varianz maximieren.
+
 \subsection{Formulierung als Singulärwertzerlegung}
+$$ \mat{X} = \mat{U}\mat{V}\mat{D}^T $$
+wobei $\mat{D}$ eine Diagonalmatrix mit Elementen $d_1,\ldots,d_p$ in absteigender Reihenfolge, $\mat{U}$ eine $n \times p$ und $\mat{V}$ eine $p \times p$ orthogonale Matrix.
+$\mat{U}\mat{V}$ sind die Hauptkomponenten und die Spalten von $\mat{V}$ sind die Eigenvektoren von $\mat{X}$.
+
 \subsection{Formulierung als Regressionsproblem}
-\subsection{Formulierung als beste lineare Mannigfaltigkeit Approximation}
+$$\hat{\mat{A}} = \argmin_{\mat{A}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{A}^Tx_i}^2 + \lambda \sum_{j=1}^{k}\norm{\beta_j}^2$$
+
+subject to $\mat{A}^T\mat{A} = I_{k \times k}$
+
+\cite{zou_sparsepca}
+
+Man projiziert die Daten auf einen k-dimensionalen linearen Unterraum. Man kann zeigen, dass die Lösung dieses Problem genau die ersten k Hauptachsen sind.
+
 Ausgehend von diesem Regressionsproblem werden wir im nächsten Kapitel die Variante der dünnbesetzten Hauptkomponentenanalyse beschreiben.
 
 \section{Theoretische Aussagen}
+
+\begin{thm}
+PCA always gives unique solution.
+\end{thm}
+
+\begin{thm}
+PCA inconsistent for p >> n.
+\end{thm}
+
+\begin{defn}
+This is a definition
+\end{defn}

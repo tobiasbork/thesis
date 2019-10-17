@@ -50,6 +50,26 @@ headsepline, % Uncomment to get a line under the header
 \usepackage[autostyle=true]{csquotes} % Required to generate language-dependent quotes in the bibliography
 
 %----------------------------------------------------------------------------------------
+%	OWN SETTINGS
+%----------------------------------------------------------------------------------------
+
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+
+% Declare theorem style and numbering
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[chapter]
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{ex}[thm]{Beispiel}
+
+\newcommand{\mat}[1]{\mathbf{#1}} 
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+
+%----------------------------------------------------------------------------------------
 %	MARGIN SETTINGS
 %----------------------------------------------------------------------------------------
 
@@ -162,24 +182,6 @@ headsepline, % Uncomment to get a line under the header
 
 \cleardoublepage
 
-%----------------------------------------------------------------------------------------
-%	QUOTATION PAGE
-%----------------------------------------------------------------------------------------
-
-\vspace*{0.2\textheight}
-
-\noindent\enquote{\itshape Thanks to my solid academic training, today I can write hundreds of words on virtually any topic without possessing a shred of information, which is how I got a good job in journalism.}\bigbreak
-
-\hfill Dave Barry
-
-%----------------------------------------------------------------------------------------
-%	ABSTRACT PAGE
-%----------------------------------------------------------------------------------------
-
-\begin{abstract}
-\addchaptertocentry{\abstractname} % Add the abstract to the table of contents
-The Thesis Abstract is written here (and usually kept to just this page). The page is kept centered vertically so can expand into the blank space above the title too\ldots
-\end{abstract}
 
 %----------------------------------------------------------------------------------------
 %	ACKNOWLEDGEMENTS
@@ -228,6 +230,8 @@ The acknowledgments and the people to thank go here, don't forget to include you
 
 \printbibliography[heading=bibintoc]
 
+
 %----------------------------------------------------------------------------------------
+
 
 \end{document}  
