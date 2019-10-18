@@ -43,20 +43,20 @@ $$\alpha_{k+1} = \argmax_{\norm{\alpha} = 1} \alpha^T\sum\alpha$$ unter der Bedi
 Fasst man diese Schritte zusammen kann man eine Eigenwertzerlegung vornehmen. Theorem, dass die Eigenwerte von $X^TX$ die Varianz maximieren.
 
 \subsection{Formulierung als Singulärwertzerlegung}
-$$ \mat{X} = \mat{U}\mat{V}\mat{D}^T $$
+$$ \mat{X} = \mat{U}\mat{D}\mat{V}^T $$
 wobei $\mat{D}$ eine Diagonalmatrix mit Elementen $d_1,\ldots,d_p$ in absteigender Reihenfolge, $\mat{U}$ eine $n \times p$ und $\mat{V}$ eine $p \times p$ orthogonale Matrix.
 $\mat{U}\mat{V}$ sind die Hauptkomponenten und die Spalten von $\mat{V}$ sind die Eigenvektoren von $\mat{X}$.
 
 \subsection{Formulierung als Regressionsproblem}
-$$\hat{\mat{A}} = \argmin_{\mat{A}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{A}^Tx_i}^2 + \lambda \sum_{j=1}^{k}\norm{\beta_j}^2$$
+$$\hat{\mat{A}_k} = \argmin_{\mat{A}_k} \sum_{i=1}^{n} \norm{x_i - \mat{A}_k \mat{A}_k^Tx_i}^2 + \lambda \sum_{j=1}^{k}\norm{\beta_j}^2$$
 
-subject to $\mat{A}^T\mat{A} = I_{k \times k}$
+subject to $\mat{A}_k^T\mat{A}_k = I_{k \times k}$
 
 \cite{zou_sparsepca}
 
 Man projiziert die Daten auf einen k-dimensionalen linearen Unterraum. Man kann zeigen, dass die Lösung dieses Problem genau die ersten k Hauptachsen sind.
 
-Ausgehend von diesem Regressionsproblem werden wir im nächsten Kapitel die Variante der dünnbesetzten Hauptkomponentenanalyse beschreiben.
+Ausgehend von dieser Formulierung als Regressionsproblem werden wir im nächsten Kapitel die Variante der dünnbesetzten Hauptkomponentenanalyse beschreiben.
 
 \section{Theoretische Aussagen}
 
@@ -64,10 +64,11 @@ Ausgehend von diesem Regressionsproblem werden wir im nächsten Kapitel die Vari
 PCA always gives unique solution.
 \end{thm}
 
+\begin{thm}[\cite{vidal}]
+Sei $\mat X \in \mathbb{R}^n$ und $\mat A_{p,k} = [\alpha_1, \ldots \alpha_k] $   
+\end{thm}
+
 \begin{thm}
 PCA inconsistent for p >> n.
 \end{thm}
 
-\begin{defn}
-This is a definition
-\end{defn}

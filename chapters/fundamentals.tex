@@ -11,11 +11,46 @@
 \subsection{l2-Norm}
 
 \section{Regression}
-
+Lineare Regression (Least Squares)
 \subsection{LASSO}
 \subsection{Ridge Regression}
 
+\section{Orthogonalprojektion}
+\begin{defn}
+Zwei Vektoren $\vec a$ und $\vec b$ sind genau dann orthogonal, wenn ihr Skalarprodukt null ist, also
+$$\vec a \perp \vec b \iff\vec a \cdot \vec b = 0.$$
+\end{defn}
+
+Was sind orthogonale, orthonormale Matrizen, orthogonale, orthonormale Basis?
+Skalarprodukt?
+Von einem Skalarprodukt induzierte Norm?
+Projektionsmatrizen?
+
+Allgemeine orthogonale Projektionsmatrix falls keine ONB gegeben ist.
+$$\mat P_{\mat A} = \mat A (\mat A^T \mat A)^{-1} \mat A$$
+
+Von Wikipedia:
+\begin{defn}
+Eine Orthogonalprojektion auf einen Untervektorraum $U$ eines Vektorraums $V$ ist eine lineare Abbildung $P_U \colon V \rightarrow V$, die für alle Vektoren $v\in V$ die beiden Eigenschaften
+
+\begin{itemize}
+\item $P_U(v) \in U \quad$   (Projektion)
+\item $\langle P_U(v) - v , u \rangle = 0$ für alle $u \in U \quad$ (Orthogonalität)
+\end{itemize}
+erfüllt.
+\end{defn}
+
+Allgemeine orthogonale Projektion auf einen affinen linearen Unterraum.
+$$P_{U_0}(v) = r_0 + \sum_{i=1}^k \frac{\langle v - r_0, w_i \rangle}{\langle w_i, w_i \rangle} w_i$$
+
+WÖRTLICH VON WIKIPEDIA:
+Der orthogonal projizierte Vektor minimiert den Abstand zwischen dem Ausgangsvektor und allen Vektoren des Untervektorraums bezüglich der von dem Skalarprodukt abgeleiteten Norm $\norm{\cdot}$, denn es gilt mit dem Satz des Pythagoras für Skalarprodukträume
+
+$$\norm{u - v}^2 = \norm{u - P_U(v)}^2 + \norm{P_U(v) - v}^2 \geq \norm{P_U(v) - v}^2$$
+
 \section{Matrixzerlegungen}
+
+Diagonalisierbarkeit?
 
 \subsection{Eigenwertzerlegung}
 \subsubsection{Eigenwerte, Eigenvektoren}
@@ -28,7 +63,7 @@
 \subsection{Nyquist-Shannon Abtasttheorem}
 
 \section{Statistik}
-
+Varianz, Erwartungswert
 \subsection{Empirische Kovarianzmatrix}
 
 \section{Mannigfaltigkeit}
