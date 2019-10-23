@@ -4,8 +4,6 @@
 % Chapter label
 \label{pca}
 
-\section{Motivation}
-
 Die Hauptkomponentenanalyse ist ein weitverbreitetes multivariates statistisches Verfahren zur Dimensionsreduktion. Multivariate Verfahren zielen darauf ab, die in einem Datensatz enthaltene Zahl der Variablen zu verringern, ohne die darin enthaltene Information (zu verlieren) / (wesentlich zu reduzieren). Dadurch können umfangreiche Datensätze strukturiert, veranschaulicht und vereinfacht werden. Somit ist das Verfahren Teil der explorativen Statistik, welche Datensätze hinsichtlich ihrer Zusammenhänge analysiert.
 
 So ist man meist besonders an der Bildung sog. Cluster, also Gruppierungen, interessiert. Datenpunkte, die im entstehendem Bild nach Anwendung der Hauptkomponentenanalyse nah beieinander liegen, sind in gewisser Weise ähnlich zueinander während Datenpunkte, die weit von einander entfernt liegen, wenig Ähnlichkeit aufweisen. Abbildung CITE zeigt die Entstehung solcher Cluster auf dem Datensatz. Mit diesem Verfahren lässt sich daher eine Art Struktur in den Daten erkennen, die für weitere Analysezwecke ausgenutzt werden kann.
@@ -16,7 +14,7 @@ Das dahinterstehende mathematische Problem kann auf verschiedene Weisen beschrie
 
 \section{Konstruktion}
 
-Gegeben sei ein Datensatz mit $n$ samples und $p$ Variablen. Die zentrale Idee der Hauptkomponentenanalyse besteht darin, die $p$ bestehenden Variablen in $r$ neue, unkorrelierte Variablen zu überführen. Um eine Reduktion der Dimension, also $r < p$ zu erreichen, müssen die bestehenden Variablen "zusammengefasst" werden. Idealerweise sollte bei diesem Prozess möglichst wenig Information verloren gehen. Als Maß für den Informationsgehalt der Daten wird hierbei die Varianz verwendet. Das heißt, je größer die Varianz einer Variable, desto mehr Information birgt sie und desto "wichtiger" ist sie. Hätte man eine Variable, die für alle Beobachtungen ähnliche Werte hat, so ist Diese nicht von Nutzen bei der Unterscheidung verschiedener samples. PCA sucht also nach Eigenschaften, die viel Varianz zeigen. Dabei wählt PCA aber nicht einfach nur bestimmte Eigenschaften mit viel Varianz aus, sondern konstruiert neue Variablen, die die bestehenden zusammenfassen.
+Gegeben sei ein Datensatz mit $n$ samples und $p$ Variablen. Die zentrale Idee der Hauptkomponentenanalyse besteht darin, die $p$ bestehenden Variablen in $r$ neue, unkorrelierte Variablen zu überführen. Um eine Reduktion der Dimension, also $r < p$ zu erreichen, müssen die bestehenden Variablen \textit{zusammengefasst} werden. Idealerweise sollte bei diesem Prozess möglichst wenig Information verloren gehen. Als Maß für den Informationsgehalt der Daten wird hierbei die Varianz verwendet. Das heißt, je größer die Varianz einer Variable, desto mehr Information birgt sie und desto \textit{wichtiger} ist sie. Hätte man eine Variable, die für alle Beobachtungen ähnliche Werte hat, so ist Diese nicht von Nutzen bei der Unterscheidung verschiedener samples. PCA sucht also nach Eigenschaften, die viel Varianz zeigen. Dabei wählt PCA aber nicht einfach nur bestimmte Eigenschaften mit viel Varianz aus, sondern konstruiert neue Variablen, die die bestehenden zusammenfassen.
 
 Konkret suchen wir also sukzessive nach einer Linearkombination der bestehenden Variablen. Die entstehenden Vektor zeigen dann in die Richtung größter Varianz in unserem Datensatz. Wir nennen sie die Hauptachsen bzw. Hauptrichtungen unseres Datensatzes. Nachdem wir Diese berechnet haben wollen wir unsere Beobachtungen bezüglich der neuen Variablen darstellen. Dazu verwenden wir die orthogonale Projektion. Dies entspricht einer Rotation des Koordinatensystems, so dass die Hauptrichtugen den Standardachsen entsprechen. Die so entstehenden Werte bezüglich der neuen Variablen werden Hauptkomponenten genannt. 
 
@@ -39,14 +37,15 @@ Mathematisch gesehen endet man das Verfahren also nicht auf die Kovarianzmatrix,
 
 \subsection{Problemformulierung als Varianzmaximierung}
 
-Wir wollen nun die Intuition des minimalen Informationsverlust mathematisch formulieren. Gegeben sei dazu eine Matrix $\mat{X} \in \mathbb{R}^{n\times p}$, wobei $n$ die Anzahl der Samples bzw. Beobachtungen und $p$ die Anzahl der Variablen ist. Ohne Beschränkung der Allgemeinheit nehmen wir im Folgenden an, dass die Daten zuvor standardisiert wurden.
-Aufgabe der Hauptkomponentenanalyse ist es nun sukzessive die Richtungen größter Varianz zu finden und anschließend die Daten auf die neu konstruierten Variablen zu projizieren. Mathematisch können erhalten wir die erste Hauptachse dann durch:
-$$v_1 = \argmax_{\norm{v}_2 = 1} \sum_{i=1}^n(X_iv)^2 = \argmax_{\norm{v}_2 = 1} \norm{Xv}_2^2 = \argmax_{\norm{v}_2 = 1} v^T \mat{K}_{xx} v$$
+Wir wollen nun die Intuition des minimalen Informationsverlust mathematisch formulieren. Gegeben sei dazu eine Matrix $\mat{X} \in \mathbb{R}^{n\times p}$, wobei $n$ die Anzahl der Samples bzw. Beobachtungen und $p$ die Anzahl der Variablen ist. Wir nehmen im Folgenden ohne Beschränkung der Allgemeinheit an, dass die Variablen zuvor zentriert wurden. 
+
+Aufgabe der Hauptkomponentenanalyse ist es nun sukzessive Richtungen größter Varianz zu finden. Wir bezeichnen die Hauptachsen mit $v_i$, wobei $v_i = (v_{i1}, \ldots, v_{ip})^T$. Die Darstellung der Beobachtungen bezüglich der neuen Variablen Hauptkomponenten $Z_i $werden dann durch d ist dann die Transformation dwird definiert durch $Z_i = \sum_{j=1}^p v_{ij}X_j = \mat{X}v$ wobei  so gewählt wird, dass die Varianz der ersten Hauptkomponente $Z_1$ maximiert wird:
+$$v_1 = \argmax_{\norm{v}_2 = 1} \text{Var}[\mat{X}v] = \argmax_{\norm{v}_2 = 1} \frac{1}{n-1} v^T\mat{X}^T\mat{X}v  = \argmax_{\norm{v}_2 = 1} v^T \mat{K}_{xx} v$$
 wobei $\mat{K_{xx}}$ die Kovarianzmatrix ist. Die erste Hauptkomponente, d.h. die Projektion der Daten auf die erste Hauptachse erhält man durch $Z_1 = \sum_{j=1}^{p} v_{1j}X_j$, wobei $v_1 = (v_{11}, \ldots, v_{1p})^T$. Die restlichen Hauptachsen und Komponenten können sukzessive definiert werden.
 $$v_{k+1} = \argmax_{\norm{v} = 1} v^T \mat{K}_{xx} v$$ unter der Nebenbedingung, dass $v_{k+1}^Tv_l = 0, \forall 1 \leq l \leq k$. Man sucht also unter den Richtungen, die orthogonal zu allen bisherigen Hauptachsen sind, diejenige, die die Varianz maximiert.
 \cite{zou_overview}
 CITE JOLLIFE
-
+und anschließend die Daten auf die neu konstruierten Variablen zu projizieren
 Wie wir bereits in THEOREM gesehen haben, entsprechen die Eigenvektoren der Kovarianzmatrix genau den Richtungen maximaler Varianz wie oben definiert. Daher können wir anstatt sukzessiver Berechnung einzelner Hauptachsen die Kovarianzmatrix $\mat{K}_{xx}$ diagonalisieren. Da $\mat{K}_{xx}$ symmetrisch ist
 $$\mat{K}_{xx} = \mat V \mat L \mat{V}^T$$
 wobei $\mat V$ die Matrix der Eigenvektoren ist (Jede Spalte ist ein Eigenvektor) und $\mat{L}$ ist eine Diagonalmatrix mit Eigenwerten $\lambda_i$ in absteigender Reihenfolge. Die Eigenvektoren entsprechen den Hauptachsen und die Projektion der Daten auf die Hauptachsen wird erreicht durch Multiplikation des Datensatz mit den Eigenvektoren $\mat Z = \mat X \mat V$. Die Spalten in $\mat{Z}$ sind also die Hauptkomponenten. Die i-te Beobachtung bezüglich der neuen Variablen sind die Zeilen von $\mat{X}\mat{V}$.
@@ -75,15 +74,20 @@ $$\hat{\mat{V}_k} = \argmin_{\mat{V}_k} \sum_{i=1}^{n} \norm{x_i - \mat{V}_k \ma
 
 subject to $\mat{V}_k^T\mat{V}_k = I_{k \times k}$
 
+Wie bereits erwähnt (Wurde es erwähnt?) ist PCA ein lineares Dimensionsreduktionsverfahren, d.h. dass die Daten in den niedrigdimensionalen Raum linear, also durch eine Kombination von Rotationen und Translationen, transformiert / projeziert  werden. 
+
 \cite{zou_sparsepca}
 
 Man projiziert die Daten auf einen k-dimensionalen linearen Unterraum. Man kann zeigen, dass die Lösung dieses Problem genau die ersten k Hauptachsen sind.
 
 Ausgehend von dieser Formulierung als Regressionsproblem werden wir im nächsten Kapitel die Variante der dünnbesetzten Hauptkomponentenanalyse beschreiben.
 
+\section{Dimensionsreduktion}
+Wie viele Hauptkomponenten sollen wir auswählen?
+
 \section{Grenzen der Anwendbarkeit}
 
-Obwohl die Hauptkomponentenanalysen in vielen Situationen helfen kann, Datensätze zu veranschaulichen und zu strukturieren, gibt es keine Garantie für sinnvolle Ergebnisse. Im Folgendem werden wir Szenarien beschreiben, bei denen unerwünschte Effekte bei der Verwendung dieses Verfahrens auftreten. Dazu werden wir den Datensatz hinsichtlich folgender Gesichtspunkte betrachten: 
+Obwohl die Hauptkomponentenanalysen in vielen Situationen helfen kann, Datensätze zu veranschaulichen und zu strukturieren, gibt es keine Garantie für sinnvolle Ergebnisse. Im Folgendem werden wir Szenarien beschreiben, bei denen unerwünschte Effekte bei der Verwendung dieses Verfahrens auftreten. Daher gilt es den Datensatz vorest hinsichtlich folgender Gesichtspunkte zu untersuchen: 
 
 \begin{itemize}
 \item Lineare Beziehung zwischen Variablen
@@ -93,13 +97,19 @@ Obwohl die Hauptkomponentenanalysen in vielen Situationen helfen kann, Datensät
 \item Anzahl an Beobachtungen in Relation zu Anzahl an Variablen
 \end{itemize}
 
-Wie bereits erwähnt (Wurde es erwähnt?) ist PCA ein lineares Dimensionsreduktionsverfahren, d.h. dass die Daten in den niedrigdimensionalen Raum linear, also durch eine Kombination von Rotationen und Translationen, transformiert / projeziert  werden. Es kann aber vorkommen, dass es keine lineare Beziehung zwischen den Variablen gibt. In diesem Fall verliert man an Information. Seit der Entstehung von PCA gab es aber zahlreiche nicht-lineare Erweiterungen. Darunter fallen zum Beispiel Kernel PCA CITE, CITE oder CITE.
-Damit der Datensatz für eine Dimensionsreduktion geeignet ist, müssen die verschiedenen Variablen einen gewissen Grad an Korrelation aufweisen. Im extremen Fall der Unabhängigkeit der Variablen bewirkt eine Hauptachsentransformation nichts. Reduziert man dann die Anzahl der Hauptkomponenten verliert man mit jeder Variable einen Großteil der Information.  
-Des Weiterem gehen wir von einem vollständigem Datensatz aus, bei dem keine Einträge fehlen oder korrupt sind. Für dieser Art Probleme existieren entsprechende Erweiterungen von PCA wie zum Beispiel in cite und cite. Ausreißer in den Daten können die Resultate drastisch beeinflussen. Genaue Effekte überlegen und CITE. Aus diesem Grund sollten Ausreißer vor der Anwendung von PCA entfernt werden.
+Wie in REF beschrieben versuchen wir Daten in einen niedrigdimensionaleren linearen oder affinen Unterraum zu transformieren. Es kann aber durchaus vorkommen, dass es keine lineare Beziehung zwischen den Variablen gibt. Nichtlineare Strukturen können von PCA nicht erfasst werden und gehen somit verloren. \cite{vidal} Vidal et al. zeigen diese Grenze konkret am Beispiel von Porträt-Fotos auf. Seit der Entstehung von PCA gab es aber zahlreiche nicht-lineare Erweiterungen. So nutzt zum Beispiel Kernel PCA den \textit{Kernel Trick} aus, bei welchem man die Daten zuerst durch eine nichtlineare Transformation in ein höherdimensionalen Raum einbettet von dem man sich erhofft, dass die Daten in diesem linear verteilt. Erst anschließend wird dann die eigentliche Reduktion durchgeführt. Hierbei muss man die Daten aber nicht im höherdimensionalen Raum auswerten. CITE. Andere Erweiterungen, die allgemein unter \textit{manifold learning} zusammengefasst werden können, basieren auf der Idee, dass die Dimension des Datensatz nur künstlich hoch ist. Man versucht die lokale Geometrie der Mannigfaltigkeit (Begriff erklären?) zu approximieren und damit direkt eine niedrigdimensionale Einbettung zu erhalten. Hierunter fallen zum Beispiel die multidimensionale Skalierung oder ISOMAP.
 
-In besonderen Fällen sind die relevanten Informationen in den Variablen mit niedriger Varianz versteckt. Da die Hauptkomponentenanalyse Diese vernachlässigt wird sich unter Umständen die erwünschte Struktur auf den Daten ergeben. Oftmals weiß man aber im Vorhinein nicht, in welchen Variablen diese Unterscheidungsmöglichkeit versteckt ist.
+Damit der Datensatz für eine Dimensionsreduktion per PCA geeignet ist, müssen die verschiedenen Variablen einen gewissen Grad an Korrelation aufweisen. Im extremen Fall der Unabhängigkeit der Variablen bewirkt eine Hauptachsentransformation nichts. Reduziert man dann die Anzahl der Hauptkomponenten verliert man mit jeder Variable einen Großteil der Information.
 
-Das wohl wichtigste Hindernis im Zuge dieser Arbeit ist sicherlich die durch die Transformation entstehenden Interpretationsschwierigkeiten. Jede Hauptkomponente entsteht wie oben beschrieben durch eine Linearkombination der Ausgangsvariablen. Während die Ausgangsvariablen Bedeutungen wie Gewicht oder Größe hatten ist in vor allem in hochdimensionalen Fällen eine Interpretation der Hauptkomponenten nur schwer möglich (Rotation Techniques CITE). Dieser Interpretationsverlust ist Ausgangspunkt der Idee der dünnbesetzten Hauptkomponentenanalyse, genannt sparse PCA. Diesem Verfahren ist das folgende Kapitel gewidmet.
+Ein weiterer Gesichtspunkt ist die Vollständigkeit eines Datensatzes. Finden wir fehlende oder korrupte Einträge in unserem Datensatz vor, kann die klassische Hauptkomponentenanalyse ... . Für dieser Art Probleme existieren entsprechende Ergänzungen von PCA wie zum Beispiel in cite und cite. Ausreißer in den Daten können die Resultate drastisch beeinflussen. Genaue Effekte überlegen und CITE. Aus diesem Grund sollten Ausreißer vor der Anwendung von PCA entfernt werden.
+
+Außreiser in den Daten.
+
+Anzahl der Variablen zu hoch.
+
+Darüber hinaus gibt es noch eine Reihe Spezialfälle, bei denen Probleme auftreten können. So kann es zum Beispiel passieren, dass die relevanten Informationen in den Variablen mit niedriger Varianz versteckt sind. Da die Hauptkomponentenanalyse gerade diese Variablen vernachlässigt, wird sich unter Umständen nicht die erwünschte Struktur auf den Daten ergeben. Es bedarf anderer Methoden mit anderen Ansätzen, um eine Dimensionsreduktion zu ermöglichen. Oftmals weiß man aber im Vorhinein nicht, in welchen Variablen diese Unterscheidungsmöglichkeit versteckt ist.
+
+Das wohl wichtigste/größte Hindernis im Zuge dieser Arbeit ist sicherlich die durch die Transformation entstehenden Interpretationsschwierigkeiten. Jede Hauptkomponente entsteht wie oben beschrieben durch eine Linearkombination der Ausgangsvariablen. Während die Ausgangsvariablen Bedeutungen wie Gewicht oder Größe hatten ist in vor allem in hochdimensionalen Fällen eine Interpretation der Hauptkomponenten nur schwer möglich (Rotation Techniques CITE). Dieser Interpretationsverlust ist Ausgangspunkt der Idee der dünnbesetzten Hauptkomponentenanalyse, genannt sparse PCA. Diesem Verfahren ist das folgende Kapitel gewidmet.
 
 
 \section{Theoretische Aussagen}
