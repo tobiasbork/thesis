@@ -4,11 +4,9 @@
 % Chapter label
 \label{pca}
 
-Die Hauptkomponentenanalyse ist ein weitverbreitetes multivariates statistisches Verfahren zur Dimensionsreduktion. Multivariate Verfahren zielen darauf ab, die in einem Datensatz enthaltene Zahl der Variablen zu verringern, ohne die darin enthaltene Information (zu verlieren) / (wesentlich zu reduzieren). Dadurch können umfangreiche Datensätze strukturiert, veranschaulicht und vereinfacht werden. Somit ist das Verfahren Teil der explorativen Statistik, welche Datensätze hinsichtlich ihrer Zusammenhänge analysiert.
+Die Hauptkomponentenanalyse ist ein weitverbreitetes multivariates statistisches Verfahren zur Dimensionsreduktion. Multivariate Verfahren zielen darauf ab, die in einem Datensatz enthaltene Zahl der Variablen zu verringern, ohne die darin enthaltene Information (zu verlieren) / (wesentlich zu reduzieren). Dadurch können umfangreiche Datensätze strukturiert, veranschaulicht und vereinfacht werden. Somit ist das Verfahren Teil der explorativen Statistik, welche Datensätze hinsichtlich ihrer Zusammenhänge analysiert. Die sich ergebende Struktur kann für weitere Analysezwecke ausgenutzt werden.
 
-So ist man meist besonders an der Bildung sog. Cluster, also Gruppierungen, interessiert. Datenpunkte, die im entstehendem Bild nach Anwendung der Hauptkomponentenanalyse nah beieinander liegen, sind in gewisser Weise ähnlich zueinander während Datenpunkte, die weit von einander entfernt liegen, wenig Ähnlichkeit aufweisen. Abbildung CITE zeigt die Entstehung solcher Cluster auf dem Datensatz. Mit diesem Verfahren lässt sich daher eine Art Struktur in den Daten erkennen, die für weitere Analysezwecke ausgenutzt werden kann.
-
-So hat die Hauptkomponentenanalyse in vielen Bereichen erfolgreich Anwendung gefunden. Darunter fällt die Erkennung handgeschriebener Zahlen, welche zum Beispiel zur automatischen Sortierung von Briefen nach Postleitzahl genutzt wird \cite{hastie_elements}. Hier lässt sich die Bedeutung der Cluster besonders gut verdeutlichen. Man erhofft, dass nach Anwendung einer Transformation 10 verschiedene Gruppierungen zu erkennen sind, die für die Ziffern 0 bis 9 stehen. Optimalerweise gehören alle Datenpunkte im demselbem Cluster zur selben Ziffer. Außerdem korrespondieren nahe beieinanderliegende Cluster mit Ziffern, die ähnlich aussehen. Des Weiteren wird das Verfahren auch in der Gesichtserkennung CITE oder in der Genexpressionsanalyse genutzt CITE.
+So hat die Hauptkomponentenanalyse in vielen Bereichen erfolgreich Anwendung gefunden. Darunter fällt die Erkennung handgeschriebener Zahlen, welche zum Beispiel zur automatischen Sortierung von Briefen nach Postleitzahl genutzt wird \cite{hastie_elements}. Hier lässt sich die Bedeutung der Findung von Clustern besonders gut verdeutlichen. Man erhofft, dass nach Anwendung einer Dimensionsreduktion wie PCA 10 verschiedene Gruppierungen zu erkennen sind, die für die Ziffern 0 bis 9 stehen. Optimalerweise gehören alle Datenpunkte im demselbem Cluster zur selben Ziffer. Außerdem korrespondieren nahe beieinanderliegende Cluster mit Ziffern, die ähnlich aussehen. Weitere Anwendungen findet das Verfahren in der Bildverarbeitung. Hier kann es zum Beispiel zur Rauschunterdrückung \cite{babu} oder zur Gesichtserkennung \cite{jiang} genutzt werden. Hierbei werden einzelne Pixel oder patches, also lokale Gruppierungen von Pixeln, eines Bildes als Variable interpretiert.
 
 Das dahinterstehende mathematische Problem kann auf verschiedene Weisen beschrieben werden. Zunächst wollen wir die Hauptkomponentenanalyse so konstruieren, dass die Idee des minimalen Informationsverlust im Vordergrund steht. Anschließend werden wir das Problem auf eine Singulärwertzerlegung zurückführen, die auch zur effizienten Implementierung genutzt wird. Des Weiteren werden wir die Hauptkomponentenanalyse als Regressionsproblem betrachten und die geometrische Interpretation weiter verdeutlichen. Zu Schluss werden wir einige theoretische Aussagen zeigen.
 
@@ -37,15 +35,15 @@ Mathematisch gesehen endet man das Verfahren also nicht auf die Kovarianzmatrix,
 
 \subsection{Problemformulierung als Varianzmaximierung}
 
-Wir wollen nun die Intuition des minimalen Informationsverlust mathematisch formulieren. Gegeben sei dazu eine Matrix $\mat{X} \in \mathbb{R}^{n\times p}$, wobei $n$ die Anzahl der Samples bzw. Beobachtungen und $p$ die Anzahl der Variablen ist. Wir nehmen im Folgenden ohne Beschränkung der Allgemeinheit an, dass die Variablen zuvor zentriert wurden. 
-
-Aufgabe der Hauptkomponentenanalyse ist es nun sukzessive Richtungen größter Varianz zu finden. Wir bezeichnen die Hauptachsen mit $v_i$, wobei $v_i = (v_{i1}, \ldots, v_{ip})^T$. Die Darstellung der Beobachtungen bezüglich der neuen Variablen Hauptkomponenten $Z_i $werden dann durch d ist dann die Transformation dwird definiert durch $Z_i = \sum_{j=1}^p v_{ij}X_j = \mat{X}v$ wobei  so gewählt wird, dass die Varianz der ersten Hauptkomponente $Z_1$ maximiert wird:
-$$v_1 = \argmax_{\norm{v}_2 = 1} \text{Var}[\mat{X}v] = \argmax_{\norm{v}_2 = 1} \frac{1}{n-1} v^T\mat{X}^T\mat{X}v  = \argmax_{\norm{v}_2 = 1} v^T \mat{K}_{xx} v$$
-wobei $\mat{K_{xx}}$ die Kovarianzmatrix ist. Die erste Hauptkomponente, d.h. die Projektion der Daten auf die erste Hauptachse erhält man durch $Z_1 = \sum_{j=1}^{p} v_{1j}X_j$, wobei $v_1 = (v_{11}, \ldots, v_{1p})^T$. Die restlichen Hauptachsen und Komponenten können sukzessive definiert werden.
-$$v_{k+1} = \argmax_{\norm{v} = 1} v^T \mat{K}_{xx} v$$ unter der Nebenbedingung, dass $v_{k+1}^Tv_l = 0, \forall 1 \leq l \leq k$. Man sucht also unter den Richtungen, die orthogonal zu allen bisherigen Hauptachsen sind, diejenige, die die Varianz maximiert.
+Wir wollen nun die Intuition des minimalen Informationsverlust mathematisch formulieren. Gegeben sei dazu eine Matrix $\mat{X} \in \mathbb{R}^{n\times p}$, wobei $n$ die Anzahl der Samples bzw. Beobachtungen und $p$ die Anzahl der Variablen ist. Wir nehmen im Folgenden ohne Beschränkung der Allgemeinheit an, dass die Variablen zuvor zentriert wurden. Aufgabe der Hauptkomponentenanalyse ist es nun sukzessive Richtungen größter Varianz zu finden. Die erste Hauptkomponente ist definiert durch $Z_1 = \sum_{j=1}^p v_{1j}X_j = \mat{X}v$ wobei die Hauptachse $v_1 = (v_{11}, \ldots, v_{1p})^T$ so gewählt wird, dass die Varianz von $Z_1$ maximiert wird, d.h.
+$$v_1 = \argmax_{\norm{v}_2 = 1} \text{Var}[\mat{X}v] = \argmax_{\norm{v}_2 = 1} v^T \mat{K}_{xx} v$$
+mit $\mat{K_{xx}} = \frac{\mat{X}^T\mat{X}}{n-1}$ als Stichprobenkovarianzmatrix. Die restlichen Hauptachsen können nun sukzessive definiert werden.
+$$v_{k+1} = \argmax_{\norm{v} = 1} v^T \mat{K}_{xx} v$$ 
+$$v_{k+1}^Tv_l = 0 \quad \forall 1 \leq l \leq k$$
+Man sucht also unter den Richtungen, die orthogonal zu allen bisherigen Hauptachsen sind, diejenige, die die Varianz maximiert. Wie oben erhält man dann die Hauptkomponenten, also die Darstellung der Daten bezüglich der neu gefundenen Variablen, durch $Z_i = \mat{X}v_i$.
 \cite{zou_overview}
 CITE JOLLIFE
-und anschließend die Daten auf die neu konstruierten Variablen zu projizieren
+
 Wie wir bereits in THEOREM gesehen haben, entsprechen die Eigenvektoren der Kovarianzmatrix genau den Richtungen maximaler Varianz wie oben definiert. Daher können wir anstatt sukzessiver Berechnung einzelner Hauptachsen die Kovarianzmatrix $\mat{K}_{xx}$ diagonalisieren. Da $\mat{K}_{xx}$ symmetrisch ist
 $$\mat{K}_{xx} = \mat V \mat L \mat{V}^T$$
 wobei $\mat V$ die Matrix der Eigenvektoren ist (Jede Spalte ist ein Eigenvektor) und $\mat{L}$ ist eine Diagonalmatrix mit Eigenwerten $\lambda_i$ in absteigender Reihenfolge. Die Eigenvektoren entsprechen den Hauptachsen und die Projektion der Daten auf die Hauptachsen wird erreicht durch Multiplikation des Datensatz mit den Eigenvektoren $\mat Z = \mat X \mat V$. Die Spalten in $\mat{Z}$ sind also die Hauptkomponenten. Die i-te Beobachtung bezüglich der neuen Variablen sind die Zeilen von $\mat{X}\mat{V}$.
@@ -84,6 +82,8 @@ Ausgehend von dieser Formulierung als Regressionsproblem werden wir im nächsten
 
 \section{Dimensionsreduktion}
 Wie viele Hauptkomponenten sollen wir auswählen?
+
+Optimal singular threshold \cite{gavish}
 
 \section{Grenzen der Anwendbarkeit}
 
