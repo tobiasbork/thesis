@@ -5,34 +5,51 @@
 \label{pca}
 
 To Do: Kovarianzmatrix / Stichprobenkovarianzmatrix einheitlich!
+Begriffe wie samples, PCA, oder features erklären
 
 Die Hauptkomponentenanalyse ist ein weitverbreitetes multivariates statistisches Verfahren zur Dimensionsreduktion. Multivariate Verfahren zielen darauf ab, die in einem Datensatz enthaltene Zahl der Variablen zu verringern, ohne die darin enthaltene Information (zu verlieren) / (wesentlich zu reduzieren). Dadurch können umfangreiche Datensätze strukturiert, veranschaulicht und vereinfacht werden. Somit ist das Verfahren Teil der explorativen Statistik, welche Datensätze hinsichtlich ihrer Zusammenhänge analysiert. Die sich ergebende Struktur kann für weitere Analysezwecke ausgenutzt werden.
 
-Aus diesem Grund hat die Hauptkomponentenanalyse in vielen Bereichen erfolgreich Anwendung gefunden. Darunter fällt die Erkennung handgeschriebener Zahlen, welche zum Beispiel zur automatischen Sortierung von Briefen nach Postleitzahl genutzt wird \cite{hastie_elements}. An diesem Beispiel lässt es sich besonders gut verdeutlichen, was es heißt Zusammenhänge zu analysieren und Strukturen auf den Daten zu finden. Man erhofft, dass nach Anwendung einer Dimensionsreduktion wie PCA auf den Datensatz 10 verschiedene Gruppierungen zu erkennen sind, die für die Ziffern 0 bis 9 stehen (siehe dazu Bild?). Optimalerweise gehören alle Datenpunkte im demselbem Cluster zur selben Ziffer. Außerdem korrespondieren nahe beieinanderliegende Cluster mit Ziffern, die ähnlich aussehen. Weitere Anwendungen findet das Verfahren in der Bildverarbeitung. Hier kann es zum Beispiel zur Rauschunterdrückung \cite{babu} oder zur Gesichtserkennung \cite{jiang} genutzt werden. Um Bilder für solch ein Verfahren nutzbar zu machen, werden einzelne Pixel oder patches, also lokale Gruppierungen von Pixeln, eines Bildes als Variable interpretiert.
+Aus diesem Grund hat die Hauptkomponentenanalyse in vielen Bereichen erfolgreich Anwendung gefunden. Darunter fällt die Erkennung handgeschriebener Zahlen, welche zum Beispiel zur automatischen Sortierung von Briefen nach Postleitzahl genutzt wird \cite{hastie_elements}. An diesem Beispiel lässt es sich besonders gut verdeutlichen, was es heißt Zusammenhänge zu analysieren und Strukturen auf den Daten zu finden. Man erhofft, dass nach Anwendung einer Dimensionsreduktion wie PCA auf den Datensatz 10 verschiedene Gruppierungen zu erkennen sind, die für die Ziffern 0 bis 9 stehen (siehe dazu Bild?). Optimalerweise gehören alle Datenpunkte im demselbem Cluster zur selben Ziffer. Außerdem korrespondieren nahe beieinanderliegende Cluster mit Ziffern, die ähnlich aussehen. Weitere Anwendung findet das Verfahren in der Bildverarbeitung. Hier kann es zum Beispiel zur Rauschunterdrückung \cite{babu} oder zur Gesichtserkennung \cite{jiang} genutzt werden. Um Bilder für solch ein Verfahren nutzbar zu machen, werden einzelne Pixel oder patches, also lokale Gruppierungen von Pixeln, eines Bildes als Variable interpretiert.
 
-Das dahinterstehende mathematische Problem kann auf verschiedene Weisen beschrieben werden. Zunächst wollen wir die Hauptkomponentenanalyse so konstruieren, dass die Idee des minimalen Informationsverlust im Vordergrund steht. Anschließend werden wir das Problem auf eine Singulärwertzerlegung zurückführen, die auch zur effizienten Implementierung genutzt wird. Des Weiteren werden wir die Hauptkomponentenanalyse als Regressionsproblem betrachten und die geometrische Interpretation weiter verdeutlichen. Zu Schluss werden wir einige theoretische Aussagen angeben, die für die folgenden Kapitel relevant sind.
+Das mathematische Problem der Hauptkomponentenanalyse kann auf verschiedene Weisen beschrieben werden. Zunächst wollen wir es so konstruieren, dass die Idee des minimalen Informationsverlust im Vordergrund steht. Anschließend werden wir das Problem auf eine Singulärwertzerlegung zurückführen, die auch zur effizienten Implementierung genutzt wird. Des Weiteren werden wir die Hauptkomponentenanalyse als Regressionsproblem betrachten und die geometrische Interpretation weiter verdeutlichen. Zu Schluss werden wir einige theoretische Aussagen angeben, die für die folgenden Kapitel relevant sind.
 
 \section{Konstruktion}
 
-Gegeben sei ein Datensatz mit $n$ samples und $p$ Variablen. Die zentrale Idee der Hauptkomponentenanalyse besteht darin, die $p$ bestehenden Variablen in $r$ neue, unkorrelierte Variablen zu überführen. Um eine Reduktion der Dimension, also $r < p$ zu erreichen, müssen die bestehenden Variablen \textit{zusammengefasst} werden. Idealerweise sollte bei diesem Prozess möglichst wenig Information verloren gehen. Als Maß für den Informationsgehalt der Daten wird hierbei die Varianz verwendet. Das heißt, je größer die Varianz einer Variable, desto mehr Information birgt sie und desto \textit{wichtiger} ist sie. Denn eine Variable, die für alle Beobachtungen ähnliche Werte aufweist, ist nicht von Nutzen bei der Unterscheidung verschiedener samples. PCA sucht also nach Eigenschaften, die hohe Varianz zeigen. Hierbei wählt das Verfahren aber nicht einfach nur bestimmte Eigenschaften mit hoher Varianz aus, sondern konstruiert neue Variablen, die die bestehenden zusammenfassen.
+Gegeben sei ein Datensatz mit $n$ samples und $p$ Variablen. Die zentrale Idee der Hauptkomponentenanalyse besteht darin, die $p$ bestehenden Variablen in $k$ neue, unkorrelierte Variablen zu überführen. Um eine Reduktion der Dimension, also $k < p$ zu erreichen, müssen die bestehenden Variablen \textit{zusammengefasst} werden. Idealerweise sollte bei diesem Prozess möglichst wenig Information verloren gehen. Als Maß für den Informationsgehalt der Daten wird hierbei die Varianz verwendet. Das heißt, je größer die Varianz einer Variable, desto mehr Information birgt sie und desto \textit{wichtiger} ist sie. Denn eine Variable, die für alle Beobachtungen ähnliche Werte aufweist, ist nicht von Nutzen bei der Unterscheidung verschiedener samples. Um die Dimension zu reduzieren könnte man einfach nach den Eigenschaften größter Varianz suchen und alle Variablen unterhalb eines festgelegten Grenzwertes verwerfen. Dieses Vorgehen fällt allgemein unter die Methodik der \textit{feature selection}. Die Hauptkomponentenanalyse verwendet allerdings ein anderes Prinzip, welches der Methodik der \textit{feature extraction} zuzuordnen ist: Anstatt Eigenschaften mit hoher Varianz auszuwählen, konstruiert man neue Variablen, die die Bestehenden zusammenfassen. Variablen mit hoher Varianz werden in der Konstruktion einen größeren Beitrag spielen.
 
-Abbildung Höhe Gewicht mit Eigenvektoren und gedrehtes Bild
+Konkret suchen wir also sukzessive nach einer Linearkombination der bestehenden Variablen. Finden wir nun zunächst die Richtung größter Varianz in unserem Datensatz, die erste \textit{Hauptachse}. Der zugehörige Vektor spiegelt dabei den Beitrag bzw. den Informationsgehalt jeder einzelnen Variable wider. Anschließend finden wir weitere Hauptachsen, indem wir unter den Richtungen, die orthogonal zu allen vorherigen Hauptachsen sind, die mit der größten Varianz wählen. (Man iteriert diesen Prozess solange ...) Die Orthogonalität garantiert, dass die entstehenden Variablen unkorreliert sind. (Was hat das für einen Vorteil?) Nach der Identifizierung der Hauptachsen wollen wir unsere Beobachtungen bezüglich dieser darstellen. Wir erhalten die \textit{Hauptkomponenten} unseres Datensatzes, indem wir die einzelnen samples auf die Hauptachsen transformieren. Aufgrund der schrittweisen Konstruktion verfügen Diese über eine sehr wichtige Sortierung. So beinhaltet die erste Hauptkomponente die meiste Information. Mit jeder weiteren Hauptkomponente erhält man mehr Information, aber der Informationsgewinn wird mit jeder Hauptkomponente geringer. Abbildung SCREE PLOT verdeutlicht diesen Verlauf.
+
+Die eigentliche Dimensionsreduktion findet dann durch Selektion statt. Je nach Komplexität des Modells, welches man erreichen möchte, können so mehr oder weniger Hauptkomponenten ausgewählt werden. Je mehr Hauptkomponenten man auswählt, desto mehr Information erhält man über den Datensatz. Allerdings wird das Modell mit steigender Anzahl an Variablen immer komplizierter. Es gilt einen Punkt der Balance zu finden, der ein gutes Mittel aus Information und Komplexität liefert. Dieser kann vom Anwendungsfall abhängen. Wir werden uns mit diesem Thema weiter in \ref{selection_principal_components} beschäftigen.
+Zusammenfassend haben wir somit unseren ursprünglichen Datensatz in neuen Hauptkomponenten konzentriert, die aber trotzdem einen Großteil an Information beinhalten.
 
 Um dieses Prinzip zu veranschaulichen, wenden wir uns nun einem simplem Beispiel zu. Gegeben seien die Größe [cm] und das Gewicht [kg] zu 1000 Personen (Daten sind simuliert, keine real-world-data) (siehe dazu Abbildung). In diesem Fall ist also $n = 1000$ und $p = 2$. Bei Betrachtung der Abbildung fällt schnell auf, dass die beiden Variablen positiv korreliert sind, d.h. prinzipiell erkennt man folgende Tendenz: Je größer eine Person, desto schwerer ist sie. 
 
-Konkret suchen wir also sukzessive nach einer Linearkombination der bestehenden Variablen. Diese Linearkombination sei so gewählt, dass der zugehörige Vektor in die Richtung größter Varianz in unserem Datensatz zeigt. Die so entstehenden Vektoren werden Hauptachsen bzw. Hauptrichtungen genannt. Nach der Berechnung der Hauptachsen wollen wir unsere Beobachtungen bezüglich der neuen Variablen darstellen. Dazu projizieren wir die einzelnen Beobachtungen auf die neuen Variablen. Die Werte gemäß der neuen Variablen werden Hauptkomponenten genannt. 
+\begin{figure}
+\centering
+	\begin{subfigure}{0.45\textwidth}
+	\centering
+	\includegraphics[width = \textwidth]{figures/pca_example.png}
+	\label{pca_example_original}
+	\end{subfigure}
+	%	
+	\begin{subfigure}{0.45\textwidth}
+	\centering
+	\includegraphics[width = \textwidth]{figures/pca_example_rotated.png}
+	\label{pca_example_rotated}
+	\end{subfigure}
 
-DIESE BEIDEN ABSÄTZE GUT ZUSAMMENFASSEN. Orthogonalität mit rein bringen, nach Wichtigkeit sortiert und sukzessive.  Anordnung nach absteigender Varianz bzw. Information.
+\caption{Die Abbildung zeigt die Richtung größter Varianz ...}
+\label{pca_example}
+\end{figure}
 
-Konkret konstruieren wir Variablen, die sich aus Linerakombinationen der Alten zusammensetzen. Dabei sollen die neuen Variablen der Wichtigkeit nach sortiert sein. In anderen Worten enthält die erste Variable die meiste Information bzw. die größte Varianz, dann die zweite, usw.
 
-Die eigentliche Dimensionsreduktion findet dann durch Selektion statt. Je nach Komplexität des Modells, welches man erreichen möchte, können so mehr oder weniger Hauptkomponenten ausgewählt werden. Es kommt also auf den Anwendungsfall an, wie viele Hauptkomponenten auszuwählen sind. Wir werden uns mit diesem Thema aber weiter in CITE beschäftigen.
-Insgesamt haben wir somit eine kleinere, neue Zusammenstellung von Variablen konstruiert, die aber trotzdem den Großteil an Information beinhaltet.
 
-Bevor wir die Hauptkomponentenanalyse auf den Datensatz anwenden können, gibt es aber noch einen wichtigen Bearbeitungsschritt zu beachten. Wenn eine Variable weniger variiert als eine Andere aufgrund der verwendeten Einheit oder Skala (meter oder kilo) kann dies zu ungewollten Ergebnissen führen. Ohne eine Vorbehandlung der Daten hat so im obigen Beispiel eine Änderung von 1m die gleiche Bedeutung wie eine Änderung von 1kg. (Satz schöner formulieren) Allerdings sind zwei Menschen, deren Größe 1m variiert, sehr verschieden, während zwei Menschen, die eine Differenz von 1kg haben, sehr ähnlich sind. Daher werden die Daten häufig einem sog. preprocessing unterzogen. Ein zu diesem Zweck oft verwendetes Verfahren ist die Standardisierung (auch z-Transformation genannt). In diesem Schritt werden die Variablen so transfomiert, dass sie \textit{vergleichbarer} werden. Seien dazu $X_i$ die Zufallsvariablen mit Erwartungswert $E[X_i] = \mu$ und Varianz $Var[X_i] = \sigma^2$. So erhält man die zugehörigen standardisierten Zufallsvariablen $Z_i$ durch Zentrierung und anschließender Division durch die Standardabweichung $Z = \frac{X-\mu}{\sigma}$. Somit gilt dann:
+\textbf{Standardisierung}
+
+Bevor wir die Hauptkomponentenanalyse auf den Datensatz anwenden, gibt es aber noch einen wichtigen Bearbeitungsschritt zu beachten. Wenn eine Variable weniger variiert als eine Andere aufgrund der verwendeten Einheit oder Skala (meter oder kilo) kann dies zu ungewollten Ergebnissen führen. Ohne eine Vorbehandlung der Daten hat so im obigen Beispiel eine Änderung von 1m die gleiche Bedeutung wie eine Änderung von 1kg. (Satz schöner formulieren) Allerdings sind zwei Menschen, deren Größe 1m variiert, sehr verschieden, während zwei Menschen, die eine Differenz von 1kg haben, sehr ähnlich sind. Daher werden die Daten häufig einem sogenanntem preprocessing unterzogen. Ein zu diesem Zweck oft verwendetes Verfahren ist die Standardisierung oder auch z-Transformation genannt. In diesem Schritt werden die Variablen so transformiert, dass sie \textit{vergleichbarer} werden. Seien dazu $Y_i$ die Zufallsvariablen mit Erwartungswert $E[Y_i] = \mu$ und Varianz $Var[Y_i] = \sigma^2$. So erhält man die zugehörigen standardisierten Zufallsvariablen $X_i$ durch Zentrierung und anschließender Division durch die Standardabweichung $X_i = \frac{Y_i - \mu}{\sigma}$. Somit gilt dann:
 \begin{itemize}
-\item $E[Z_i] = 0$ für alle $1 \leq i \leq p$
-\item $Var[Z_i] = 1$ für alle $1 \leq i \leq p$
+\item $E[X_i] = 0$ für alle $1 \leq i \leq p$
+\item $Var[X_i] = 1$ für alle $1 \leq i \leq p$
 \end{itemize}
 
 Mathematisch gesehen wendet man das Verfahren also nicht auf die Kovarianzmatrix, sondern auf die Korrelationsmatrix an.
@@ -44,15 +61,15 @@ $$v_1 = \argmax_{\norm{v}_2 = 1} \text{Var}[\mat{X}v] = \argmax_{\norm{v}_2 = 1}
 mit $\mat{K_{xx}} = \frac{\mat{X}^T\mat{X}}{n-1}$ als Stichprobenkovarianzmatrix. Die restlichen Hauptachsen können nun sukzessive definiert werden.
 $$v_{k+1} = \argmax_{\norm{v} = 1} v^T \mat{K}_{xx} v$$ 
 $$v_{k+1}^Tv_l = 0 \quad \forall 1 \leq l \leq k$$
-Man sucht also unter den Richtungen, die orthogonal zu allen bisherigen Hauptachsen sind, diejenige, die die Varianz maximiert. Wie oben beschrieben erhält man dann die Hauptkomponenten, also die Darstellung der Daten bezüglich der neu gefundenen Variablen, durch Projektion der Daten $Z_i = \mat{X}v_i$.
+Man sucht also unter den Richtungen, die orthogonal zu allen bisherigen Hauptachsen sind, diejenige, die die Varianz maximiert. Wie oben beschrieben erhält man dann die Hauptkomponenten, also die Darstellung der Daten bezüglich der neu gefundenen Hauptachsen, durch Projektion der Daten $Z_i = \mat{X}v_i$.
 \cite{zou_overview}
 CITE JOLLIFE
 
 Wie wir bereits in THEOREM gesehen haben, entsprechen die Eigenvektoren der Kovarianzmatrix genau den Richtungen maximaler Varianz. Daher können wir anstatt sukzessiver Berechnung einzelner Hauptachsen die Kovarianzmatrix $\mat{K}_{xx}$ direkt diagonalisieren. Dies ist möglich, da $\mat{K}_{xx}$ symmetrisch ist. Die Diagonalisierung ergibt
 $$\mat{K}_{xx} = \mat V \mat L \mat{V}^T$$
-wobei $\mat V$ die Matrix der Eigenvektoren ist, d.h. jede Spalte entspricht einem Eigenvektor von $\mat{K}_{xx}$ und $\mat{L}$ eine Diagonalmatrix mit Eigenwerten $\lambda_i$ ist. Somit können die Hauptachsen direkt aus $\mat V$ abgelesen werden. Die Projektion der Daten auf die Hauptachsen wird dann wie zuvor durch Multiplikation der Beobachtungen mit den Eigenvektoren erreicht. 
+wobei $\mat{L}$ eine Diagonalmatrix mit Eigenwerten $\lambda_i$ und $\mat V$ die Matrix der Eigenvektoren ist, d.h. jede Spalte entspricht einem Eigenvektor von $\mat{K}_{xx}$. Somit können die Hauptachsen direkt aus $\mat V$ abgelesen werden. Die Projektion der Daten auf die Hauptachsen wird dann wie zuvor durch Multiplikation der Beobachtungen mit den Eigenvektoren erreicht. 
 $$\mat Z = \mat X \mat V$$
-Die i-te Spalte in $\mat{Z}$ entspricht also der i-ten Hauptkomponente und die einzelnen Beobachtungen bezüglich der neuen Variablen stimmen mit den Zeilen von $\mat{Z}$ überein.
+Die i-te Spalte in $\mat{Z}$ entspricht also der i-ten Hauptkomponente und die einzelnen Beobachtungen bezüglich der neuen Darstellung sind die Zeilen von $\mat{Z}$.
 
 
 \subsection{Formulierung als Singulärwertzerlegung}
@@ -60,7 +77,9 @@ Es gibt einen engen Zusammenhang zwischen der Diagonalisierung der Kovarianzmatr
 $$ \mat{X} = \mat{U}\mat{D}\mat{V}^T $$
 wobei $\mat{D}$ eine Diagonalmatrix mit Singulärwerten $d_1,\ldots,d_p$, $\mat{U}$ eine orthogonale $n \times p$ und $\mat{V}$ eine orthogonale $p \times p$ Matrix ist. Nun sieht man aufgrund der Orthogonalität von $\mat U$, dass
 $$\mat{K}_{xx} = \mat X^T \mat X = \mat{V}\mat{D}\mat{U}^T \mat{U}\mat{D}\mat{V}^T = \mat V \mat{D}^2 \mat V^T$$
-Wegen der Eindeutigkeit der Diagonalisierung(stimmt das?) ist $\mat V$ nun wie zuvor die Matrix der Eigenvektoren und somit der Hauptachsen. Ebenso stehen die Singulärwerte durch $\lambda_i = \frac{d_i^2}{n-1}$ in Beziehung mit den Eigenwerten der Kovarianzmatrix. Die Hauptkomponenten kann man somit auch durch $\mat X \mat V = \mat U \mat D$ erhalten.
+Wegen der Eindeutigkeit der Diagonalisierung(stimmt das?) ist $\mat V$ nun wie zuvor die Matrix der Eigenvektoren und somit der Hauptachsen. Ebenso stehen die Singulärwerte durch 
+$$\lambda_i = \frac{d_i^2}{n-1}$$
+in Beziehung mit den Eigenwerten der Kovarianzmatrix. Die Hauptkomponenten kann man somit auch durch $\mat X \mat V = \mat U \mat D$ erhalten.
 
 Computing PCA using Eigen value decomposition of the sample covariance matrix:
 We first have to compute the covariance matrix, which is $O(p^2n)$ and then compute its eigenvalue decomposition which is $O(p^3)$ giving a total cost of $O(p^2n+p^3)$ (https://arxiv.org/pdf/1503.05214.pdf)
@@ -84,19 +103,20 @@ Further multiplying the first k PCs by the corresponding principal axes $\mat V^
 \label{pca_projection_explanation}
 \end{figure}
 
-Wir widmen uns nun einer letzten Formulierung der Hauptkomponentenanalyse, die eine geometrische Interpretation ermöglicht. Hierbei versucht man einen $k$-dimensionalen $(k < n)$ Unterraum zu finden, der die Daten bestmöglich im Sinne der kleinsten Quadrate approximiert. Wir werden diese Problemstellung nun mathematisch formulieren.
+Wir widmen uns nun einer letzten Formulierung der Hauptkomponentenanalyse, die eine geometrische Interpretation ermöglicht. Hierbei versucht man einen $k$-dimensionalen $(k < n)$ Unterraum zu finden, der die Daten bestmöglich approximiert. Wir werden diese Problemstellung nun mathematisch formulieren.
 
 Sei dazu $x_i$ die i-te Beobachtung, also die i-te Zeile von $\mat X$ und $\mat V_k = [V_1 \vert \cdots \vert V_k]$ eine $p \times k$ orthonormale Matrix. Nun projizieren wir jede Beobachtung orthogonal auf den durch $V_1, \ldots V_k$ aufgespannten Unterraum. Die orthogonale Projektion wird wie in REF beschrieben durch Multiplikation mit dem Operator $\mat V_k \mat V_k^T$ erreicht. Die auf den linearen Unterraum projizierten Daten ergeben sich also durch $\mat V_k \mat V_k^T x_i$. Um die Daten bestmöglich in diesem niedrigdimensionalen Raum darzustellen minimiert man nun die Distanz zwischen jeder Beobachtung und seiner Projektion. Ein Weg, um die beste Projektion zu definieren is $l_2$ Approximation erhält man folgendes Problem \cite{zou_sparsepca}: (Hier auch noch schreiben warum man den zweiten Term braucht, Eindeutigkeit von PCA)
 
 $$\hat{\mat{V}_k} = \argmin_{\mat{V}_k} \sum_{i=1}^{n} \norm{x_i - \mat{V}_k \mat{V}_k^Tx_i}^2 + \lambda \sum_{j=1}^{k}\norm{\beta_j}^2$$
 $$\mat{V}_k^T\mat{V}_k = I_{k \times k}$$
 
-Man kann zeigen, dass die Lösung des Problems $\mat V_k$ genau den ersten $k$ Hauptachsen entsprechen. Wir haben dies in \ref{theo_results} festgehalten.  \cite{vidal} Zum besseren Verständnis hilft \ref{pca_projection_explanation}, welches die Äquivalenz von Maximierung der Varianz und Minimierung der orthogonalen Projektion verdeutlichen soll. Jeder Datenpunkt ist hier in 2 Dimensionen dargestellt. Versucht man nun die Daten bestmöglich auf einen 1-dimensionalen Unterraum, also eine Linie, orthogonal zu projizieren erhält man denselben Vektor, den man bei der Maximierung der Varianz zuvor auch erhalten hat. 
+Man kann zeigen, dass die Lösung dieses Problems genau den ersten $k$ Hauptachsen entspricht. Wir haben dies in einem Theorem \ref{theo_results} festgehalten.  \cite{vidal} Zum besseren Verständnis hilft \ref{pca_projection_explanation}, welches die Äquivalenz von Maximierung der Varianz und Minimierung der orthogonalen Projektion verdeutlichen soll. Jeder Datenpunkt ist hier in 2 Dimensionen dargestellt. Versucht man nun die Daten bestmöglich auf einen 1-dimensionalen Unterraum, also eine Linie, orthogonal zu projizieren erhält man denselben Vektor, den man aus Sicht der Varianzmaximierung auch erhalten hätte. 
 
-Aus dieser Interpretation leitet sich auch der Name des linearen Dimensionreduktionsverfahren ab, denn die Daten werden auf den niedrigdimensionaleren Raum linear transformiert. Ausgehend von dieser Formulierung als Regressionsproblem werden wir im nächsten Kapitel die Variante der dünnbesetzten Hauptkomponentenanalyse beschreiben.
+Aus dieser Interpretation leitet sich auch der Name des linearen Dimensionreduktionsverfahrens ab, denn die Daten werden auf den niedrigdimensionaleren Raum linear transformiert. Ausgehend von dieser Formulierung als Regressionsproblem werden wir im nächsten Kapitel die Variante der dünnbesetzten Hauptkomponentenanalyse beschreiben.
 
 
 \section{Selektion der Hauptkomponenten}
+\label{selection_principal_components}
 Wie viele Hauptkomponenten sollen wir auswählen?
 
 Abbildung Scree Plot

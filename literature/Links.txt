@@ -6,3 +6,5 @@ https://stats.stackexchange.com/questions/32174/pca-objective-function-what-is-t
 http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/
 http://alexhwilliams.info/itsneuronalblog/2018/02/26/crossval/
 https://cbmm.mit.edu/video/dimensionality-reduction-matrix-and-tensor-coded-data-part-1-5336
+
+https://www.tandfonline.com/doi/abs/10.1080/00401706.1982.10487712
