@@ -58,9 +58,9 @@ Die i-te Spalte in $\mat{Z}$ entspricht also der i-ten Hauptkomponente und die e
 \subsection{Formulierung als Singulärwertzerlegung}
 Es gibt einen engen Zusammenhang zwischen der Diagonalisierung der Kovarianzmatrix $\mat{K}_{xx} = \mat X^T \mat X$ und der Singulärwertzerlegung von $\mat X$. Diese Beziehung können wir nutzen, um das Problem neu zu formulieren. Eine Singulärwertzerlegung der Matrix $\mat X$ ergibt
 $$ \mat{X} = \mat{U}\mat{D}\mat{V}^T $$
-wobei $\mat{D}$ eine Diagonalmatrix mit Singulärwerten $d_1,\ldots,d_p$, $\mat{U}$ eine $n \times p$ und $\mat{V}$ eine $p \times p$ orthogonale Matrix ist. Nun sieht man, dass
+wobei $\mat{D}$ eine Diagonalmatrix mit Singulärwerten $d_1,\ldots,d_p$, $\mat{U}$ eine orthogonale $n \times p$ und $\mat{V}$ eine orthogonale $p \times p$ Matrix ist. Nun sieht man aufgrund der Orthogonalität von $\mat U$, dass
 $$\mat{K}_{xx} = \mat X^T \mat X = \mat{V}\mat{D}\mat{U}^T \mat{U}\mat{D}\mat{V}^T = \mat V \mat{D}^2 \mat V^T$$
-Aufgrund der Eindeutigkeit der Diagonalisierung(stimmt das?) ist $\mat V$ nun wie zuvor die Matrix der Eigenvektoren und somit der Hauptachsen. Ebenso stehen die Singulärwerte durch $\lambda_i = \frac{d_i^2}{n-1}$ in Beziehung mit den Eigenwerten der Kovarianzmatrix. Die Hauptkomponenten kann man somit auch durch $\mat X \mat V = \mat U \mat D$ erhalten.
+Wegen der Eindeutigkeit der Diagonalisierung(stimmt das?) ist $\mat V$ nun wie zuvor die Matrix der Eigenvektoren und somit der Hauptachsen. Ebenso stehen die Singulärwerte durch $\lambda_i = \frac{d_i^2}{n-1}$ in Beziehung mit den Eigenwerten der Kovarianzmatrix. Die Hauptkomponenten kann man somit auch durch $\mat X \mat V = \mat U \mat D$ erhalten.
 
 Computing PCA using Eigen value decomposition of the sample covariance matrix:
 We first have to compute the covariance matrix, which is $O(p^2n)$ and then compute its eigenvalue decomposition which is $O(p^3)$ giving a total cost of $O(p^2n+p^3)$ (https://arxiv.org/pdf/1503.05214.pdf)
