@@ -5,7 +5,7 @@
 \label{pca}
 
 To Do: Kovarianzmatrix / Stichprobenkovarianzmatrix einheitlich!
-Begriffe wie samples, PCA, oder features erklären
+Begriffe wie samples, PCA, oder features erklären, EIGENVALUE = VARIANCE
 
 Die Hauptkomponentenanalyse ist ein weitverbreitetes multivariates statistisches Verfahren zur Dimensionsreduktion. Multivariate Verfahren zielen darauf ab, die in einem Datensatz enthaltene Zahl der Variablen zu verringern, ohne die darin enthaltene Information (zu verlieren) / (wesentlich zu reduzieren). Dadurch können umfangreiche Datensätze strukturiert, veranschaulicht und vereinfacht werden. Somit ist das Verfahren Teil der explorativen Statistik, welche Datensätze hinsichtlich ihrer Zusammenhänge analysiert. Die sich ergebende Struktur kann für weitere Analysezwecke ausgenutzt werden.
 
@@ -119,6 +119,17 @@ Aus dieser Interpretation leitet sich auch der Name des linearen Dimensionredukt
 \label{selection_principal_components}
 Wie viele Hauptkomponenten sollen wir auswählen?
 
+A simple approach is to choose the number of
+PCs for the variance to achieve a predetermined
+percentage. say 95%
+Most existing approaches to determining the number of PC's use an index that is monotonlcally
+decreasing. The number of PC's is chosen when
+there is no significant decrease in the index after
+adding a PC. These approaches based on monotonic indices are subjective because (i) there may
+be a rather constant decrement in the index; and
+(ii) there can be more than one location which
+satisfies the criterion
+
 Abbildung Scree Plot
 
 Optimal singular threshold \cite{gavish}
@@ -149,8 +160,54 @@ Darüber hinaus gibt es noch eine Reihe Spezialfälle, bei denen Probleme auftre
 
 Das wohl wichtigste/größte Hindernis im Zuge dieser Arbeit ist sicherlich die durch die Transformation entstehenden Interpretationsschwierigkeiten. Jede Hauptkomponente entsteht wie oben beschrieben durch eine Linearkombination der Ausgangsvariablen. Während die Ausgangsvariablen Bedeutungen wie Gewicht oder Größe hatten ist in vor allem in hochdimensionalen Fällen eine Interpretation der Hauptkomponenten nur schwer möglich (Rotation Techniques CITE). Dieser Interpretationsverlust ist Ausgangspunkt der Idee der dünnbesetzten Hauptkomponentenanalyse, genannt sparse PCA. Diesem Verfahren ist das folgende Kapitel gewidmet.
 
+\section{Erweiterungen der Hauptkomponentenanalyse}
+Wie wir bereits gesehen haben, gibt es viele verschiedene Erweiterungen von PCA. Die meisten kann man unter folgendem Schema zusammenfassen: (Welche genau?)
+
+$$\min_{\mat{U},\mat{V}} \underbrace{\norm{\mat{X} - \mat{U}\mat{V}^T}_F}_{\text{Loss Function}} + \underbrace{\lambda_u f_u(\mat U) + \lambda_v f_v(\mat V)}_{\text{Regularisierung}}$$
+$$\text{subject to} \quad \underbrace{\mat U \in \Omega_u, \mat V \in \Omega_v}_{\text{Nebenbedingungen}}$$
+
+\begin{table}
+\centering
+\begin{tabular}[c]{lll}
+\thead{Loss Functions} & \thead{regularizer} & \thead{constraints} \\
+\hline
+\makecell{quadratic\\(real data)} & \makecell{L2 norm\\(small factors)} & \makecell{Nonnegative\\(additive factors)}\\
+\makecell{absolute\\(robust to outliers)} & \makecell{L1 norm\\(sparse factors)}\\
+\makecell{logistic\\(binary data)} & \makecell{Derivative penalties\\ (smooth factors)}\\
+\makecell{Poisson\\(integer data)}\\
+\makecell{circular\\(angular data)}\\
+\end{tabular}
+\caption{Allgemeines Schema zu PCA Erweiterungen}
+\end{table}
+
+\section{Implementierung}
+
+Allgemein ist dies kein konvexes Problem, aber bikonvex, also in jeder Komponente. Somit ergibt sich der einfache folgende Algorithmus
+
+\begin{algorithm}
+    \caption{Alternating minimization}
+    \label{alternating_minimization}
+    \begin{algorithmic}[1]
+        \Procedure{Alternate}{$U,V$}
+        	\State choose initial starting Points $\mat W^{(0)}$ and $\mat C^{(0)}$
+        	\State $n \gets 0$
+            \While{not converged} \Comment{Definiere Abbruchkriterium}
+                \State $\mat W^{(n+1)} \gets$ minimize over $\mat W$ while holding $\mat C = \mat C^{(n)}$ constant.
+                \State $\mat C^{(n+1)} \gets$ minimize over $\mat C$ while holding $\mat W = \mat W^{(n+1)}$ constant.
+                \State $n \gets n+1$
+            \EndWhile
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm} 
+
 
 \section{Theoretische Aussagen}
+
+non convex problem that can be solved efficiently by truncated SVD.
+
+Baldi Hornik 1989
+all local minima are solutions to pca
+all non optimal critical points are saddle points or maxima
 
 \begin{thm}
 PCA always gives unique solution.

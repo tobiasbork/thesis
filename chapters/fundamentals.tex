@@ -15,7 +15,9 @@ Lineare Regression (Least Squares)
 \subsection{LASSO}
 \subsection{Ridge Regression}
 
-\section{Orthogonalprojektion}
+\section{Lineare Algebra}
+
+\subsection{Orthogonalprojektion}
 \begin{defn}
 Zwei Vektoren $\vec a$ und $\vec b$ sind genau dann orthogonal, wenn ihr Skalarprodukt null ist, also
 $$\vec a \perp \vec b \iff\vec a \cdot \vec b = 0.$$
@@ -48,7 +50,7 @@ Der orthogonal projizierte Vektor minimiert den Abstand zwischen dem Ausgangsvek
 
 $$\norm{u - v}^2 = \norm{u - P_U(v)}^2 + \norm{P_U(v) - v}^2 \geq \norm{P_U(v) - v}^2$$
 
-\section{Matrixzerlegungen}
+\subsection{Matrixzerlegungen}
 
 Diagonalisierbarkeit?
 
@@ -56,6 +58,41 @@ Diagonalisierbarkeit?
 \subsubsection{Eigenwerte, Eigenvektoren}
 \subsection{Singulärwertzerlegung}
 \subsubsection{Singulärwerte}
+
+\subsection{Matrixnorm}
+\begin{defn}[Frobeniusnorm]
+$$\norm{\mat X}_F$$
+\end{defn}
+
+\subsection{Rang}
+
+\begin{defn}[Rang]
+Eine Matrix hat Rang k ... wenn
+\end{defn}
+
+\begin{thm}[Wörtlich von Wikipedia, Eckart-Young-Theorem]
+The unstructured problem with fit measured by the Frobenius norm, i.e.,
+$$\text{minimize} \quad \text{over } \widehat D \quad \|D - \widehat D\|_{\text{F}} \quad\text{subject to}\quad \operatorname{rank}\big(\widehat D\big) \leq r $$
+has analytic solution in terms of the singular value decomposition of the data matrix. The result is referred to as the matrix approximation lemma or Eckart–Young–Mirsky theorem.[4] Let
+
+$$D = U\Sigma V^{\top} \in \mathbb{R}^{m\times n}, \quad m \leq n$$
+
+be the singular value decomposition of $D$ and partition $U, \Sigma=:\operatorname{diag}(\sigma_1,\ldots,\sigma_m)$, and $V$ as follows:
+
+$$U =: \begin{bmatrix} U_1 & U_2\end{bmatrix}, \quad 
+\Sigma =: \begin{bmatrix} \Sigma_1 & 0 \\ 0 & \Sigma_2 \end{bmatrix}, \quad\text{and}\quad 
+V =: \begin{bmatrix} V_1 & V_2 \end{bmatrix},$$
+
+where $U_{1}$ is $m\times r$, $\Sigma _{1}$ is $r\times r$, and $V_{1}$ is $n\times r$. Then the rank-$r$ matrix, obtained from the truncated singular value decomposition
+
+$$\widehat D^* = U_1 \Sigma_1 V_1^{\top},$$
+
+is such that
+
+$$\|D-\widehat D^*\|_{\text{F}} = \min_{\operatorname{rank}(\widehat D) \leq r} \|D-\widehat D\|_{\text{F}} = \sqrt{\sigma^2_{r+1} + \cdots + \sigma^2_m}.$$
+
+The minimizer $\widehat D^*$ is unique if and only if $\sigma_{r+1}\neq\sigma_{r}$.
+\end{thm}
 
 \section{Signaltheorie}
 
