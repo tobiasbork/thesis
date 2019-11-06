@@ -17,54 +17,125 @@ Lineare Regression (Least Squares)
 
 \section{Lineare Algebra}
 
-\subsection{Orthogonalprojektion}
-\begin{defn}
-Zwei Vektoren $\vec a$ und $\vec b$ sind genau dann orthogonal, wenn ihr Skalarprodukt null ist, also
-$$\vec a \perp \vec b \iff\vec a \cdot \vec b = 0.$$
+Ein Großteil der Hauptachsentransformation beruht auf Methoden der linearen Algebra. Daher werden wir im Folgendem die wichtigsten Begriffe einführen. Aufgrund des Anwedungsfalls werden wir uns hier auf reelle Vektorräume beschränken.
+
+\subsection{Orthogonalität}
+\begin{defn}[Skalarprodukt \ref{jaenich}]
+Sei $V$ ein reeller Vektorraum. Ein \textit{Skalarprodukt} in $V$ ist eine Abbildung $\inner{\cdot}{\cdot}: V \times V \longrightarrow \mathbb{R}$ mit den folgenden Eigenschaften:
+\begin{enumerate}[(i)]
+\item Für jedes $x \in V$ sind die Abbildungen
+\begin{align*}
+\inner{\cdot}{x}: V & \longrightarrow \mathbb{R} & \inner{x}{\cdot}: V & \longrightarrow \mathbb{R}\\
+v & \longmapsto \inner{v}{x} & v & \longmapsto \inner{x}{v}
+\end{align*}
+linear. $\quad$ (Bilinearität)
+\item $\inner{x}{y} = \inner{y}{x}$ für alle  $x,y \in V \quad$ (Symmetrie)
+\item $\inner{x}{x} \geq 0$ für alle $x \neq 0 \quad$ (Positive Definitheit)
+\end{enumerate}
 \end{defn}
 
-Was sind orthogonale, orthonormale Matrizen, orthogonale, orthonormale Basis?
-Skalarprodukt?
-Von einem Skalarprodukt induzierte Norm?
-Projektionsmatrizen?
+Allgemein versteht man unter einem \textit{euklidischer Vektorraum} ein Paar $(V, \inner{\cdot}{\cdot})$, welches aus einem reellem Vektorraum $V$ und einem Skalarprodukt $\inner{\cdot}{\cdot}$ auf $V$ besteht. Die durch das Skalarprodukt induziert Norm für $v \in V$ wird definiert durch:
+$$\norm{v} \defeq \sqrt{\inner{v}{v}}$$
+Wir werden uns im Folgenden auf das \textit{Standardskalarprodukt} im $\mathbb{R}^n$ beschränken. Dies ist gegeben durch 
+$$\inner{x}{y} = x_1y_1 + \cdots + x_ny_n.$$
+Die durch das Standardskalarprodukt induzierte Norm, ist die \textit{euklidische Norm} oder $l_2$-Norm, welche wir bereits zuvor gesehen haben.
 
-Allgemeine orthogonale Projektionsmatrix falls keine ONB gegeben ist.
-$$\mat P_{\mat A} = \mat A (\mat A^T \mat A)^{-1} \mat A$$
+\begin{defn}[Orthogonalität \ref{jaenich}]
+Zwei Elemente $v,w$ eines euklidischen Vektorraums $V$ heißen \textit{orthogonal} (geschrieben $v \perp w$) wenn ihr Skalarprodukt null ist, d.h.
+$$v \perp w \iff \inner{v}{w} = 0.$$
+Eine Familie $(v_1, \ldots, v_n)$ in $V$ heißt \textit{orthogonal} oder \textit{Orthogonalsystem}, wenn
+$$v_i \perp v_j \quad \text{für alle} \quad i \neq j.$$
+Gilt zusätzlich $\inner{v_i}{v_i} = 1$ für alle $1 \leq i \leq n$, so spricht man von einem \textit{Orthonormalsystem}.
+\end{defn}
 
-Von Wikipedia:
-\begin{defn}
-Eine Orthogonalprojektion auf einen Untervektorraum $U$ eines Vektorraums $V$ ist eine lineare Abbildung $P_U \colon V \rightarrow V$, die für alle Vektoren $v\in V$ die beiden Eigenschaften
+\begin{defn}[Orthonormalbasis \ref{fischer}]
+Sei $\inner{\cdot}{\cdot}: V \times V \longrightarrow \mathbb{R}$ ein Skalarprodukt. Ein System von Vektoren $(v_1, \ldots, v_n)$ in $V$ wird als \textit{Orthogonalbasis} (bzw. \textit{Orthonormalbasis}) bezeichnet, wenn folgende Bedingungnen erfüllt sind:
+\begin{enumerate}[(i)]
+\item $(v_1, \ldots, v_n)$ ist eine Basis von $V$
+\item $(v_1, \ldots, v_n)$ ist ein Orthogonalsystem (bzw. Orthonormalsystem)
+\end{enumerate}
+\end{defn}
 
-\begin{itemize}
+\begin{thm}[Existenz einer Orthonormalbasis (Fischer Lineare Algebra)]
+Jeder endlichdimensionale euklidische Vektorraum besitzt eine Orthonormalbasis.
+\end{thm}
+
+\begin{thm}[Verallgemeinerter Satz des Pythagoras \ref{anton}]
+\label{pythagoras}
+Für orthogonale Vektoren $u,v$ in einem euklidischem Vektorraum $V$ gilt
+$$\norm{u+v}^2 = \norm u^2 + \norm v^2.$$
+\end{thm}
+
+Der Begriff der Orthogonalität lässt sich auf lineare Abbildungen und somit auf Matrizen übertragen.
+
+\begin{thm}[Orthogonale Abbildung \ref{jaenich}]
+Seien $V,W$ euklidische Vektorräume. Eine lineare Abbildung $f: V \longrightarrow W$ heißt \textit{orthogonal} oder \textit{isometrisch}, wenn
+$$\inner{f(v)}{f(w)} = \inner{v}{w} \quad \text{für alle } v,w \in V$$
+\end{thm}
+
+\begin{defn}[Orthogonale Matrix \ref{anton}]
+Eine Matrix $A \in \mathbb{M}(n \times n, \mathbb{R})$ heißt 		\textit{orthogonal}, falls
+$$\mat A^T \mat A = \mathbb{1}_n$$
+\end{defn}
+
+\begin{thm}[Bosch]
+Für eine Matrix $\mat A \in \mathbb{M}(n \times n, \mathbb{R})$ sind die folgenden Bedingungen äquivalent:
+\begin{enumerate}[(i)]
+\item $\mat A$ ist orthogonal
+\item $\mat A^T \mat A = \mathbb{1}_n$
+\item $\mat A \mat A^T = \mathbb{1}_n$
+\item Die Spalten von $\mat A$ bilden ein Orthonormalsystem
+\item Die Zeilen von $\mat A$ bilden ein Orthonormalsystem
+\item $\mat A$ ist invertierbar und $\mat{A}^{-1} = \mat A^T$
+\end{enumerate}
+\end{thm}
+
+\begin{defn}[Orthogonalprojektion (Wikipedia)]
+Eine \textit{Orthogonalprojektion} auf einen Untervektorraum $U$ eines Vektorraums $V$ ist eine lineare Abbildung $P_U \colon V \rightarrow V$, die für alle Vektoren $v\in V$ die beiden Eigenschaften
+\begin{enumerate}[(i)]
 \item $P_U(v) \in U \quad$   (Projektion)
 \item $\langle P_U(v) - v , u \rangle = 0$ für alle $u \in U \quad$ (Orthogonalität)
-\end{itemize}
+\end{enumerate}
 erfüllt.
 \end{defn}
 
-Allgemeine orthogonale Projektion auf einen affinen linearen Unterraum.
-$$P_{U_0}(v) = r_0 + \sum_{i=1}^k \frac{\langle v - r_0, w_i \rangle}{\langle w_i, w_i \rangle} w_i$$
+Mithilfe einer Orthogonalbasis für $U$ lässt sich aus dieser Definition eine Lösung für die Orthogonalprojektion $P_U(v)$ herleiten.
 
-WÖRTLICH VON WIKIPEDIA:
-Der orthogonal projizierte Vektor minimiert den Abstand zwischen dem Ausgangsvektor und allen Vektoren des Untervektorraums bezüglich der von dem Skalarprodukt abgeleiteten Norm $\norm{\cdot}$, denn es gilt mit dem Satz des Pythagoras für Skalarprodukträume
+\begin{thm}[\ref{Anton}]
+Ist $(u_1, \ldots, u_n)$ eine Orthogonalbasis von $U$, so gilt für alle $v \in V$
+$$P_{U}(v) = \sum_{i=1}^n \frac{\langle v, u_i \rangle}{\langle u_i, u_i \rangle} u_i$$
+\end{thm}
 
-$$\norm{u - v}^2 = \norm{u - P_U(v)}^2 + \norm{P_U(v) - v}^2 \geq \norm{P_U(v) - v}^2$$
+In späteren Kapiteln werden wir die Orthogonalprojektion in einer anderen Form nutzen. Wir können die Projektion auch als Matrix-Vektor-Produkt auffassen. Verwenden wir das Standardskalarprodukt so gilt mit einer Orthogonalbasis $(u_1, \ldots, u_n)$ von $U$:
+$$P_U(v) = \sum_{i=1}^n \frac{v^T u_i}{u_i^T u_i} u_i = \sum_{i=1}^n \frac{u_i u_i^T}{u_i^T u_i}v = \mat A \mat A^T v$$
+wobei die Spalten von $\mat A$ die normalisierten Vektoren der Orthogonalbasis sind, d.h. $\mat A = \left[ \frac{u_1}{\norm{u_1}} \Big\vert \cdots \Big\vert \frac{u_n}{\norm{u_n}}\right]$. 
+
+Mithilfe von \ref{pythagoras} lässt sich zeigen, dass der orthogonal auf den Unterraum projizierte Vektor den Abstand zwischen dem Ausgansvektor und dem Unterraum minimiert.
+
+\begin{thm}[\ref{anton}]
+Sei $U$ ein Unterraum eines euklidischen Vektorraums $V$. Dann ist $P_U(v)$ die beste Näherung von $u$ in $U$, d.h.
+$$\norm{P_U(v) - v}^2 \leq \norm{u - v}^2 \quad \text{für alle } u \in U$$
+\end{thm}
+
 
 \subsection{Matrixzerlegungen}
 
-Diagonalisierbarkeit?
+\textbf{Eigenwerte, Eigenvektoren}
+\textbf{Singulärwerte}
 
-\subsection{Eigenwertzerlegung}
-\subsubsection{Eigenwerte, Eigenvektoren}
-\subsection{Singulärwertzerlegung}
-\subsubsection{Singulärwerte}
+\textbf{Diagonalisierbarkeit}
+\begin{thm}[Spektralsatz / Hauptachsentransformation \ref{beutelspacher}]
+Jede symmetrische reelle Matrix ist diagonalisierbar und hat nur reelle Eigenwerte.
+\end{thm}
+\textbf{Eigenwertzerlegung}
+\textbf{Singulärwertzerlegung}
 
-\subsection{Matrixnorm}
+\subsection{Matrixnorm und Rang (Eigenschaften?)}
 \begin{defn}[Frobeniusnorm]
 $$\norm{\mat X}_F$$
 \end{defn}
 
-\subsection{Rang}
+\textbf{Rang}
 
 \begin{defn}[Rang]
 Eine Matrix hat Rang k ... wenn
