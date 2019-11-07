@@ -24,7 +24,7 @@ headsepline, % Uncomment to get a line under the header
 
 \usepackage{mathpazo} % Use the Palatino font by default
 
-\usepackage[backend=bibtex,style=numeric,natbib=true]{biblatex} % Use the bibtex backend with the authoryear citation style (which resembles APA)
+\usepackage[backend=biber,style=numeric,natbib=true]{biblatex} % Use the bibtex backend with the authoryear citation style (which resembles APA)
 
 \addbibresource{references.bib} % The filename of the bibliography
 
@@ -33,7 +33,6 @@ headsepline, % Uncomment to get a line under the header
 %----------------------------------------------------------------------------------------
 %	OWN SETTINGS
 %----------------------------------------------------------------------------------------
-
 
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -60,7 +59,11 @@ headsepline, % Uncomment to get a line under the header
 \DeclareMathOperator*{\argmin}{arg\,min}
 \newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
 \newcommand\inner[2]{\langle #1, #2 \rangle}
+\newcommand\rang[1]{\text{rang} \left( #1 \right)}
 \newcommand{\defeq}{\vcentcolon=}
+\newcommand{\rnn}{\mathbb{R}^{n \times n}}
+\newcommand{\rmn}{\mathbb{R}^{m \times n}}
+\newcommand{\rn}{\mathbb{R}^n}
 
 %----------------------------------------------------------------------------------------
 %	MARGIN SETTINGS
