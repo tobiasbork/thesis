@@ -4,24 +4,13 @@
 % Chapter label
 \label{fundamentals}
 
-\section{Normen und deren Effekte}
-\label{norm}
 
-\begin{defn}[$l_p$-Norm \cite{schaback}] 
-Auf dem $\mathbb{R}^n$ sind die $l_p$-Normen für $1 \leq p < \infty$ definiert als
-$$\norm{x}_p \defeq \left( \sum_{i=1}^{n} \norm{x_i}^{p} \right) ^{\frac{1}{p}} \quad x \in \mathbb{R}^{n}$$
-und für $p = \infty$ als
-$$\norm{x}_{\infty} \defeq \max_{1 \leq i \leq n} \norm{x_i} \quad x \in \mathbb{R}^{n}.$$
-Im Fall $p = \infty$ spricht man auch von der \textit{Maximumsnorm} und im Fall $p = 2$ von der \textit{euklidischen Norm}.
-\end{defn}
-\subsection{l0-Norm}
-\subsection{l1-Norm}
-\subsection{l2-Norm}
 
-\section{Regression}
-Lineare Regression (Least Squares)
-\subsection{LASSO}
-\subsection{Ridge Regression}
+%----------------------------------------------------------------------------------------
+%	Lineare Algebra
+%----------------------------------------------------------------------------------------
+
+
 
 \section{Lineare Algebra}
 
@@ -107,6 +96,10 @@ In späteren Kapiteln werden wir die Orthogonalprojektion in einer anderen Form 
 $$P_U(v) = \sum_{i=1}^n \frac{v^T u_i}{u_i^T u_i} u_i = \sum_{i=1}^n \frac{u_i u_i^T}{u_i^T u_i}v = \mat A \mat A^T v$$
 wobei die Spalten von $\mat A$ die normalisierten Vektoren der Orthogonalbasis sind, d.h. $\mat A = \begin{bmatrix} \frac{u_1}{\norm{u_1}} & \cdots & \frac{u_n}{\norm{u_n}} \end{bmatrix}$
 
+(Von Wikipedia)
+The orthonormality condition can also be dropped. If $u_{1},\ldots ,u_{k}$ is a (not necessarily orthonormal) basis, and $\mat A$ is the matrix with these vectors as columns, then the projection is:
+$$P_{A}=A(A^{\mathrm{T}}A)^{-1}A^{\mathrm{T}}$$
+
 Mithilfe von \ref{pythagoras} lässt sich zeigen, dass der orthogonal auf den Unterraum projizierte Vektor den Abstand zwischen dem Ausgansvektor und dem Unterraum minimiert.
 
 \begin{thm}[\cite{anton}]
@@ -162,7 +155,7 @@ Die positiven Diagonaleinträgen $\sigma_{i} > 0$ von $\mat D$ werden \textit{Si
 Nach Konvention werden die Singulärwerte von $\mat D$ absteigend sortiert, d.h. $\sigma _{1} \geq \cdots \geq \sigma _{r}$. Außerdem sind die Singulärwerte eindeutig bestimmt und stehen durch $\sigma_i = \sqrt{\lambda_i}$ in einer engen Beziehung mit den Eigenwerten $\lambda_i$ von $\mat A$. Geometrisch bedeutet diese Faktorisierung, dass sich die Matrix $A$ in zwei Drehungen $\mat U, \mat V$ und eine Streckung unterteilen lässt. Dabei korrespondieren die Streckungsfaktoren mit den Einträgen der Diagonalmatrix $\mat D$.
 
 
-\subsection{Matrixnorm und Rang (Eigenschaften?)}
+\subsection{Matrix Approximation}
 
 Das Konzept von Normen lässt sich auch Matrizen übertragen. In späteren Kapiteln werden wir vor allem Gebrauch folgender Norm machen.
 
@@ -171,35 +164,97 @@ Für eine Matrix $A \in \rmn$ ist die \textit{Frobeniusnorm} definiert durch
 $$\norm{\mat A}_F = \left( \sum_{i=1}^{m} \sum_{j=1}^{n} \lvert a_{ij} \rvert ^{2} \right) ^{\frac{1}{2}}.$$
 \end{defn}
 
+Man zeigt leicht, dass $\norm{\mat A}_F = \spur{\mat A^T \mat A}$ gilt.
 Eine weitere wichtige Eigenschaft von Matrizen ist der \textit{Rang}.
 
 \begin{defn}[Rang \cite{anton}]
 Die Dimension des Zeilen- und des Spaltenraumes einer Matrix $\mat A$ heißt \textit{Rang} von $\mat A$ und wird mit $\rang{\mat A}$ bezeichnet.
 \end{defn}
 
-\begin{thm}[Wörtlich von Wikipedia, Eckart-Young-Theorem]
-The unstructured problem with fit measured by the Frobenius norm, i.e.,
-$$\text{minimize} \quad \text{over } \widehat D \quad \|D - \widehat D\|_{\text{F}} \quad\text{subject to}\quad \operatorname{rank}\big(\widehat D\big) \leq r $$
-has analytic solution in terms of the singular value decomposition of the data matrix. The result is referred to as the matrix approximation lemma or Eckart–Young–Mirsky theorem.[4] Let
+Später werden wir eine Matrix $\mat A$ durch eine andere, simplere Matrix $\widehat{\mat A}$ mit niedrigerem Rang approximieren. Dieses Problem ist unter dem Namen \textit{low rank approximation} im Englischen bekannt.
+Mithilfe der Singulärwertzerlegung können wir eine explizite Lösung für dieses Problem angeben.
 
-$$D = U\Sigma V^{\top} \in \mathbb{R}^{m\times n}, \quad m \leq n$$
+\begin{thm}[Eckart-Young-Mirsky-Theorem \cite{eckart}]
+Sei
+$$\mat{A} = \mat{U}\mat{D} \mat{V}^{\top} \in \mathbb{R}^{m\times n}, \quad m \leq n$$
 
-be the singular value decomposition of $D$ and partition $U, \Sigma=:\operatorname{diag}(\sigma_1,\ldots,\sigma_m)$, and $V$ as follows:
+die Singulärwertzerlegung von $\mat{A}$ und partitioniere $\mat{U}, \mat{D}$ und $\mat{V}$ wie folgt:
 
-$$U =: \begin{bmatrix} U_1 & U_2\end{bmatrix}, \quad 
-\Sigma =: \begin{bmatrix} \Sigma_1 & 0 \\ 0 & \Sigma_2 \end{bmatrix}, \quad\text{and}\quad 
-V =: \begin{bmatrix} V_1 & V_2 \end{bmatrix},$$
+$$\mat{U} =: \begin{bmatrix} \mat{U}_1 & \mat{U}_2\end{bmatrix}, \quad 
+\mat{D} =: \begin{bmatrix} \mat{D}_1 & 0 \\ 0 & \mat{D}_2 \end{bmatrix},\quad \mat{V} =: \begin{bmatrix} \mat{V}_1 & \mat{V}_2 \end{bmatrix},$$
 
-where $U_{1}$ is $m\times r$, $\Sigma _{1}$ is $r\times r$, and $V_{1}$ is $n\times r$. Then the rank-$r$ matrix, obtained from the truncated singular value decomposition
+wobei $\mat{U}_{1} \in \mathbb{R}^{m\times r}$, $\mat{D} _{1} \in \mathbb{R}^{r\times r}$ und $\mat{V}_{1} \in \mathbb{R}^{n\times r}$. Dann löst die abgeschnittene Singularwärtzerlegung (Englisch: \textit{truncated singular value decomposition)}
 
-$$\widehat D^* = U_1 \Sigma_1 V_1^{\top},$$
+$$\widehat \mat{A}^* = \mat{U}_1 \mat{D}_1 \mat{V}_1^{\top},$$
 
-is such that
+das Approximationsproblem
 
-$$\|D-\widehat D^*\|_{\text{F}} = \min_{\operatorname{rank}(\widehat D) \leq r} \|D-\widehat D\|_{\text{F}} = \sqrt{\sigma^2_{r+1} + \cdots + \sigma^2_m}.$$
+$$\min_{\operatorname{rank}(\widehat \mat{A}) \leq r} \|\mat{A}-\widehat \mat{A}\|_{\text{F}} = \|\mat{A}-\widehat \mat{A}^*\|_{\text{F}} = \sqrt{\sigma^2_{r+1} + \cdots + \sigma^2_m},$$
 
-The minimizer $\widehat D^*$ is unique if and only if $\sigma_{r+1}\neq\sigma_{r}$.
+wobei $\sigma_i$ die Singulärwerte von $\mat A$ bzw. die Diagonaleinträge von $\mat D$ sind. Der Minimierer $\widehat \mat{A}^*$ ist genau dann eindeutig, wenn $\sigma_{r+1} \neq \sigma_{r}$.
 \end{thm}
+
+
+
+%----------------------------------------------------------------------------------------
+%	Analysis
+%----------------------------------------------------------------------------------------
+
+
+
+\section{Analysis}
+
+In diesem Abschnitt möchten wir die 
+
+\subsection{Norm}
+
+\begin{defn}[Norm (Wikipedia)]
+\label{norm}
+Eine Norm ist eine Abbildung $\norm{\cdot} \colon \mathbb{R}^n \longrightarrow {\mathbb {R} }_{0}^{+}$, die für alle Vektoren $x,y\in \mathbb{R}^n$ und alle Skalare $\alpha \in \mathbb{R}$ die folgenden drei Axiome erfüllt:
+\begin{enumerate}[(i)]
+\item \makebox[5cm][1]{$\|x\|=0\;\Rightarrow \;x=0$}(Definitheit)
+\item \makebox[5cm][1]{$\|\alpha \cdot x\|=|\alpha |\cdot \|x\|$}(Homogenität)
+\item \makebox[5cm][1]{$\|x+y\|\leq \|x\|+\|y\|$}(Subadditivität)
+\end{enumerate}
+\end{defn}
+
+Im Zuge dieser Arbeit werden wir uns vor allem mit den $l_p$-Normen beschäftigen.
+
+\begin{defn}[$l_p$-Norm \cite{schaback}] 
+Auf dem $\mathbb{R}^n$ sind die $l_p$-Normen für $1 \leq p < \infty$ definiert als
+$$\norm{x}_p \defeq \left( \sum_{i=1}^{n} \abs{x_i}^{p} \right) ^{\frac{1}{p}} \quad x \in \mathbb{R}^{n}$$
+und für $p = \infty$ als
+$$\norm{x}_{\infty} \defeq \max_{1 \leq i \leq n} \abs{x_i} \quad x \in \mathbb{R}^{n}.$$
+Im Fall $p = \infty$ spricht man auch von der \textit{Maximumsnorm} und im Fall $p = 2$ von der \textit{euklidischen Norm}.
+\end{defn}
+
+Wir führen nun die Idee eines dünnbesetzen Vektors ein.
+
+\begin{defn}[$l_0$-\q{Norm} \cite{foucart}]
+Die sogenannte $l_0$-\q{Norm} ist definiert durch
+$$\norm{x}_{0} \defeq \left|\{i \colon \enspace x_i \neq 0 , \quad 1 \leq i \leq n\}\right|.$$
+\end{defn}
+
+Die übliche Schreibweise $\norm{x}_0$ - die Notation $\norm{x}_{0}^{0}$ wäre angemessener - enspringt der Beobachtung, dass 
+$$\norm{x}_{p}^{p} = \sum_{i=1}^{n} \abs{x_i}^p \quad \underset{p \rightarrow 0}{\longrightarrow} \quad \sum_{i=1}^{n} \mathbb{1}_{\{x_i = 0\}} = \left|\{i \colon \enspace x_i \neq 0\, , \quad 1 \leq i \leq n\}\right|$$
+Wir wollen betonen, dass die $l_0$-\q{Norm} keine wirkliche Norm ist, da die Abbildung nicht homogen ist. Trotzdem ist diese \q{Norm} in der Theorie der komprimierten Erfassung (Englisch: \textit{compressive sensing}) sehr nützlich.
+
+\subsection{Regression}
+\textbf{Lineare Regression (Least Squares)}
+\textbf{LASSO}
+\textbf{Ridge Regression}
+
+\subsection{Mannigfaltigkeit}
+
+\subsection{Fouriertransformation}
+
+
+
+%----------------------------------------------------------------------------------------
+%	Statistik
+%----------------------------------------------------------------------------------------
+
+
 
 \section{Signaltheorie}
 
@@ -209,7 +264,5 @@ The minimizer $\widehat D^*$ is unique if and only if $\sigma_{r+1}\neq\sigma_{r
 \section{Statistik}
 Varianz, Erwartungswert
 \subsection{Empirische Kovarianzmatrix}
-
-\section{Mannigfaltigkeit}
 
 \section{Dictionary Learning}
