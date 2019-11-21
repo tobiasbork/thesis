@@ -14,7 +14,7 @@
 
 \section{Lineare Algebra}
 
-Ein Großteil der Mathematik der Hauptkomponentenanalyse beruht auf Methoden der linearen Algebra. Daher werden wir im Folgendem die wichtigsten Begriffe einführen. Aufgrund des Anwedungsfalls werden wir uns hier auf reelle Vektorräume beschränken.
+Ein Großteil der Mathematik der Hauptkomponentenanalyse beruht auf Methoden der linearen Algebra. Daher werden wir im Folgendem die wichtigsten Begriffe einführen. Aufgrund des Anwendungsfalls werden wir uns hier auf reelle Vektorräume beschränken.
 Zunächst Orthogonalität, dann Matrixzerlegungen, dann noch einige weitere Eigenschaften und Theoreme, die wir später benötigen.
 
 \subsection{Orthogonalität}
@@ -47,7 +47,7 @@ Gilt zusätzlich $\inner{v_i}{v_i} = 1$ für alle $1 \leq i \leq n$, so spricht 
 \end{defn}
 
 \begin{defn}[Orthonormalbasis \cite{fischer}]
-Sei $\inner{\cdot}{\cdot}: V \times V \longrightarrow \mathbb{R}$ ein Skalarprodukt. Ein System von Vektoren $(v_1, \ldots, v_n)$ in $V$ wird als \textit{Orthogonalbasis} (bzw. \textit{Orthonormalbasis}) bezeichnet, wenn folgende Bedingungnen erfüllt sind:
+Sei $\inner{\cdot}{\cdot}: V \times V \longrightarrow \mathbb{R}$ ein Skalarprodukt. Ein System von Vektoren $(v_1, \ldots, v_n)$ in $V$ wird als \textit{Orthogonalbasis} (bzw. \textit{Orthonormalbasis}) bezeichnet, wenn folgende Bedingungen erfüllt sind:
 \begin{enumerate}[(i)]
 \item $(v_1, \ldots, v_n)$ ist eine Basis von $V$
 \item $(v_1, \ldots, v_n)$ ist ein Orthogonalsystem (bzw. Orthonormalsystem)
@@ -64,15 +64,10 @@ Für orthogonale Vektoren $u,v$ in einem euklidischem Vektorraum $V$ gilt
 $$\norm{u+v}^2 = \norm u^2 + \norm v^2.$$
 \end{thm}
 
-Der Begriff der Orthogonalität lässt sich auf lineare Abbildungen und somit auf Matrizen übertragen.
-
-\begin{defn}[Orthogonale Abbildung \cite{jaenich}]
-Seien $V,W$ euklidische Vektorräume. Eine lineare Abbildung $f: V \longrightarrow W$ heißt \textit{orthogonal} oder \textit{isometrisch}, wenn
-$$\inner{f(v)}{f(w)} = \inner{v}{w} \quad \text{für alle } v,w \in V$$
-\end{defn}
+Der Begriff der Orthogonalität lässt sich auf Matrizen übertragen.
 
 \begin{defn}[Orthogonale Matrix \cite{anton}]
-Eine Matrix $A \in \mathbb{M}(n \times n, \mathbb{R})$ heißt 		\textit{orthogonal}, falls deren Zeilen und Spalten jeweils paarweise orthonormal sind:
+Eine Matrix $A \in \mathbb{M}(n \times n, \mathbb{R})$ heißt 		\textit{orthogonal}, falls deren Zeilen und Spalten jeweils paarweise orthonormal sind, d.h.
 $$\mat A^T \mat A = \mathbb{1}_n$$
 \end{defn}
 
@@ -100,7 +95,7 @@ wobei die Spalten von $\mat A$ die normalisierten Vektoren der Orthogonalbasis s
 The orthonormality condition can also be dropped. If $u_{1},\ldots ,u_{k}$ is a (not necessarily orthonormal) basis, and $\mat A$ is the matrix with these vectors as columns, then the projection is:
 $$P_{A}=A(A^{\mathrm{T}}A)^{-1}A^{\mathrm{T}}$$
 
-Mithilfe von \ref{pythagoras} lässt sich zeigen, dass der orthogonal auf den Unterraum projizierte Vektor den Abstand zwischen dem Ausgansvektor und dem Unterraum minimiert.
+Mithilfe von \ref{pythagoras} lässt sich zeigen, dass der orthogonal auf den Unterraum projizierte Vektor den Abstand zwischen dem Ausgangsvektor und dem Unterraum minimiert.
 
 \begin{thm}[\cite{anton}]
 Sei $U$ ein Unterraum eines euklidischen Vektorraums $V$. Dann ist $P_U(v)$ die beste Näherung von $u$ in $U$, d.h.
@@ -122,7 +117,7 @@ für einen Skalar $\lambda \in \mathbb{R}$. Die Zahl $\lambda$ heißt \textit{Ei
 Eine quadratische Matrix $\mat A \in \rnn$ heißt \textit{diagonalisierbar}, wenn eine invertierbare Matrix $\mat P$ existiert, so dass $\mat{D} = \mat{P}^{-1}\mat{A}\mat{P}$ Diagonalgestalt hat.
 \end{defn}
 
-Es gibt nun viele verschiedene Kriterien, wann eine Matrix diagonalisierbar ist. Für unsere spätere Anwendung interessieren wir uns vor allem für die Frage, ob es zu einer gegebenen Matrix $\mat{A} \in \rnn$ eine orthogonale Matrix $\mat{P}$ gibt, die $\mat{A}$ diagonalisiert. Eine derartige Diagonalisierung wird auch als \textit{Hauptachsentransformation} bezeichnet. Dieser Name stammt ursprünglich aus der Theorie der Kegelschnitte. Hierbei ist eine Hauptachsentransformation eine orthogonale Abbildung, welche die Koordinatenachsen in die Richtungen der beiden \textit{Hauptachsen} überführt. Wir wollen uns aber vorest nicht mit dieser geometrischen Interpretation beschäftigen, sondern mit einem mathematisch äquivalenten, in den Anwendungen aber wichtigeren Problem.
+Es gibt nun viele verschiedene Kriterien, wann eine Matrix diagonalisierbar ist. Für unsere spätere Anwendung interessieren wir uns vor allem für die Frage, ob es zu einer gegebenen Matrix $\mat{A} \in \rnn$ eine orthogonale Matrix $\mat{P}$ gibt, die $\mat{A}$ diagonalisiert. Eine derartige Diagonalisierung wird auch als \textit{Hauptachsentransformation} bezeichnet. Dieser Name stammt ursprünglich aus der Theorie der Kegelschnitte. Hierbei ist eine Hauptachsentransformation eine orthogonale Abbildung, welche die Koordinatenachsen in die Richtungen der beiden \textit{Hauptachsen} überführt. Wir wollen uns aber vorerst nicht mit dieser geometrischen Interpretation beschäftigen, sondern mit einem mathematisch äquivalenten, in den Anwendungen aber wichtigeren Problem.
 
 \begin{thm}[Hauptachsentransformation \cite{jaenich}]
 Ist $\mat{A} \in \rnn$ eine symmetrische Matrix, so gibt es eine orthogonale Transformation $\mat{P}$, welche $\mat{A}$ in eine Diagonalmatrix $\mat{D} \defeq \mat{P}^{-1}\mat{A}\mat{P}$ der Gestalt
@@ -149,7 +144,7 @@ mit orthogonalen Matrizen $\mat U \in \mathbb{R}^{m \times m}$ und $\mat V \in \
 \end{thm}
 
 \begin{defn}[Singulärwert]
-Die positiven Diagonaleinträgen $\sigma_{i} > 0$ von $\mat D$ werden \textit{Singulärwerte} genannt.
+Die positiven Diagonaleinträge $\sigma_{i} > 0$ von $\mat D$ werden \textit{Singulärwerte} genannt.
 \end{defn}
 
 Nach Konvention werden die Singulärwerte von $\mat D$ absteigend sortiert, d.h. $\sigma _{1} \geq \cdots \geq \sigma _{r}$. Außerdem sind die Singulärwerte eindeutig bestimmt und stehen durch $\sigma_i = \sqrt{\lambda_i}$ in einer engen Beziehung mit den Eigenwerten $\lambda_i$ von $\mat A$. Geometrisch bedeutet diese Faktorisierung, dass sich die Matrix $A$ in zwei Drehungen $\mat U, \mat V$ und eine Streckung unterteilen lässt. Dabei korrespondieren die Streckungsfaktoren mit den Einträgen der Diagonalmatrix $\mat D$.
@@ -183,7 +178,7 @@ die Singulärwertzerlegung von $\mat{A}$ und partitioniere $\mat{U}, \mat{D}$ un
 $$\mat{U} =: \begin{bmatrix} \mat{U}_1 & \mat{U}_2\end{bmatrix}, \quad 
 \mat{D} =: \begin{bmatrix} \mat{D}_1 & 0 \\ 0 & \mat{D}_2 \end{bmatrix},\quad \mat{V} =: \begin{bmatrix} \mat{V}_1 & \mat{V}_2 \end{bmatrix},$$
 
-wobei $\mat{U}_{1} \in \mathbb{R}^{m\times r}$, $\mat{D} _{1} \in \mathbb{R}^{r\times r}$ und $\mat{V}_{1} \in \mathbb{R}^{n\times r}$. Dann löst die abgeschnittene Singularwärtzerlegung (Englisch: \textit{truncated singular value decomposition)}
+wobei $\mat{U}_{1} \in \mathbb{R}^{m\times r}$, $\mat{D} _{1} \in \mathbb{R}^{r\times r}$ und $\mat{V}_{1} \in \mathbb{R}^{n\times r}$. Dann löst die abgeschnittene Singulärwertzerlegung (Englisch: \textit{truncated singular value decomposition)}
 
 $$\widehat \mat{A}^* = \mat{U}_1 \mat{D}_1 \mat{V}_1^{\top},$$
 
@@ -228,21 +223,25 @@ $$\norm{x}_{\infty} \defeq \max_{1 \leq i \leq n} \abs{x_i} \quad x \in \mathbb{
 Im Fall $p = \infty$ spricht man auch von der \textit{Maximumsnorm} und im Fall $p = 2$ von der \textit{euklidischen Norm}.
 \end{defn}
 
-Wir führen nun die Idee eines dünnbesetzen Vektors ein.
+Wir führen nun die Idee eines dünnbesetzten Vektors ein.
 
 \begin{defn}[$l_0$-\q{Norm} \cite{foucart}]
 Die sogenannte $l_0$-\q{Norm} ist definiert durch
 $$\norm{x}_{0} \defeq \left|\{i \colon \enspace x_i \neq 0 , \quad 1 \leq i \leq n\}\right|.$$
 \end{defn}
 
-Die übliche Schreibweise $\norm{x}_0$ - die Notation $\norm{x}_{0}^{0}$ wäre angemessener - enspringt der Beobachtung, dass 
+Die übliche Schreibweise $\norm{x}_0$ - die Notation $\norm{x}_{0}^{0}$ wäre angemessener - entspringt der Beobachtung, dass 
 $$\norm{x}_{p}^{p} = \sum_{i=1}^{n} \abs{x_i}^p \quad \underset{p \rightarrow 0}{\longrightarrow} \quad \sum_{i=1}^{n} \mathbb{1}_{\{x_i = 0\}} = \left|\{i \colon \enspace x_i \neq 0\, , \quad 1 \leq i \leq n\}\right|$$
 Wir wollen betonen, dass die $l_0$-\q{Norm} keine wirkliche Norm ist, da die Abbildung nicht homogen ist. Trotzdem ist diese \q{Norm} in der Theorie der komprimierten Erfassung (Englisch: \textit{compressive sensing}) sehr nützlich.
 
 \subsection{Regression}
 \textbf{Lineare Regression (Least Squares)}
+\textbf{Subset Selection}
 \textbf{LASSO}
 \textbf{Ridge Regression}
+\textbf{Elastic Net}
+
+Im folgendem Abschnitt werden wir sehen, dass die Wahl der Norm verschiedene Effekte auf die Regressionskoeffizienten hat.
 
 \subsection{Mannigfaltigkeit}
 
