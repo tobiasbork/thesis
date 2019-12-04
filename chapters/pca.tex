@@ -82,10 +82,10 @@ $$\lambda_i = \frac{d_i^2}{n-1}$$
 in Beziehung mit den Eigenwerten der Kovarianzmatrix. Die Hauptkomponenten kann man somit auch durch $\mat X \mat V = \mat U \mat D$ erhalten.
 
 Computing PCA using Eigen value decomposition of the sample covariance matrix:
-We first have to compute the covariance matrix, which is $O(p^2n)$ and then compute its eigenvalue decomposition which is $O(p^3)$ giving a total cost of $O(p^2n+p^3)$ (https://arxiv.org/pdf/1503.05214.pdf)
+We first have to compute the covariance matrix, which is $\mathcal{O}(p^2n)$ and then compute its eigenvalue decomposition which is $\mathcal{O}(p^3)$ giving a total cost of $\mathcal{O}(p^2n+p^3)$ (https://arxiv.org/pdf/1503.05214.pdf)
 
 Computing PCA using SVD of the data matrix:
-Svd has a computational cost of $O(p^2n)$
+Svd has a computational cost of $\mathcal{O}(p^2n)$
 
 Numerical Stability? Which method is preferrable in the $n << p$ case?
 

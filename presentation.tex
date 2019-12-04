@@ -1,0 +1,141 @@
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass{beamer}
+
+\usetheme[hideothersubsections]{Goettingen}
+\usepackage{german}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\newcommand{\mat}[1]{\mathbf{#1}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+
+%----------------------------------------------------------------------------------------
+%	BEGIN DOCUMENT
+%----------------------------------------------------------------------------------------
+
+
+\begin{document}
+
+\title{Sparse Principal Component Analysis}
+\subtitle{for Frequency Data}   
+\institute{Institute for Numerical Simulation}
+\author{Tobias Bork} 
+\date{\today}
+\titlegraphic{	\includegraphics[scale=0.04]{figures/university_of_bonn.png} 				\hspace{0.5cm}
+				\includegraphics[scale=0.10]{figures/fraunhofer_scai.png}}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+%\begin{frame}
+%\frametitle{Table of Contents}
+%\tableofcontents
+%\end{frame}
+
+%----------------------------------------------------------------------------------------
+%	Introduction
+%----------------------------------------------------------------------------------------
+
+\section{Introduction} 
+\begin{frame}
+\frametitle{Titel} 
+Die einzelnen Frames sollte einen Titel haben 
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+%	Principal Component Analysis
+%----------------------------------------------------------------------------------------
+
+\section{PCA} 
+\subsection{Idea}
+\begin{frame}\frametitle{Aufz\"ahlung}
+\begin{itemize}
+\item Einf\"uhrungskurs in \LaTeX  
+\item Kurs 2  
+\item Seminararbeiten und Pr\"asentationen mit \LaTeX 
+\item Die Beamerclass 
+\end{itemize} 
+\end{frame}
+
+\subsection{Mathematical Formulations}
+\subsection{Theorems}
+\subsection{Limits of Usability}
+\subsection{Application}
+
+%----------------------------------------------------------------------------------------
+%	Fundamentals
+%----------------------------------------------------------------------------------------
+
+\section{Fundamentals}
+
+\subsection{Regression}
+\subsection{Sparsity inducing Norms}
+
+%----------------------------------------------------------------------------------------
+%	Sparse Principal Component Analysis
+%----------------------------------------------------------------------------------------
+
+\section{Sparse PCA}
+
+\subsection{Mathematical Formulation}
+\subsection{Numerical Solution}
+
+\begin{frame}
+\begin{algorithm}[H]
+  \scriptsize
+    \caption{General SPCA Algorithm}
+    \begin{algorithmic}[1]
+        \Procedure{SPCA}{$A,B$}
+        	\State $\mat A \gets \mat V[,1 \colon k]$, the loadings of the first k ordinary principal components
+            \While{not converged} \Comment{Definiere Abbruchkriterium}
+                \State Given a fixed $\mat A = [\alpha_1, \ldots, \alpha_k]$, solve the elastic net problem $$\beta_j = \argmin_{\beta} \norm{\mat X \alpha_j - \mat X \beta}^{2} + \lambda \norm{\beta}^2 + \lambda_{1,j}\norm{\beta}_{1}$$
+                \State For a fixed $\mat B = [\beta_1, \ldots, \beta_k]$, compute the SVD of $$\mat X^T \mat X \mat B = \mat U \mat D \mat V^T$$
+                \State $\mat A \gets \mat U \mat V^T$
+            \EndWhile
+            \State $\hat{V}_j = \frac{\beta_j}{\norm{\beta_j}}$ for $j = 1, \ldots, k$
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm} 
+\end{frame}
+
+\subsection{Adjusted Variances}
+\subsection{p >> n case}
+
+%----------------------------------------------------------------------------------------
+%	Application
+%----------------------------------------------------------------------------------------
+
+\section{Application}
+
+\subsection{Dataset}
+\subsection{Results}
+
+%----------------------------------------------------------------------------------------
+%	References
+%----------------------------------------------------------------------------------------
+
+\section{References}
+\begin{frame}
+
+\frametitle{References}
+
+\begin{thebibliography}{9}
+\bibitem[Beamerpaket]{paket} \emph{Beamer Paket} \\ 
+\text{http://latex-beamer.sourceforge.net/}
+\bibitem[Beamerdokumentation]{doku} \emph{User's Guide to the Beamer} 
+\bibitem[Dante]{dante} \emph{DANTE e.V.} \text{http://www.dante.de}   
+\end{thebibliography}
+
+
+\end{frame}
+
+
+
+\end{document}
