@@ -12,6 +12,7 @@
 \usepackage{subcaption}
 \usepackage{amsmath}
 \usepackage{amsthm}
+\usepackage{caption}
 
 % Declare theorem style and numbering
 \theoremstyle{plain}
@@ -86,9 +87,10 @@
 \begin{frame}\frametitle{Central Idea}
 \begin{itemize}
 \item Reduce dimensionality while retaining as much information as possible
+\item Sequentially identify principal axis of greatest variability
+\item Represent data set regarding identified principal axis
 \item Linearly project the data to a space of fewer dimensions
-\item Represent data set regarding newly identified principal components
-\item Natural order on principal components
+\item Yields natural order on principal components
 \end{itemize} 
 \end{frame}
 
@@ -97,17 +99,20 @@
 \centering
 	\begin{subfigure}{0.45\textwidth}
 	\centering
+	\captionsetup{justification=centering}
 	\includegraphics[width = \textwidth]{figures/pca_example.png}
 	\label{pca_example_original}
+	\caption{Finding principal axis on a data set}
 	\end{subfigure}
 	%	
 	\begin{subfigure}{0.45\textwidth}
 	\centering
+	\captionsetup{justification=centering}
 	\includegraphics[width = \textwidth]{figures/pca_example_rotated.png}
 	\label{pca_example_rotated}
+	\caption{Linear projection of data to a space of fewer dimensions}
 	\end{subfigure}
 
-\caption{Some description of the plots}
 \label{pca_example}
 \end{figure}
 \end{frame}
@@ -118,10 +123,11 @@
 Let $\mat X \in \mathbb{R}^{n \times p}$ be a centered data matrix with $n$ samples and $p$ variables. We find the first principal axis by 
 $$v_1 = \argmax_{\norm{v}_2 = 1} \text{Var}[\mat{X}v] = \argmax_{\norm{v}_2 = 1} v^T \mat{\Sigma} v$$
 where $\mat{\Sigma} = \mat X^T \mat X$ is the sample covariance matrix.
-Then we can find the following principal axis successively
+
+We compute the following principal axis successively
 $$v_{k+1} = \argmax_{\norm{v} = 1} v^T \mat{\Sigma} v$$ 
 $$\text{subject to }v_{k+1}^Tv_l = 0 \quad \forall 1 \leq l \leq k$$
-The new, transformed variables are defined by $Z_i = \mat{X}v_i$
+The new principal components are defined by $Z_i = \mat{X}v_i$
 
 \end{frame}
 
@@ -143,25 +149,49 @@ where $\mat{D}$ is a diagonal matrix with singular values $d_1,\ldots,d_p$, $\ma
 \end{figure}
 Suppose we want to extract the first $k$ principal axis.
 $$\mat{\hat{V}}_k = \argmin_{\mat{V}_k} \sum_{i=1}^{n} \norm{x_i - \mat{V}_k \mat{V}_k^Tx_i}^2 + \lambda \sum_{j=1}^{k}\norm{\beta_j}^2$$
-$$\text{subject to }\mat{V}_k^T\mat{V}_k = I_{k \times k}$$
+$$\text{subject to }\mat{V}_k^T\mat{V}_k = \mat{I}_{k \times k}$$
+where $x_i$ is the $i$th row of $\mat X$
 \end{frame}
 \subsection{Theorems}
 
 \begin{frame}
+\frametitle{Theorems}
 Succes of PCA is due to the following two important optimal properties
 \begin{enumerate}
 \item Principal Components sequentially capture the maximum variability (among the columns of X, thus guaranteeing minimal information loss)
 \item Principal Components are uncorrelated, (so we can talk about one principal component without referring to others)
 \end{enumerate}
 \end{frame}
+
+\begin{frame}
+\begin{thm}[Eckart-Young-Mirsky-Theorem]
+Let $\widehat{\mat{A}}^* = \mat{U}_1 \mat{D}_1 \mat{V}_1^{\top}$
+be the \textit{truncated singular value decomposition}. Then $\widehat{ \mat{A}}^*$ solves the matrix rank approximation problem
+
+$$\min_{\operatorname{rank}(\widehat{\mat{A}}) \leq r} \|\mat{A}-\widehat{\mat{A}}\|_{\text{F}} = \|\mat{A}-\widehat{\mat{A}}^*\|_{\text{F}} = \sqrt{\sigma^2_{r+1} + \cdots + \sigma^2_m}$$
+
+where $\sigma_i$ are the singular values of $\mat A$.
+\end{thm}
+\end{frame}
+
+\begin{frame}
+\begin{thm}
+PCA is inconsistent for $p \gg n$.
+\end{thm}
+\end{frame}
+
+
+
+
 \subsection{Limits of Usability}
 \begin{frame}
+\frametitle{Limits of Usability}
 \begin{itemize}
 \item Linear Relationship between variables
 \item Correlation of variables
 \item Completeness of data set
 \item Outliers
-\item Number of variables p >> Number of Samples n (Inconsistency Theorem)
+\item Inconsistency theorem in $p \gg n$ case
 \item Interpreation of principal axis
 \end{itemize}
 
@@ -186,6 +216,36 @@ Succes of PCA is due to the following two important optimal properties
 \section{Fundamentals}
 
 \subsection{Regression}
+\begin{frame}
+\frametitle{Linear Regression}
+Consider a linear regression model with $n$ observations and $p$ predictors. Let $Y = (y_1, \ldots , y_n)^T$ be the response vector and $\mat X = \left[X_1 \vert \cdots \vert X_p \right]$. We assume that all the $X_j$ and $Y$ are centered.
+
+The linear regression model has the form
+$$f(\mat X) = \beta_0 + \sum_{j=1}^p X_j\beta_j$$
+where the $\beta_j$'s are unknown coefficients.
+
+We define the residual sum of squares
+$$RSS(\beta) = \sum_{i=1}^n (y_i - f(x_i))^2 = \sum_{i=1}^n (y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 = \norm{Y - \mat{X}\beta}_{2}^{2}$$
+
+$$\hat{\beta} = \argmin_{\beta} RSS(\beta)$$
+\end{frame}
+
+\begin{frame}
+\frametitle{Ridge Regression}
+$$\hat{\beta}^{lasso} = \argmin_{\beta} \norm{Y - \mat{X}\beta}_{2}^{2} + \lambda \norm{\beta}_{2}^{2} = \sum_{i=1}^n (y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2$$
+$$\text{subject to } \norm{\beta}_{2}^2 \leq t$$
+or equivalently in Lagrangian Form
+$$\hat{\beta}^{lasso} = \argmin_{\beta}\left\{\frac{1}{2}\sum_{i=1}^n (y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda\norm{\beta}_{2}^2 \right\}$$
+\end{frame}
+
+\begin{frame}
+\frametitle{LASSO Regression}
+\end{frame}
+
+\begin{frame}
+\frametitle{Elastic Net}
+\end{frame}
+
 \subsection{Sparsity inducing Norms}
 
 %----------------------------------------------------------------------------------------
@@ -194,7 +254,33 @@ Succes of PCA is due to the following two important optimal properties
 
 \section{Sparse PCA}
 
+\begin{frame}
+\frametitle{Sparse PCA}
+\textbf{Problem:} Principal Components are hard to interpret \linebreak
+\textbf{Approach:} Require sparse loadings when performing PCA
+
+$$\max{v^T \Sigma v}$$
+$$\text{subject to } \norm{v}_2 = 1, \quad \norm{v}_{0} \leq k$$
+
+\textbf{Relaxation}:
+\begin{itemize}
+\item a regression framework
+\item a convex semidefinite programming framework
+\item a generalized power method framework
+\item an alternating maximization framework
+\item forward-backward greedy search and exact methods using branch-and-bound techniques
+\item Bayesian formulation framework
+\end{itemize}
+\end{frame}
+
 \subsection{Mathematical Formulation}
+\begin{frame}
+\frametitle{Mathematical Formulation}
+We will use a regression framework to derive sparse PCA. We add
+$$(\hat{\mat{A}}, \hat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}^2 + \lambda \sum_{j=1}^{k}\norm{\beta_j}^2 + \sum_{j=1}^k \lambda_{1,j} \norm{\beta_j}_1$$
+$$\text{subject to } \mat{A}^T\mat{A} = I_{k \times k}$$
+\end{frame}
+
 \subsection{Numerical Solution}
 
 \begin{frame}
