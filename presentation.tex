@@ -61,9 +61,18 @@
 \frametitle{Dimensionality Reduction} 
 
 \begin{itemize}
-\item What are DR methods?
-\item Why are DR methods important / what is the goal of DR methods?
-\item When to use DR methods?
+\item \textbf{Problems} in high dimensions: 
+\setbeamertemplate{itemize items}[circle]
+	\begin{itemize}
+	\item Time and storage space
+	\item Multi-collinearity 
+	\item Visualizing data set
+	\item Curse of dimensionality
+	\end{itemize}
+\setbeamertemplate{itemize items}[triangle]
+\item \textbf{Idea:} Reduce the number of variables while preserving structure in the data
+\item \textbf{Approach:} Feature selection methods
+\item \textbf{Approach:} Feature extraction methods
 
 \end{itemize}
 \end{frame}
@@ -76,12 +85,10 @@
 \subsection{Idea}
 \begin{frame}\frametitle{Central Idea}
 \begin{itemize}
-\item Reduce dimensionality of a data set while retaining as much information as possible
-\item extract the most important information from the data table;
-\item compress the size of the data set by keeping only this important information;
-\item simplify the description of the data set; and
-\item analyze the structure of the observations and the variables
-\item first component has most variance 
+\item Reduce dimensionality while retaining as much information as possible
+\item Linearly project the data to a space of fewer dimensions
+\item Represent data set regarding newly identified principal components
+\item Natural order on principal components
 \end{itemize} 
 \end{frame}
 
