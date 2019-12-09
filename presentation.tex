@@ -5,7 +5,7 @@
 
 \documentclass{beamer}
 
-\usetheme[hideothersubsections]{Goettingen}
+\usetheme{Goettingen}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{graphicx}
@@ -110,7 +110,7 @@
 	\captionsetup{justification=centering}
 	\includegraphics[width = \textwidth]{figures/pca_example_rotated.png}
 	\label{pca_example_rotated}
-	\caption{Linear projection of data to a space of fewer dimensions}
+	\caption{Linear projection of data to first principal axis}
 	\end{subfigure}
 
 \label{pca_example}
@@ -122,7 +122,7 @@
 \frametitle{Mathematical Formulation}
 Let $\mat X \in \mathbb{R}^{n \times p}$ be a centered data matrix with $n$ samples and $p$ variables. We find the first principal axis by 
 $$v_1 = \argmax_{\norm{v}_2 = 1} \text{Var}[\mat{X}v] = \argmax_{\norm{v}_2 = 1} v^T \mat{\Sigma} v$$
-where $\mat{\Sigma} = \mat X^T \mat X$ is the sample covariance matrix.
+where $\mat{\Sigma} = \frac{\mat X^T \mat X}{n}$ is the sample covariance matrix.
 
 We compute the following principal axis successively
 $$v_{k+1} = \argmax_{\norm{v} = 1} v^T \mat{\Sigma} v$$ 
@@ -147,10 +147,14 @@ where $\mat{D}$ is a diagonal matrix with singular values $d_1,\ldots,d_p$, $\ma
 \includegraphics[width = 0.8\textwidth]{figures/pca_projection_explanation.png}
 \label{pca_projection_explanation}
 \end{figure}
-Suppose we want to extract the first $k$ principal axis.
+\end{frame}
+
+\begin{frame}
+\frametitle{PCA as a regression problem}
+Suppose we want to extract the first $k$ principal axis. Let $x_i$ be the $i$th row of $\mat X$.
 $$\mat{\hat{V}}_k = \argmin_{\mat{V}_k} \sum_{i=1}^{n} \norm{x_i - \mat{V}_k \mat{V}_k^Tx_i}^2 + \lambda \sum_{j=1}^{k}\norm{\beta_j}^2$$
 $$\text{subject to }\mat{V}_k^T\mat{V}_k = \mat{I}_{k \times k}$$
-where $x_i$ is the $i$th row of $\mat X$
+
 \end{frame}
 \subsection{Theorems}
 
@@ -161,27 +165,12 @@ Succes of PCA is due to the following two important optimal properties
 \item Principal Components sequentially capture the maximum variability (among the columns of X, thus guaranteeing minimal information loss)
 \item Principal Components are uncorrelated, (so we can talk about one principal component without referring to others)
 \end{enumerate}
+
+\begin{itemize}
+\item Eckart-Young-Mirsky-Theorem
+\item PCA is inconsistent for $p \gg n$.
+\end{itemize}
 \end{frame}
-
-\begin{frame}
-\begin{thm}[Eckart-Young-Mirsky-Theorem]
-Let $\widehat{\mat{A}}^* = \mat{U}_1 \mat{D}_1 \mat{V}_1^{\top}$
-be the \textit{truncated singular value decomposition}. Then $\widehat{ \mat{A}}^*$ solves the matrix rank approximation problem
-
-$$\min_{\operatorname{rank}(\widehat{\mat{A}}) \leq r} \|\mat{A}-\widehat{\mat{A}}\|_{\text{F}} = \|\mat{A}-\widehat{\mat{A}}^*\|_{\text{F}} = \sqrt{\sigma^2_{r+1} + \cdots + \sigma^2_m}$$
-
-where $\sigma_i$ are the singular values of $\mat A$.
-\end{thm}
-\end{frame}
-
-\begin{frame}
-\begin{thm}
-PCA is inconsistent for $p \gg n$.
-\end{thm}
-\end{frame}
-
-
-
 
 \subsection{Limits of Usability}
 \begin{frame}
@@ -200,6 +189,38 @@ PCA is inconsistent for $p \gg n$.
 
 
 \subsection{Application}
+
+\begin{frame}
+\frametitle{Application to handwritten digits}
+\textbf{Data Set Characteristics:}
+\begin{itemize}
+\item \textbf{Number of Instances:} 1797
+\item \textbf{Number of Attributes:} 64
+\item \textbf{Attribute Information:} $8 \times 8$ image of integer pixels
+\end{itemize}
+
+\begin{figure}
+\centering
+	\begin{subfigure}{0.45\textwidth}
+	\centering
+	\captionsetup{justification=centering}
+	\includegraphics[width = \textwidth]{figures/handwritten_digits_dataset_1.jpg}
+	\label{pca_example_original}
+	\caption{Handwritten digit 1}
+	\end{subfigure}
+	%	
+	\begin{subfigure}{0.45\textwidth}
+	\centering
+	\captionsetup{justification=centering}
+	\includegraphics[width = \textwidth]{figures/handwritten_digits_dataset_5.jpg}
+	\label{pca_example_rotated}
+	\caption{Handwritten digit 5}
+	\end{subfigure}
+
+\label{pca_example}
+\end{figure}
+\end{frame}
+
 \begin{frame}
 \frametitle{Application to handwritten digits}
 \begin{figure}
@@ -276,12 +297,47 @@ $$\text{subject to } \norm{v}_2 = 1, \quad \norm{v}_{0} \leq k$$
 \subsection{Mathematical Formulation}
 \begin{frame}
 \frametitle{Mathematical Formulation}
-We will use a regression framework to derive sparse PCA. We add
+We will use a regression framework to derive sparse PCA. We add a LASSO penalty to ensure sparse loadings:
 $$(\hat{\mat{A}}, \hat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}^2 + \lambda \sum_{j=1}^{k}\norm{\beta_j}^2 + \sum_{j=1}^k \lambda_{1,j} \norm{\beta_j}_1$$
 $$\text{subject to } \mat{A}^T\mat{A} = I_{k \times k}$$
+
+Then $\mat B$ represents the newly found sparse principal axis. (Theorem)
 \end{frame}
 
 \subsection{Numerical Solution}
+
+\begin{frame}
+\frametitle{Numerical Solution}
+Let $\mat{A}_{p \times k} = \left[ \alpha_1, \ldots , \alpha_k\right]$ and $\mat{B}_{p \times k} = \left[ \beta_1, \ldots , \beta_k\right]$. Since $\mat A$ is orthonomal, let $\mat A_{\perp}$ be any orthonormal matrix such that $\left[ \mat A ; \mat A_{\perp} \right]$ is $p \times p$ orthonormal. Then we ran reformulate the problem
+\begin{align*}
+\sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}^2 & = \norm{\mat{X} - \mat{X} \mat{B} \mat{A}^T}_F^2\\
+& = \norm{\mat X \mat A_{\perp}}_F^2 + \norm{\mat X \mat A - \mat X \mat B}_F^2\\
+& = \norm{\mat X \mat A_{\perp}}_F^2 + \sum_{j=1}^{k} \norm{\mat X \alpha_j - \mat X \beta_j}^2
+\end{align*}
+How can we minimize the SPCA criterion?
+\end{frame}
+
+\begin{frame}
+\begin{itemize}
+\item{\textbf{$\mat B$ given $\mat A$:} For each $j$, let $Y^* = \mat X \alpha_j$. By the previous analysis we compute $\hat{\mat{B}} = \left[ \hat{\beta}_1, \ldots , \hat{\beta}_k\right]$ by solving $k$ elastic net problems:
+$$\hat{\beta}_j = \argmin_{\beta_j} \norm{Y^* - \mat{X}\beta_j}^2 + \lambda \norm{\beta_j}^2 + \lambda_{1,j} \norm{\beta_j}_1$$}
+\item{\textbf{$\mat A$ given $\mat B$:} On the other hand, if $\mat B$ is fixed, then we can ignore the penalty part and only try to minimize
+$$\sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}^2 = \norm{\mat{X} - \mat{X} \mat{B} \mat{A}^T}_F^2$$
+$$\text{subject to } \mat{A}^T\mat{A} = I_{k \times k}$$
+The solution is obtained by computing the SVD
+$$(\mat X^T \mat X) \mat B = \mat U \mat D \mat V^T$$
+and set $\hat{\mat{A}} = \mat U \mat V^T$
+}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{thm}[Reduced Rank Procrustes Rotation]
+Let $\mat M \in \mathbb{R}^{n \times p}$ and $\mat N \in \mathbb{R}^{n \times k}$ be two matrices. Consider the constrained minimization problem
+$$\hat{\mat{A}} = \argmin_{\mat A} \norm{\mat M - \mat N \mat A^T}_F^2 \quad \text{subject to } \mat{A}^T\mat{A} = I_{k \times k}$$
+Suppose the SVD of $\mat M^T \mat N$ is $\mat U \mat D \mat V^T$, then $\hat{\mat{A}} = \mat U \mat V^T$
+\end{thm}
+\end{frame}
 
 \begin{frame}
 \begin{algorithm}[H]
@@ -290,7 +346,7 @@ $$\text{subject to } \mat{A}^T\mat{A} = I_{k \times k}$$
     \begin{algorithmic}[1]
         \Procedure{SPCA}{$A,B$}
         	\State $\mat A \gets \mat V[,1 \colon k]$, the loadings of the first k ordinary principal components
-            \While{not converged} \Comment{Definiere Abbruchkriterium}
+            \While{not converged}
                 \State Given a fixed $\mat A = [\alpha_1, \ldots, \alpha_k]$, solve the elastic net problem $$\beta_j = \argmin_{\beta} \norm{\mat X \alpha_j - \mat X \beta}^{2} + \lambda \norm{\beta}^2 + \lambda_{1,j}\norm{\beta}_{1}$$
                 \State For a fixed $\mat B = [\beta_1, \ldots, \beta_k]$, compute the SVD of $$\mat X^T \mat X \mat B = \mat U \mat D \mat V^T$$
                 \State $\mat A \gets \mat U \mat V^T$
@@ -302,16 +358,15 @@ $$\text{subject to } \mat{A}^T\mat{A} = I_{k \times k}$$
 \end{frame}
 
 \subsection{Adjusted Variances}
-\subsection{p >> n case}
+\begin{frame}
+The sparse principal components don't have to be orthogonal. Hence, we need to compute the adjusted variances in a different way.
+p >> n case?
+\end{frame}
 
-%----------------------------------------------------------------------------------------
-%	Application
-%----------------------------------------------------------------------------------------
+\subsection{Application}
+\begin{frame}
+\end{frame}
 
-\section{Application}
-
-\subsection{Dataset}
-\subsection{Results}
 
 %----------------------------------------------------------------------------------------
 %	References
@@ -334,5 +389,16 @@ $$\text{subject to } \mat{A}^T\mat{A} = I_{k \times k}$$
 
 
 \section{Appendix}
+
+\begin{frame}
+\begin{thm}[Eckart-Young-Mirsky-Theorem]
+Let $\widehat{\mat{A}}^* = \mat{U}_1 \mat{D}_1 \mat{V}_1^{\top}$
+be the \textit{truncated singular value decomposition}. Then $\widehat{ \mat{A}}^*$ solves the matrix rank approximation problem
+
+$$\min_{\operatorname{rank}(\widehat{\mat{A}}) \leq r} \|\mat{A}-\widehat{\mat{A}}\|_{\text{F}} = \|\mat{A}-\widehat{\mat{A}}^*\|_{\text{F}} = \sqrt{\sigma^2_{r+1} + \cdots + \sigma^2_m}$$
+
+where $\sigma_i$ are the singular values of $\mat A$.
+\end{thm}
+\end{frame}
 
 \end{document}
