@@ -29,7 +29,6 @@
 \DeclareMathOperator*{\argmin}{arg\,min}
 \newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
 
-\addbibresource{references_presentation.bib}
 %\setbeamertemplate{bibliography item}{\insertbiblabel}
 
 %----------------------------------------------------------------------------------------
@@ -342,8 +341,34 @@ $$\hat{\mat{A}} = \mat U \mat V^T.$$
 
 \begin{frame}{Bibliography}
 \frametitle{References}
-\nocite{*}
-\printbibliography
+\begin{thebibliography}{9}
+
+\bibitem{zou}
+  Hastie et al.
+  \textit{The Elements of Statistical Learning: Data Mining, Inference, and Prediction}.
+  2nd edition. 
+  2009,.
+  Springer-Verlag New York.
+  
+ \bibitem{zou_sparsepca}
+ Zou et al.
+  \textit{Sparse Principal Component Analysis}.
+  Journal of Computational and Graphical Statistics.
+  Volume 15.
+  Number 2.
+  2006.
+  \textit{https://doi.org/10.1198/106186006X113430}.
+  
+  \bibitem{foucart}
+ Foucart, Rauhut.
+ \textit{A Mathematical Introduction to Compressive Sensing}.
+ 1st edition.
+ 2013.
+ Birkh{\"a}user Basel.
+
+\end{thebibliography}
+
+
 \end{frame}
 
 
@@ -403,7 +428,27 @@ with the computational cost of a single least squares fit.
 \end{frame}
 
 \begin{frame}
-RUNTIME SPCA ALGORITHM
+\frametitle{Sparse PCA Algorithm Complexity}
+\begin{itemize}
+\item \textbf{Case 1: $n > p$}
+\begin{itemize}
+\item Compute the $p \times p$ matrix $\hat{\mat \Sigma} = \mat X^T \mat X$ which requires $np^2$ operations (Same $\hat{\mat \Sigma}$ is used in each step)
+\item Compute $\mat X^T \mat X \mat B$ which costs $p^2k$ operations
+\item Compute the SVD of $\mat X^T \mat X \mat B$ which costs $\mathcal{O}(pk^2)$
+\item Compute each elastic net solution which requires at most $\mathcal{O}(p^3)$
+\end{itemize}
+Since $k \leq p$, the total computation cost is at most $np^2 + m\mathcal{O}(p^3)$ where $m$ is the number of iterations before convergence
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Sparse PCA Algorithm Complexity}
+\begin{itemize}
+\item \textbf{Case 2: $p \gg n$}\linebreak
+The trick of using $\hat{\mat \Sigma}$ is no longer applicable, because $\hat{\mat \Sigma}$ is a huge $p \times p$ matrix in this case. The most consuming step is solving each elastic net, whose cost is of order $\mathcal{O}(pnJ + J^3)$ for a positive $\lambda$, where $J$ is the number of nonzero coeffiecients.
+
+Generally speaking the total cost is of order $mk\mathcal{O}(pnJ+J^3)$, which can be expensive for large $J$ and $p$. Fortunately, there exists a special SPCA algorithm for efficiently dealing with $p \gg n$ data.
+\end{itemize}
 \end{frame}
 
 \begin{frame}
