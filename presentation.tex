@@ -13,6 +13,7 @@
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{caption}
+\usepackage{biblatex}
 
 % Declare theorem style and numbering
 \theoremstyle{plain}
@@ -27,6 +28,9 @@
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+
+\addbibresource{references_presentation.bib}
+%\setbeamertemplate{bibliography item}{\insertbiblabel}
 
 %----------------------------------------------------------------------------------------
 %	BEGIN DOCUMENT
@@ -48,10 +52,6 @@
 \titlepage
 \end{frame}
 
-%\begin{frame}
-%\frametitle{Table of Contents}
-%\tableofcontents
-%\end{frame}
 
 %----------------------------------------------------------------------------------------
 %	Introduction
@@ -66,7 +66,6 @@
 \setbeamertemplate{itemize items}[circle]
 	\begin{itemize}
 	\item Time and storage space
-	\item Multi-collinearity 
 	\item Visualizing data set
 	\item Curse of dimensionality
 	\end{itemize}
@@ -84,24 +83,14 @@
 
 \section{PCA} 
 \subsection{Idea}
-\begin{frame}\frametitle{Central Idea}
-\begin{itemize}
-\item Reduce dimensionality while retaining as much information as possible
-\item Sequentially identify principal axis of greatest variability
-\item Represent data set regarding identified principal axis
-\item Linearly project the data to a space of fewer dimensions
-\item Yields natural order on principal components
-\end{itemize} 
-\end{frame}
-
 \begin{frame}
 \begin{figure}
+\frametitle{Idea of PCA}
 \centering
 	\begin{subfigure}{0.45\textwidth}
 	\centering
 	\captionsetup{justification=centering}
 	\includegraphics[width = \textwidth]{figures/pca_example.png}
-	\label{pca_example_original}
 	\caption{Finding principal axis on a data set}
 	\end{subfigure}
 	%	
@@ -109,11 +98,8 @@
 	\centering
 	\captionsetup{justification=centering}
 	\includegraphics[width = \textwidth]{figures/pca_example_rotated.png}
-	\label{pca_example_rotated}
 	\caption{Linear projection of data to first principal axis}
 	\end{subfigure}
-
-\label{pca_example}
 \end{figure}
 \end{frame}
 
@@ -122,19 +108,19 @@
 \frametitle{Mathematical Formulation}
 Let $\mat X \in \mathbb{R}^{n \times p}$ be a centered data matrix with $n$ samples and $p$ variables. We find the first principal axis by 
 $$v_1 = \argmax_{\norm{v}_2 = 1} \text{Var}[\mat{X}v] = \argmax_{\norm{v}_2 = 1} v^T \mat{\Sigma} v$$
-where $\mat{\Sigma} = \frac{\mat X^T \mat X}{n}$ is the sample covariance matrix.
+where $\mat{\Sigma} = \frac{\mat X^T \mat X}{n}$ is the sample covariance matrix.\pause
 
 We compute the following principal axis successively
 $$v_{k+1} = \argmax_{\norm{v} = 1} v^T \mat{\Sigma} v$$ 
-$$\text{subject to }v_{k+1}^Tv_l = 0 \quad \forall 1 \leq l \leq k$$
+$$\text{subject to }v_{k+1}^Tv_l = 0 \quad \forall 1 \leq l \leq k$$\pause
 The new principal components are defined by $Z_i = \mat{X}v_i$
-
 \end{frame}
 
 \begin{frame}
+\frametitle{Mathematical Formulation using SVD}
 The principal axis can also be computed via the eigendecomposition of $\mat{\Sigma}$.
 $$\mat{\Sigma} = \mat V \mat L \mat{V}^T$$
-where $\mat{L}$ is a diagonal matrix with eigenvalues $\lambda_i$ and $\mat V$ is the matrix of eigenvectors.
+where $\mat{L}$ is a diagonal matrix with eigenvalues $\lambda_i$ and $\mat V$ is the matrix of eigenvectors.\linebreak \pause
 Closely related is the Singular Value Decomposition (SVD) 
 $$ \mat{X} = \mat{U}\mat{D}\mat{V}^T $$
 where $\mat{D}$ is a diagonal matrix with singular values $d_1,\ldots,d_p$, $\mat{U}$ a $n \times p$ and $\mat{V}$ a $p \times p$ orthogonal matrix.
@@ -144,43 +130,42 @@ where $\mat{D}$ is a diagonal matrix with singular values $d_1,\ldots,d_p$, $\ma
 \frametitle{PCA as a regression problem}
 \begin{figure}
 \centering
-\includegraphics[width = 0.8\textwidth]{figures/pca_projection_explanation.png}
-\label{pca_projection_explanation}
+\includegraphics[width = \textwidth]{figures/pca_projection_explanation.png}
+\caption{Two equivalent ways of finding principal axis}
 \end{figure}
 \end{frame}
 
 \begin{frame}
 \frametitle{PCA as a regression problem}
-Suppose we want to extract the first $k$ principal axis. Let $x_i$ be the $i$th row of $\mat X$.
-$$\mat{\hat{V}}_k = \argmin_{\mat{V}_k} \sum_{i=1}^{n} \norm{x_i - \mat{V}_k \mat{V}_k^Tx_i}^2 + \lambda \sum_{j=1}^{k}\norm{\beta_j}^2$$
-$$\text{subject to }\mat{V}_k^T\mat{V}_k = \mat{I}_{k \times k}$$
+\begin{thm} 
+Let $x_i$ be the $i$th row of $\mat X$.
+$$\mat{\hat{A}}_k = \argmin_{\mat{A}_k} \sum_{i=1}^{n} \norm{x_i - \mat{A}_k \mat{A}_k^Tx_i}^2 + \lambda \sum_{j=1}^{k}\norm{\beta_j}^2$$
+$$\text{subject to }\mat{A}_k^T\mat{A}_k = \mat{I}_{k \times k}$$
+Then, if we normalize each column $\mat{\tilde{A}}_k = \left[ \frac{\hat{\alpha}_1}{\norm{\hat{\alpha}_1}} \bigg\lvert \cdots \bigg\rvert \frac{\hat{\alpha}_k}{\norm{\hat{\alpha}_1}} \right]$ we recover the first $k$ principal axis.
+\end{thm}
 
 \end{frame}
 \subsection{Theorems}
 
 \begin{frame}
 \frametitle{Theorems}
-Succes of PCA is due to the following two important optimal properties
-\begin{enumerate}
-\item Principal Components sequentially capture the maximum variability (among the columns of X, thus guaranteeing minimal information loss)
-\item Principal Components are uncorrelated, (so we can talk about one principal component without referring to others)
-\end{enumerate}
-
+The Success of PCA is due to the following optimal properties:
 \begin{itemize}
+\item Principal Components sequentially capture the maximum variability
+\item Principal Components are uncorrelated
 \item Eckart-Young-Mirsky-Theorem
-\item PCA is inconsistent for $p \gg n$.
 \end{itemize}
 \end{frame}
 
 \subsection{Limits of Usability}
 \begin{frame}
 \frametitle{Limits of Usability}
+\textbf{Drawbacks:}
 \begin{itemize}
 \item Linear Relationship between variables
-\item Correlation of variables
 \item Completeness of data set
-\item Outliers
-\item Inconsistency theorem in $p \gg n$ case
+\item Outliers in data set
+\item PCA is inconsistent when $p \gg n$
 \item Interpreation of principal axis
 \end{itemize}
 
@@ -205,7 +190,6 @@ Succes of PCA is due to the following two important optimal properties
 	\centering
 	\captionsetup{justification=centering}
 	\includegraphics[width = \textwidth]{figures/handwritten_digits_dataset_1.jpg}
-	\label{pca_example_original}
 	\caption{Handwritten digit 1}
 	\end{subfigure}
 	%	
@@ -213,11 +197,8 @@ Succes of PCA is due to the following two important optimal properties
 	\centering
 	\captionsetup{justification=centering}
 	\includegraphics[width = \textwidth]{figures/handwritten_digits_dataset_5.jpg}
-	\label{pca_example_rotated}
 	\caption{Handwritten digit 5}
 	\end{subfigure}
-
-\label{pca_example}
 \end{figure}
 \end{frame}
 
@@ -230,44 +211,6 @@ Succes of PCA is due to the following two important optimal properties
 \end{figure}
 \end{frame}
 
-%----------------------------------------------------------------------------------------
-%	Fundamentals
-%----------------------------------------------------------------------------------------
-
-\section{Fundamentals}
-
-\subsection{Regression}
-\begin{frame}
-\frametitle{Linear Regression}
-Consider a linear regression model with $n$ observations and $p$ predictors. Let $Y = (y_1, \ldots , y_n)^T$ be the response vector and $\mat X = \left[X_1 \vert \cdots \vert X_p \right]$. We assume that all the $X_j$ and $Y$ are centered.
-
-The linear regression model has the form
-$$f(\mat X) = \beta_0 + \sum_{j=1}^p X_j\beta_j$$
-where the $\beta_j$'s are unknown coefficients.
-
-We define the residual sum of squares
-$$RSS(\beta) = \sum_{i=1}^n (y_i - f(x_i))^2 = \sum_{i=1}^n (y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 = \norm{Y - \mat{X}\beta}_{2}^{2}$$
-
-$$\hat{\beta} = \argmin_{\beta} RSS(\beta)$$
-\end{frame}
-
-\begin{frame}
-\frametitle{Ridge Regression}
-$$\hat{\beta}^{lasso} = \argmin_{\beta} \norm{Y - \mat{X}\beta}_{2}^{2} + \lambda \norm{\beta}_{2}^{2} = \sum_{i=1}^n (y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2$$
-$$\text{subject to } \norm{\beta}_{2}^2 \leq t$$
-or equivalently in Lagrangian Form
-$$\hat{\beta}^{lasso} = \argmin_{\beta}\left\{\frac{1}{2}\sum_{i=1}^n (y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda\norm{\beta}_{2}^2 \right\}$$
-\end{frame}
-
-\begin{frame}
-\frametitle{LASSO Regression}
-\end{frame}
-
-\begin{frame}
-\frametitle{Elastic Net}
-\end{frame}
-
-\subsection{Sparsity inducing Norms}
 
 %----------------------------------------------------------------------------------------
 %	Sparse Principal Component Analysis
@@ -281,7 +224,7 @@ $$\hat{\beta}^{lasso} = \argmin_{\beta}\left\{\frac{1}{2}\sum_{i=1}^n (y_i - \be
 \textbf{Approach:} Require sparse loadings when performing PCA
 
 $$\max{v^T \Sigma v}$$
-$$\text{subject to } \norm{v}_2 = 1, \quad \norm{v}_{0} \leq k$$
+$$\text{subject to } \norm{v}_2 = 1, \quad \norm{v}_{0} \leq t$$
 
 \textbf{Relaxation}:
 \begin{itemize}
@@ -297,36 +240,52 @@ $$\text{subject to } \norm{v}_2 = 1, \quad \norm{v}_{0} \leq k$$
 \subsection{Mathematical Formulation}
 \begin{frame}
 \frametitle{Mathematical Formulation}
-We will use a regression framework to derive sparse PCA. We add a LASSO penalty to ensure sparse loadings:
+We will use a regression framework to derive sparse PCA.\linebreak
+
+\textbf{Problem Formulation:}\linebreak
+Let $\mat B = \left[ \beta_1 \big\vert \cdots \big\vert \beta_k \right]$. The Sparse PCA Criterion is defined by
 $$(\hat{\mat{A}}, \hat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}^2 + \lambda \sum_{j=1}^{k}\norm{\beta_j}^2 + \sum_{j=1}^k \lambda_{1,j} \norm{\beta_j}_1$$
 $$\text{subject to } \mat{A}^T\mat{A} = I_{k \times k}$$
 
-Then $\mat B$ represents the newly found sparse principal axis. (Theorem)
+Then, $\beta_i$ represent the newly found sparse principal axis and $Z_i = \mat X \beta_i$ the sparse principal components.
+\end{frame}
+
+\subsection{Sparsity and Norms}
+\begin{frame}
+\frametitle{Sparsity inducing norms}
+\begin{figure}
+\centering
+\includegraphics[width = 0.9\textwidth]{figures/lasso_ridge_regression.png}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Sparsity inducing norms}
+\begin{figure}
+\centering
+\includegraphics[width = 0.9\textwidth]{figures/lasso_ridge_regression_constraint_region.png}
+\end{figure}
 \end{frame}
 
 \subsection{Numerical Solution}
 
 \begin{frame}
 \frametitle{Numerical Solution}
-Let $\mat{A}_{p \times k} = \left[ \alpha_1, \ldots , \alpha_k\right]$ and $\mat{B}_{p \times k} = \left[ \beta_1, \ldots , \beta_k\right]$. Since $\mat A$ is orthonomal, let $\mat A_{\perp}$ be any orthonormal matrix such that $\left[ \mat A ; \mat A_{\perp} \right]$ is $p \times p$ orthonormal. Then we ran reformulate the problem
-\begin{align*}
-\sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}^2 & = \norm{\mat{X} - \mat{X} \mat{B} \mat{A}^T}_F^2\\
-& = \norm{\mat X \mat A_{\perp}}_F^2 + \norm{\mat X \mat A - \mat X \mat B}_F^2\\
-& = \norm{\mat X \mat A_{\perp}}_F^2 + \sum_{j=1}^{k} \norm{\mat X \alpha_j - \mat X \beta_j}^2
-\end{align*}
-How can we minimize the SPCA criterion?
+\textbf{Problem:} How do we minimize the Sparse PCA criterion?\linebreak
+
+$$(\hat{\mat{A}}, \hat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}^2 + \lambda \sum_{j=1}^{k}\norm{\beta_j}^2 + \sum_{j=1}^k \lambda_{1,j} \norm{\beta_j}_1$$
+$$\text{subject to } \mat{A}^T\mat{A} = I_{k \times k}$$
 \end{frame}
 
 \begin{frame}
 \begin{itemize}
-\item{\textbf{$\mat B$ given $\mat A$:} For each $j$, let $Y^* = \mat X \alpha_j$. By the previous analysis we compute $\hat{\mat{B}} = \left[ \hat{\beta}_1, \ldots , \hat{\beta}_k\right]$ by solving $k$ elastic net problems:
-$$\hat{\beta}_j = \argmin_{\beta_j} \norm{Y^* - \mat{X}\beta_j}^2 + \lambda \norm{\beta_j}^2 + \lambda_{1,j} \norm{\beta_j}_1$$}
-\item{\textbf{$\mat A$ given $\mat B$:} On the other hand, if $\mat B$ is fixed, then we can ignore the penalty part and only try to minimize
+\item{\textbf{$\mat B$ given $\mat A$:} For each $j$, let $Y^* = \mat X \alpha_j$. We minimize over $\hat{\mat{B}} = \left[ \hat{\beta}_1, \ldots , \hat{\beta}_k\right]$ by solving $k$ elastic net problems
+$$\hat{\beta}_j = \argmin_{\beta_j} \norm{Y^* - \mat{X}\beta_j}^2 + \lambda \norm{\beta_j}^2 + \lambda_{1,j} \norm{\beta_j}_1$$} \pause
+\item{\textbf{$\mat A$ given $\mat B$:} We can ignore the penalties and minimize
 $$\sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}^2 = \norm{\mat{X} - \mat{X} \mat{B} \mat{A}^T}_F^2$$
 $$\text{subject to } \mat{A}^T\mat{A} = I_{k \times k}$$
-The solution is obtained by computing the SVD
+This problem has an explicit solution which is obtained by computing the SVD of
 $$(\mat X^T \mat X) \mat B = \mat U \mat D \mat V^T$$
-and set $\hat{\mat{A}} = \mat U \mat V^T$
 }
 \end{itemize}
 \end{frame}
@@ -335,7 +294,8 @@ and set $\hat{\mat{A}} = \mat U \mat V^T$
 \begin{thm}[Reduced Rank Procrustes Rotation]
 Let $\mat M \in \mathbb{R}^{n \times p}$ and $\mat N \in \mathbb{R}^{n \times k}$ be two matrices. Consider the constrained minimization problem
 $$\hat{\mat{A}} = \argmin_{\mat A} \norm{\mat M - \mat N \mat A^T}_F^2 \quad \text{subject to } \mat{A}^T\mat{A} = I_{k \times k}$$
-Suppose the SVD of $\mat M^T \mat N$ is $\mat U \mat D \mat V^T$, then $\hat{\mat{A}} = \mat U \mat V^T$
+Suppose the SVD of $\mat M^T \mat N$ is $\mat U \mat D \mat V^T$, then 
+$$\hat{\mat{A}} = \mat U \mat V^T.$$
 \end{thm}
 \end{frame}
 
@@ -347,24 +307,30 @@ Suppose the SVD of $\mat M^T \mat N$ is $\mat U \mat D \mat V^T$, then $\hat{\ma
         \Procedure{SPCA}{$A,B$}
         	\State $\mat A \gets \mat V[,1 \colon k]$, the loadings of the first k ordinary principal components
             \While{not converged}
-                \State Given a fixed $\mat A = [\alpha_1, \ldots, \alpha_k]$, solve the elastic net problem $$\beta_j = \argmin_{\beta} \norm{\mat X \alpha_j - \mat X \beta}^{2} + \lambda \norm{\beta}^2 + \lambda_{1,j}\norm{\beta}_{1}$$
+                \State Given a fixed $\mat A = [\alpha_1, \ldots, \alpha_k]$, solve $k$ elastic net problems $$\beta_j = \argmin_{\beta} \norm{\mat X \alpha_j - \mat X \beta}^{2} + \lambda \norm{\beta}^2 + \lambda_{1,j}\norm{\beta}_{1}$$
                 \State For a fixed $\mat B = [\beta_1, \ldots, \beta_k]$, compute the SVD of $$\mat X^T \mat X \mat B = \mat U \mat D \mat V^T$$
-                \State $\mat A \gets \mat U \mat V^T$
+                $$\mat A \gets \mat U \mat V^T$$
             \EndWhile
-            \State $\hat{V}_j = \frac{\beta_j}{\norm{\beta_j}}$ for $j = 1, \ldots, k$
+            \State $\hat{V}_j \gets \frac{\beta_j}{\norm{\beta_j}}$ for $j = 1, \ldots, k$
         \EndProcedure
     \end{algorithmic}
 \end{algorithm} 
 \end{frame}
 
-\subsection{Adjusted Variances}
-\begin{frame}
-The sparse principal components don't have to be orthogonal. Hence, we need to compute the adjusted variances in a different way.
-p >> n case?
-\end{frame}
-
 \subsection{Application}
 \begin{frame}
+\end{frame}
+
+\subsection{Further Analysis}
+\begin{frame}
+\frametitle{Further Analysis}
+\begin{itemize}
+\item Consistency theorem for Sparse PCA when $p \gg n$
+\item Efficient implementation when $p \gg n$
+\item Computation of ajusted variances
+\item Identify differences in Sparse PCA implementations across different platforms (R, Python)
+\item Application to frequency data set
+\end{itemize}
 \end{frame}
 
 
@@ -373,20 +339,17 @@ p >> n case?
 %----------------------------------------------------------------------------------------
 
 \section{References}
-\begin{frame}
 
+\begin{frame}{Bibliography}
 \frametitle{References}
-
-\begin{thebibliography}{9}
-\bibitem[Beamerpaket]{paket} \emph{Beamer Paket} \\ 
-\text{http://latex-beamer.sourceforge.net/}
-\bibitem[Beamerdokumentation]{doku} \emph{User's Guide to the Beamer} 
-\bibitem[Dante]{dante} \emph{DANTE e.V.} \text{http://www.dante.de}   
-\end{thebibliography}
-
-
+\nocite{*}
+\printbibliography
 \end{frame}
 
+
+%----------------------------------------------------------------------------------------
+%	Appendix
+%----------------------------------------------------------------------------------------
 
 \section{Appendix}
 
@@ -400,5 +363,60 @@ $$\min_{\operatorname{rank}(\widehat{\mat{A}}) \leq r} \|\mat{A}-\widehat{\mat{A
 where $\sigma_i$ are the singular values of $\mat A$.
 \end{thm}
 \end{frame}
+
+\begin{frame}
+\frametitle{Linear Regression}
+Consider a linear regression model with $n$ observations and $p$ predictors. Let $Y = (y_1, \ldots , y_n)^T$ be the response vector and $\mat X = \left[X_1 \vert \cdots \vert X_p \right]$.\linebreak
+
+The linear regression model has the form
+$$f(\mat X) = \beta_0 + \sum_{j=1}^p X_j\beta_j$$
+where the $\beta_j$'s are unknown coefficients.
+
+We define the residual sum of squares
+$$RSS(\beta) = \sum_{i=1}^n (y_i - f(x_i))^2 = \sum_{i=1}^n (y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2$$
+\end{frame}
+
+\begin{frame}
+\frametitle{Ridge Regression}
+\textbf{Problem Formulation}
+$$\hat{\beta}^{ridge} = \argmin_{\beta} \norm{Y - \mat{X}\beta}_{2}^{2} + \lambda \quad \text{subject to } \norm{\beta}_{2}^2 \leq t$$
+or equivalently in Lagrangian Form
+$$\hat{\beta}^{ridge} = \argmin_{\beta}\left\{\frac{1}{2}\sum_{i=1}^n (y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda\norm{\beta}_{2}^2 \right\}$$
+\end{frame}
+
+\begin{frame}
+\frametitle{LASSO Regression}
+\textbf{Problem Formulation}
+$$\hat{\beta}^{lasso} = \argmin_{\beta} \norm{Y - \mat{X}\beta}_{2}^{2} + \lambda \quad \text{subject to } \norm{\beta}_{1} \leq t$$
+or equivalently in Lagrangian Form
+$$\hat{\beta}^{lasso} = \argmin_{\beta}\left\{\frac{1}{2}\sum_{i=1}^n (y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda\norm{\beta}_{1} \right\}$$
+\end{frame}
+
+\begin{frame}
+\frametitle{Elastic Net}
+The elastic net penalty is a convex combination of the ridge and lasso penalties.\linebreak
+
+\textbf{Problem Formulation:}
+$$\hat{\beta}^{en} = \argmin_{\beta} (1 + \lambda_2) \left\{\norm{Y - \mat X \beta}^2 + \lambda_2 \norm{\beta}_{2}^2 + \lambda_1 \norm{\beta}_{1} \right\}$$
+Given a fixed $\lambda_2$, the LARS-EN algorithm (Zou and Hastie 2005) efficiently solves the elastic net problem for all $\lambda_1$
+with the computational cost of a single least squares fit.
+\end{frame}
+
+\begin{frame}
+RUNTIME SPCA ALGORITHM
+\end{frame}
+
+\begin{frame}
+\frametitle{Numerical Solution}
+Let $\mat{A}_{p \times k} = \left[ \alpha_1, \ldots , \alpha_k\right]$ and $\mat{B}_{p \times k} = \left[ \beta_1, \ldots , \beta_k\right]$. Since $\mat A$ is orthonomal, let $\mat A_{\perp}$ be any orthonormal matrix such that $\left[ \mat A ; \mat A_{\perp} \right]$ is $p \times p$ orthonormal. Then we ran reformulate the problem
+\begin{align*}
+\sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}^2 & = \norm{\mat{X} - \mat{X} \mat{B} \mat{A}^T}_F^2\\
+& = \norm{\mat X \mat A_{\perp}}_F^2 + \norm{\mat X \mat A - \mat X \mat B}_F^2\\
+& = \norm{\mat X \mat A_{\perp}}_F^2 + \sum_{j=1}^{k} \norm{\mat X \alpha_j - \mat X \beta_j}^2
+\end{align*}
+
+\end{frame}
+
+
 
 \end{document}
