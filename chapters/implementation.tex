@@ -5,7 +5,20 @@
 \label{implementation}
 
 \section{Implementierung nach original paper}
-Eigene Implementierung
+\begin{algorithm}[H]
+    \caption{General SPCA Algorithm}
+    \begin{algorithmic}[1]
+        \Procedure{SPCA}{$A,B$}
+        	\State $\mat A \gets \mat V[,1 \colon k]$, the loadings of the first k ordinary principal components
+            \While{not converged}
+                \State Given a fixed $\mat A = [\alpha_1, \ldots, \alpha_k]$, solve $k$ elastic net problems $$\beta_j = \argmin_{\beta} \norm{\mat X \alpha_j - \mat X \beta}^{2} + \lambda \norm{\beta}^2 + \lambda_{1,j}\norm{\beta}_{1}$$
+                \State For a fixed $\mat B = [\beta_1, \ldots, \beta_k]$, compute the SVD of $$\mat X^T \mat X \mat B = \mat U \mat D \mat V^T$$
+                $$\mat A \gets \mat U \mat V^T$$
+            \EndWhile
+            \State $\hat{V}_j \gets \frac{\beta_j}{\norm{\beta_j}}$ for $j = 1, \ldots, k$
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm} 
 
 \section{Implementierung in scikit-learn in python}
 

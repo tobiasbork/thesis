@@ -4,25 +4,83 @@
 % Chapter label
 \label{sparse_pca}
 
-Ein Nachteil der Hauptkomponentenanalyse ist, dass sich die neuen Variablen meist aus einer Linearkombination aller bestehenden Variablen zusammensetzt. Dies macht es besonders für hochdimensionale Daten schwierig die Hauptachsen zu interpretieren. Oft können somit nicht die relevanten features/Variablen herausgelesen werden. Es kann durchaus passieren, dass nicht alle Variablen relevant zur Strukturerkennung sind. 
+Ein wesentlicher Nachteil der Hauptkomponentenanalyse besteht darin, dass sich die neuen Variablen meist aus einer Linearkombination aller bestehenden Variablen zusammensetzt. Dies erschwert besonders für hochdimensionale Daten eine Interpretation der Hauptachsen. Während wir zuvor in der Lage waren jeder Variable eine Bedeutung zuzuweisen, wissen wir nach der Transformation nicht, was unsere Hauptachsen im Kontext repräsentieren. Oft können somit nicht die relevanten features/Variablen herausgelesen werden. Es kann durchaus passieren, dass nicht alle Variablen relevant zur Strukturerkennung sind.  
 
-\section{Motivation}
+A common approach is to effectively ignore (treat as zero) any coefficients less than some threshold value, so that the function becomes simple and the interpretation becomes easier for the users. Such a procedure can be misleading. There are alternatives to principal component analysis which restrict the coefficients to a smaller number of possible values in the derivation of the linear functions, or replace the principal components by "principal variables."
 
-\section{Problemformulierung}
-NP-schwere Formulierung
+Im Folgenden werden wir zunächst eine naheliegende mathematische Formulierung des Problems beschreiben. In Abschnitt \ref{relaxation} werden wir dann verschiedene Wege aufzeigen, dass Problem zu relaxieren. Später werden wir uns mit einem Ansatz intensiv beschäftigen und in Kapitel ?? einen Algorithmus dafür implementieren. 
 
-\section{Relaxation / Approximation Ideen}
+\section{Motivation} \label{motivation}
 
-\section{Konstruktion}
+Motivation
 
-Sparse PCA Kriterium.
+\section{Problemformulierung} \label{problem_formulation}
+Gegeben sei wieder eine Datenmatrix $\mat X \in \rnp$, wobei $n$ die Anzahl an Beobachtungen und $p$ die Anzahl an Variablen ist. Des Weiteren gehen wir davon aus, dass die Matrix $\mat X$ zuvor spaltenweise zentriert wurde. Dann kann die dünnbesetzte Hauptkomponentenanalyse als sukzessives Maximierungsproblem formuliert werden:
 
+$$v_{k} = \max_{\norm{v}_2 = 1} v^{T}K_{xx} v$$
+$$v_{k}^Tv_{l} = 0 \quad \forall 1 \leq l < k$$
+$${\text{unter der Nebenbedingung, dass}}\quad \norm{v_{k}}_0 \leq t$$
+
+wobei $K_{xx} = \frac{\mat X^T \mat X}{n-1}$ die empirische Kovarianzmatrix ist. Durch die Einführung der $l_0$-Norm beschränken wir uns auf die Suche von Eigenvektoren, welche höchstens $t$ von Null verschiedene Einträge haben. Wählen wir $t = p$ reduziert sich das Problem auf die normale Hauptkomponentenanalyse, wie wir sie in Kapitel 3 eingeführt haben. Während dies eine sehr schöne und einfache mathematische Formulierung ist, wurde in CITE gezeigt, dass dieses Problem NP-vollständig ist. Zur Berechnung dünnbesetzter Hauptachsen sind wir also angehalten eine geeignete Relaxation zu finden.
+
+\section{Relaxation} \label{relaxation}
+
+Es existiert eine Vielfalt an Ansätzen, um das Problem zu relaxieren. Wir wollen zunächst einen kleinen Überblick über die unterschiedlichen Ideen geben und uns anschließend mit einer genauer beschäftigen. Eine selektive Übersicht der verschiedenen Ansätze haben wir hier erstellt:
+
+\textbf{SCoTLASS}
+
+Inspiriert von der LASSO Regression CITE schlugen Jolliffe, Trendafilov und Uddin (2003) \cite{scotlass} vor die $l_1$-Norm anstelle der $l_0$-Norm zu verwenden. Wie wir bereits in Kapitel 2 CITE gesehen haben, kann die $l_1$-Norm genutzt werden, um dünnbesetzte Vektoren zu erhalten. Somit liegt es nahe diesen Ansatz zu verfolgen. Das Problem wird analog zu oben formuliert.
+
+$$v_{k} = \max_{\norm{v}_2 = 1} v^{T}K_{xx} v$$
+$$v_{k}^Tv_{l} = 0 \quad \forall 1 \leq l < k$$
+$${\text{unter der Nebenbedingung, dass}}\quad \norm{v_{k}}_1 \leq t$$
+
+Mit der Wahl der Parameters $t$ hat man Einfluss auf die Dünnbesetzung der Hauptachsen. Aufgrund der hohen Berechnungskosten ist SCoTLASS allerdings für hochdimensionale Daten ungeeignet. Diese sind vor allem darauf zurückzuführen, dass das oben genannte Problem (REF) kein konvexes Optimierungsproblem ist. Des Weiteren ergeben sich Schwierigkeiten bei der Wahl des Hyperparameters $t$. Auch wenn eine passende Wahl eine gewünschte Dünnbesetzung hervorruft, gibt es kaum Orientierungshilfen. Zusammen mit den hohen Berechnungskosten ist dieser Ansatz in der Praxis daher meist impraktikabel.
+
+\textbf{ein semidefiniter Programming Ansatz}
+
+\textbf{iterative Schwellenwert-Methoden}
+
+\textbf{eine verallgemeinerte Potenzmethode}
+
+Es gibt noch eine Reihe weiterer Ideen, die in der Literatur betrachtet wurden. Dazu gehören
+\begin{itemize}
+\item ein alternierendes Maximierungs-Netzwerk \cite{richtarik}
+\item vorwärts und rückwärts greedy Suche und exakte Methoden mittels Branch-and-Bound-Verfahren \cite{moghaddam}
+\item ein Bayes Formulierung \cite{guan}
+\end{itemize}
+
+Ein interessierter Leser 
+
+
+
+
+\section{Konstruktion Sparse PCA} \label{construction}
+
+Wir werden uns nun mit dem von Zou, Hastie und Tibshirani (2006) in \cite{zou_sparsepca} eingeführten Ansatz ausführlich beschäftigen. Zou und Hastie führten zuvor in \cite{zou_elasticnet} das sog. \textit{elastic net} ein, welches den Grundstein für die mathematische Formulierung legt.
+
+Zunächst werden wir einen zweischrittigen Ansatz betrachten???
+
+Wie bereits in Kapitel \ref{pca} beschrieben kann die Hauptkomponentenanalyse auch als Regressionsproblem betrachtet werden. Das folgende Theorem erweitert die bisherige Formulierung, indem nun nicht ausschließlich orthogonale Projektionen erlaubt werden. 
+Im Folgenden bezeichnet $k$ die Anzahl an Hauptkomponenten, die wir extrahieren möchten.
+
+\begin{thm} \label{pca_regression_formulation_ridge}
+Sei $\mat{A}_{p \times k} = [ \alpha_1, \ldots ,\alpha_k ]$ und $\mat{B}_{p \times k} = [ \beta_1, \ldots ,\beta_k ]$. Für ein $\lambda > 0$ sei
+$$(\hat{\mat{A}}, \hat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}^2 + \lambda \sum_{j=1}^{k}\norm{\beta_j}^2$$
+$$\text{wobei } \mat{A}^T\mat{A} = I_{k \times k}$$
+Dann ist $\hat{\beta}_j \propto V_j$ für $j = 1,2,\ldots,k$. 
+\end{thm}
+
+Fordern wir $\mat A =  \mat B$ so reduziert sich das Problem auf die normale Hauptkomponentenanalyse wie in (WENN A = B, dann können wir ridge penalty weglassen. Also zeigt das Theorem, dass wir immer noch exact PCA haben können, wenn wir die Bedingung B = A relaxieren und eine ridge-penalty hinzufügen.) \ref{pca_regression_formulation} beschrieben.
+Theorem \ref{pca_regression_formulation_ridge} FIX CROSS REFERENCES
+
+Somit ergibt sich das folgende Kriterium, welches wir im Folgenden als das Sparse PCA Kriterium bezeichnen werden.
 $$(\hat{\mat{A}}, \hat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}^2 + \lambda \sum_{j=1}^{k}\norm{\beta_j}^2 + \sum_{j=1}^k \lambda_{1,j} \norm{\beta_j}_1$$
 
 subject to $\mat{A}^T\mat{A} = I_{k \times k}$
 oblique projections AB
 
-\section{Theoretische Aussagen Sparse PCA}
+\section{Theoretische Aussagen} \label{theoretical results}
 z.B. wie werden neue Varianzen berechnet
 
 Alexandre d’Aspremont, Optimal Solutions for Sparse Principal Component Analysis

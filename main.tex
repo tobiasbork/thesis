@@ -43,6 +43,16 @@ headsepline, % Uncomment to get a line under the header
 \usepackage{makecell}
 \usepackage{enumerate}
 \usepackage{mathtools}
+\usepackage{xr}
+
+% add external documents for cross-referencing between different files
+\externaldocument[introduction_]{chapters/introduction}
+\externaldocument[fundamentals_]{chapters/fundamentals}
+\externaldocument[pca_]{chapters/pca}
+\externaldocument[sparse_pca_]{chapters/sparse_pca}
+\externaldocument[implementation_]{chapters/implementation}
+\externaldocument[application_]{chapters/application}
+\externaldocument[conclusion_]{chapters/conclusion}
 
 % Declare theorem style and numbering
 \theoremstyle{plain}
@@ -65,6 +75,7 @@ headsepline, % Uncomment to get a line under the header
 \newcommand{\defeq}{\vcentcolon=}
 \newcommand{\rnn}{\mathbb{R}^{n \times n}}
 \newcommand{\rmn}{\mathbb{R}^{m \times n}}
+\newcommand{\rnp}{\mathbb{R}^{n \times p}}
 \newcommand{\rn}{\mathbb{R}^n}
 
 %----------------------------------------------------------------------------------------
