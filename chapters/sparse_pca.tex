@@ -58,7 +58,7 @@ Wir werden uns nun mit dem von Zou, Hastie und Tibshirani (2006) in \cite{zou_sp
 Zunächst werden wir einen zweischrittigen Ansatz betrachten???
 
 Wie bereits in Kapitel \ref{pca} beschrieben kann die Hauptkomponentenanalyse auch als Regressionsproblem betrachtet werden. Das folgende Theorem erweitert die bisherige Formulierung, indem nun nicht ausschließlich orthogonale Projektionen erlaubt werden. 
-Im Folgenden bezeichnet $k$ die Anzahl an Hauptkomponenten, die wir extrahieren möchten.
+Im Folgenden bezeichnet $k$ die Anzahl an Hauptkomponenten, die wir extrahieren möchten und $x_i$ die $i$-te Zeile von $\mat X$.
 
 \begin{thm} \label{pca_regression_formulation_ridge}
 Sei $\mat{A}_{p \times k} = [ \alpha_1, \ldots ,\alpha_k ]$ und $\mat{B}_{p \times k} = [ \beta_1, \ldots ,\beta_k ]$. Für ein $\lambda > 0$ sei
@@ -71,7 +71,7 @@ Fordern wir $\mat A =  \mat B$ so reduziert sich das Problem auf die normale Hau
 Theorem \ref{pca_regression_formulation_ridge} FIX CROSS REFERENCES
 
 Somit ergibt sich das folgende Kriterium, welches wir im Folgenden als das Sparse PCA Kriterium bezeichnen werden.
-$$(\hat{\mat{A}}, \hat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}^2 + \lambda \sum_{j=1}^{k}\norm{\beta_j}^2 + \sum_{j=1}^k \lambda_{1,j} \norm{\beta_j}_1$$
+$$(\hat{\mat{A}}, \hat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}_2^2 + \lambda \sum_{j=1}^{k}\norm{\beta_j}_2^2 + \sum_{j=1}^k \lambda_{1,j} \norm{\beta_j}_1$$
 
 subject to $\mat{A}^T\mat{A} = I_{k \times k}$
 oblique projections AB

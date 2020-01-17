@@ -4,16 +4,58 @@
 % Chapter label
 \label{implementation}
 
+In diesem Kapitel werden wir einen Algorithmus beschreiben, der das Sparse PCA Kriterium minimiert. Dazu werden wir zwischen den beiden Fällen $n > p$ und $n \ll p$ unterscheiden (Fälle nicht exklusiv), um eine effiziente Berechnung zu garantieren. Zu Schluss dieses Kapitels werden wir uns genauer mit der Laufzeit des Algorithmus auseinandersetzen. 
+
 \section{Numerische Lösung}
 
-\begin{algorithm}[H]
-    \caption{General SPCA Algorithm}
+Zunächst möchten wir das Sparse PCA Kriterium erneut formulieren. Sei $\mat{A}_{p \times k} = [ \alpha_1, \ldots ,\alpha_k ]$ und $\mat{B}_{p \times k} = [ \beta_1, \ldots ,\beta_k ]$. Wie zuvor bezeichnen wir mit $x_i$ die $i$-te Zeile von $\mat X$. Dann lautet das Sparse PCA Kriterium
+
+$$(\hat{\mat{A}}, \hat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}_2^2 + \lambda \sum_{j=1}^{k}\norm{\beta_j}_2^2 + \sum_{j=1}^k \lambda_{1,j} \norm{\beta_j}_1$$
+
+$$\text{unter der Nebenbedingung, dass } \mat{A}^T\mat{A} = I_{k \times k}$$
+
+Durch die Einführung der Matrix $\mat B$ in das Kriterium in Kapitel \ref{sparse_pca} wird über die beiden Matrizen $\mat A$ und $\mat B$ minimiert. Man kann zeigen, dass es sich bei (...) um ein nicht-konvexes Optimierungsproblem handelt. (CITE) Allerdings stellt sich heraus, dass das Problem konvex für festes $\mat A$ bzw. festes $\mat B$ ist. (Überprüfung!!!) Daher liegt es nahe einen alternierenden Ansatz zu wählen, um das Problem numerisch zu lösen. Wir betrachten im Folgenden also zwei Optimierungsprobleme.
+
+$\mat B$ \textbf{gegeben} $\mat A$:
+
+Wir wenden uns zunächst der Zielfunktion zu. Hierfür sei $\mat A_{\perp} \in \mathbb{R}^{p \times (p-k)}$ eine orthonormale Matrix, so dass $[\mat A ; \mat A_{\perp}]$ $p \times p$ orthonormal ist. Dann gilt
+
+\begin{align*}
+\sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}_2^2 & = \norm{\mat X - \mat X \mat B \mat A^T}_F^{2}\\
+& = \norm{\mat X \mat A_{\perp}}_F^2 + \norm{\mat X \mat A - \mat X \mat B}_F^2\\
+& = \norm{\mat X \mat A_{\perp}}_F^2 + \sum_{j=1}^{k}\norm{\mat X \alpha_j - \mat X\beta_j}_2^2
+\end{align*}
+
+Wir setzen $Y_j^* = \mat X \alpha_j$ für alle $1 \leq j \leq n$. Somit reduziert sich (...) für fixes $\mat A$ auf das Lösen von $k$ elastic net Problemen
+
+$$\hat{\beta}_j = \argmin_{\beta_j} \norm{Y_j^* - \mat X \beta_j}_2^2 + \lambda \norm{\beta_j}^2 + \lambda_{1,j}\norm{\beta_j}_1$$
+
+In Kapitel \ref{fundamentals} haben wir uns bereits mit elastic nets beschäftigt und einen effizienten Algorithmus zur Lösung dieser präsentiert.
+
+$\mat A$ \textbf{gegeben} $\mat B$:
+
+Fixieren wir die Matrix $\mat B$, so können wir uns auf das Minimieren der Zielfunktion $\sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}_2^2 = \norm{\mat X - \mat X \mat B \mat A^T}_F^{2}$ beschränken, da die Bedingungen an $\beta_j$ nicht von Relevanz beim Optimieren über $\mat A$ sind. Somit ergibt sich 
+
+$$\hat{\mat A} = \argmin_{\mat A}\norm{\mat X - \mat X \mat B \mat A^T}_F^2$$
+$$\text{unter der Nebenbedingung, dass } \mat A \mat A^T = \mat I_{k \times k}$$
+
+Für dieses Optimierungsproblem lässt sich eine explizite Lösung angeben, da es eine Form von Procrustes Rotationsproblem ist, welches wir in Theorem REF beschrieben haben. Sei daher 
+$$(\mat X^T \mat X) \mat B = \mat U \mat D \mat V^T$$ eine Singulärwertzerlegung. Dann ist $\hat{\mat A} = \mat U \mat V^T$.
+
+\section{Algorithmus}
+
+Durch die Vorarbeit im vorangegangenem Abschnitt können wir einen effizienten Algorithmus zur Lösung des Sparse PCA Kriteriums angeben. Zuerst initialisieren wir $\mat A$ mit den ersten $k$ Hauptachsen. Anschließend minimieren wir abwechselnd über $\mat B$ gegeben $\mat A$ und $\mat A$ gegeben $\mat B$ solange ein geeignetes Konvergenzkriterium noch nicht erfüllt ist. Normalisieren wir die Spalten von $\mat B$ erhalten wir die dünnbesetzten Hauptachsen. Eine Übersicht haben wir in Algorithmus \ref{spca_algorithm} erstellt.
+
+\begin{algorithm}[tbh]
+    \caption{Sparse Principal Component Analysis}
+    \label{spca_algorithm}
     \begin{algorithmic}[1]
-        \Procedure{SPCA}{$A,B$}
-        	\State $\mat A \gets \mat V[,1 \colon k]$, the loadings of the first k ordinary principal components
-            \While{not converged}
-                \State Given a fixed $\mat A = [\alpha_1, \ldots, \alpha_k]$, solve $k$ elastic net problems $$\beta_j = \argmin_{\beta} \norm{\mat X \alpha_j - \mat X \beta}^{2} + \lambda \norm{\beta}^2 + \lambda_{1,j}\norm{\beta}_{1}$$
-                \State For a fixed $\mat B = [\beta_1, \ldots, \beta_k]$, compute the SVD of $$\mat X^T \mat X \mat B = \mat U \mat D \mat V^T$$
+        \Procedure{SPCA}{$\mat A, \mat B$}
+        	\State $\mat A \gets \mat V[,1 \colon k]$, die ersten $k$ Hauptachsen
+            \While{nicht konvergiert}
+                \State Gegeben festes $\mat A = [\alpha_1, \ldots, \alpha_k]$, löse das elastic net Problem
+                $$\hat{\beta}_j = \argmin_{\beta_j} \norm{\mat X \alpha_j - \mat X \beta_j}^{2} + \lambda \norm{\beta_j}^2 + \lambda_{1,j}\norm{\beta_j}_{1} \quad \text{für } j = 1, \ldots, k$$
+                \State Gegeben festes $\mat B = [\beta_1, \ldots, \beta_k]$, berechne die Singulärwerzerlegung von $$\mat X^T \mat X \mat B = \mat U \mat D \mat V^T$$
                 $$\mat A \gets \mat U \mat V^T$$
             \EndWhile
             \State $\hat{V}_j \gets \frac{\beta_j}{\norm{\beta_j}}$ for $j = 1, \ldots, k$
@@ -21,8 +63,12 @@
     \end{algorithmic}
 \end{algorithm} 
 
-\section{Implementierung in scikit-learn in python}
+Es stellt sich nun die Frage nach einem passendem Abbruchkriterium. Da für uns am Schluss des Algorithmus nur die Matrix $\mat B$ relevant ist, kann $\mat A$ bei der Wahl eines Konvergenzkriterium vernachlässigt werden. Zou, Hastie, und Tibshirani wählen in ihrer Implementierung das folgende Kriterium
+$$\max_{\substack{1 \leq i \leq p \\ 1 \leq j \leq k}} \left| \mat{B}_{ij}^{(l+1)} - \mat{B}_{ij}^{(l)} \right| < \epsilon$$
+wobei $\mat B_{ij}^{(l)}$ der $ij$-te Eintrag der Matrix in der $l$-ten Iteration ist. Sobald also die Änderung in $\mat B^{(l)}$ klein genug ist, kann die while-Schleife abgebrochen werden. Um die Laufzeit des Algorithmus zu beschränken, ist es meist sinnvoll ein zusätzliches Abbruchkriterium zu definieren. So werden wir bei Anwendung des Algorithmus eine maximale Anzahl an Iterationen $l_{max}$ festlegen, die nicht überschritten werden darf. (In Kapitel \ref{application} werden wir sehen, dass sich die Anzahl an Iterationen stark unterscheiden kann.)
 
 \section{Numerische Lösung im Fall p >> n}
+
+\section{Implementierung in scikit-learn in python}
 
 \section{Laufzeitvergleich}
