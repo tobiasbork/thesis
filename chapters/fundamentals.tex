@@ -4,6 +4,8 @@
 % Chapter label
 \label{fundamentals}
 
+In diesem Kapitel werden wir die wichtigsten mathematischen Grundlagen, die wir für die Formulierung der dünnbesetzten Hauptkomponentenanalyse benötigen, einführen. 
+
 
 
 %----------------------------------------------------------------------------------------
@@ -152,14 +154,14 @@ Nach Konvention werden die Singulärwerte von $\mat D$ absteigend sortiert, d.h.
 
 \subsection{Matrix Approximation}
 
-Das Konzept von Normen lässt sich auch Matrizen übertragen. In späteren Kapiteln werden wir vor allem Gebrauch folgender Norm machen.
+Das Konzept von Normen lässt sich auch auf Matrizen übertragen. In späteren Kapiteln werden wir vor allem Gebrauch folgender Norm machen.
 
 \begin{defn}[Frobeniusnorm \cite{schaback}]
 Für eine Matrix $A \in \rmn$ ist die \textit{Frobeniusnorm} definiert durch
 $$\norm{\mat A}_F = \left( \sum_{i=1}^{m} \sum_{j=1}^{n} \lvert a_{ij} \rvert ^{2} \right) ^{\frac{1}{2}}.$$
 \end{defn}
 
-Man zeigt leicht, dass $\norm{\mat A}_F = \spur{\mat A^T \mat A}$ gilt.
+Man zeigt leicht, dass $\norm{\mat A}_F^2 = \spur{\mat A^T \mat A}$ gilt.
 Eine weitere wichtige Eigenschaft von Matrizen ist der \textit{Rang}.
 
 \begin{defn}[Rang \cite{anton}]
@@ -189,6 +191,26 @@ $$\min_{\operatorname{rank}(\widehat \mat{A}) \leq r} \|\mat{A}-\widehat \mat{A}
 wobei $\sigma_i$ die Singulärwerte von $\mat A$ bzw. die Diagonaleinträge von $\mat D$ sind. Der Minimierer $\widehat \mat{A}^*$ ist genau dann eindeutig, wenn $\sigma_{r+1} \neq \sigma_{r}$.
 \end{thm}
 
+Ein weiteres Problem, was unter diese Kategorie fällt ist Procrustes Rotationsproblem.
+
+\begin{thm}[Procrustes Rotationsproblem \cite{gower}]
+Seien $\mat M \in \mathbb{R}^{n \times p}$, $\mat N \in \mathbb{R}^{n \times k}$ und $\mat M^T \mat N = \mat{U}\mat{D} \mat{V}^{\top}$ eine Singulärwertzerlegung. Dann löst
+$$\hat{\mat A} = \mat U \mat V^T$$
+das Approximationsproblem
+$$\hat{\mat A} = \argmin_{\mat A} \norm{\mat M - \mat N \mat A^T}_F^2$$
+$$\text{unter der Nebenbedingung, dass } \mat A^T \mat A = \mat I_{k \times k}.$$
+\end{thm}
+
+
+%----------------------------------------------------------------------------------------
+%	Statistik
+%----------------------------------------------------------------------------------------
+
+\section{Statistik}
+Varianz, Erwartungswert
+bias variance trade-off (Murphy, Machine Learning)
+\subsection{Empirische Kovarianzmatrix}
+
 
 
 %----------------------------------------------------------------------------------------
@@ -203,17 +225,15 @@ In diesem Abschnitt möchten wir die
 
 \subsection{Norm}
 
-\begin{defn}[Norm (Wikipedia)]
+\begin{defn}[\cite{hieber}]
 \label{norm}
-Eine Norm ist eine Abbildung $\norm{\cdot} \colon \mathbb{R}^n \longrightarrow {\mathbb {R} }_{0}^{+}$, die für alle Vektoren $x,y\in \mathbb{R}^n$ und alle Skalare $\alpha \in \mathbb{R}$ die folgenden drei Axiome erfüllt:
+Eine Abbildung $\norm{\cdot} \colon \mathbb{R}^n \longrightarrow {\mathbb {R} }_{0}^{+}$ heißt \textit{Norm}, falls für alle Vektoren $x,y\in \mathbb{R}^n$ und alle Skalare $\alpha \in \mathbb{R}$ die folgenden drei Axiome gelten:
 \begin{enumerate}[(i)]
-\item \makebox[5cm][1]{$\|x\|=0\;\Rightarrow \;x=0$}(Definitheit)
-\item \makebox[5cm][1]{$\|\alpha \cdot x\|=|\alpha |\cdot \|x\|$}(Homogenität)
-\item \makebox[5cm][1]{$\|x+y\|\leq \|x\|+\|y\|$}(Subadditivität)
+\item \makebox[4cm][l]{$\|x\|=0\;\Leftrightarrow \;x=0$}(Definitheit)
+\item \makebox[4cm][l]{$\|\alpha \cdot x\|=|\alpha |\cdot \|x\|$}(Homogenität)
+\item \makebox[4cm][l]{$\|x+y\|\leq \|x\|+\|y\|$}(Subadditivität)
 \end{enumerate}
 \end{defn}
-
-Im Zuge dieser Arbeit werden wir uns vor allem mit den $l_p$-Normen beschäftigen.
 
 \begin{defn}[$l_p$-Norm \cite{schaback}] 
 Auf dem $\mathbb{R}^n$ sind die $l_p$-Normen für $1 \leq p < \infty$ definiert als
@@ -223,7 +243,7 @@ $$\norm{x}_{\infty} \defeq \max_{1 \leq i \leq n} \abs{x_i} \quad x \in \mathbb{
 Im Fall $p = \infty$ spricht man auch von der \textit{Maximumsnorm} und im Fall $p = 2$ von der \textit{euklidischen Norm}.
 \end{defn}
 
-Wir führen nun die Idee eines dünnbesetzten Vektors ein.
+Eine weitere wichtige Norm, die wir im Zuge dieser Arbeit verwenden werden ist die $l_0$-\q{Norm}. Diese zählt die von null verschiedenen Einträge eines Vektors und misst somit, ob ein Vektor dünnbesetzt ist.
 
 \begin{defn}[$l_0$-\q{Norm} \cite{foucart}]
 Die sogenannte $l_0$-\q{Norm} ist definiert durch
@@ -232,13 +252,51 @@ $$\norm{x}_{0} \defeq \left|\{i \colon \enspace x_i \neq 0 , \quad 1 \leq i \leq
 
 Die übliche Schreibweise $\norm{x}_0$ - die Notation $\norm{x}_{0}^{0}$ wäre angemessener - entspringt der Beobachtung, dass 
 $$\norm{x}_{p}^{p} = \sum_{i=1}^{n} \abs{x_i}^p \quad \underset{p \rightarrow 0}{\longrightarrow} \quad \sum_{i=1}^{n} \mathbb{1}_{\{x_i = 0\}} = \left|\{i \colon \enspace x_i \neq 0\, , \quad 1 \leq i \leq n\}\right|$$
-Wir wollen betonen, dass die $l_0$-\q{Norm} keine wirkliche Norm ist, da die Abbildung nicht homogen ist. Trotzdem ist diese \q{Norm} in der Theorie der komprimierten Erfassung (Englisch: \textit{compressive sensing}) sehr nützlich.
+Wir wollen betonen, dass die $l_0$-\q{Norm} keine wirkliche Norm ist, da die Abbildung nicht homogen ist. Trotzdem ist diese \q{Norm} in der Theorie der komprimierten Erfassung (Englisch: \textit{compressive sensing}) sehr nützlich. (Trotzdem wird sie im Folgenden eine entscheidene Rolle spielen)
 
-\subsection{Regression}
-\textbf{Lineare Regression (Least Squares)}
+\subsection{Lineare Regressionsmodelle}
+
+Es existiert eine sehr enge Verbindung zwischen der Hauptkomponentenanalyse, die wir in Kapitel \ref{pca} näher kennenlernen werden, und der Regressionsanalyse. Viele der Ideen und Ansätze im folgendem Abschnitt werden wir später gebrauchen und spielen eine maßgebliche Rolle bei der Formulierung der dünnbesetzten Hauptkomponentenanalyse. 
+
+\textbf{Lineare Regression}\cite{hastie_elements}
+
+Bei der Regressionsanalyse werden Zusammenhänge zwischen
+mehreren Merkmalen untersucht. Man versucht eine unabhängige Variable $Y$ durch eine oder mehrere abhängige Variablen $X_1, \ldots, X_p$ zu erklären. Ein lineares Regressionsmodell hat also die Form
+\begin{align}
+\label{linear_model}
+f(X) = \beta_0 + \sum_{j=1}^p X_j\beta_j
+\end{align}
+wobei $\beta_j$ die Regressionskoeffizienten sind.
+Bei der Verwendung eines solchen Modells nehmen wir an, dass eine Linearkombination der abhängigen Variablen eine geeignete Approximation ist.
+
+Typischerweise verfügen wir über eine Menge von Trainingsdaten $(x_1, \ldots, x_n)$. Jedes $x_i = (x_{i1}, \ldots, x_{ip})^T$ stellt eine Beobachtung dar, die wir für die Schätzung der Parameter $\beta_j$ benutzen. Die bekannteste Methode für diesen Zweck ist sicherlich die \textit{Methode der kleinsten Quadraten} (Englisch: \textit{Least Squares}), in welcher wir $\beta = (\beta_0, \ldots, \beta_p)^T$ wählen, so dass die Summe der Residuenquadrate (Englisch: \textit{Residual Sum of Squares}, kurz RSS) minimiert wird. Wir definieren
+\begin{align}
+\label{RSS}
+\text{RSS}(\beta) & = \sum_{i=1}^{n}(y_i - f(x_i))^2\\
+& = \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2\\
+& = (y - \mat X \beta)^T(y-\mat X \beta)
+\end{align}
+
+und das dazugehörige Minimierungsproblem
+\begin{align}
+\hat{\beta} = \min_{\beta} \text{RSS}(\beta)
+\end{align}
+
+wobei $\mat X \in \mathbb{R}^{n \times (p+1)}$ die Matrix der $x_i$ mit einer 1 an erster Stelle ist und $y = (y_1, \ldots, y_n)^T$ der Ausgabevektor ist. Eine Visualisierung der Methode befindet sich in Abbildung REF. Vielleicht Bild zur Regression in 2 bzw. 3D?
+
+Es ist leicht zu zeigen, dass wir eine eindeutige Lösung (wenn X vollen Rang hat)
+
+Wir möchten erwähnen, dass wir bei der Verwendung dieser Methode keine Aussage über die Gültigkeit des Modells treffen, sondern lediglich die beste lineare Approximation finden.
+
+
+Um ein gewünschtes Verhalten der Regression zu gewährleisten, bestehen verschiedene Möglichkeiten der Regularisierung. Dazu versehen wir den Regressionsterm mit sog. \textit{Straftermen}.
+
 \textbf{Subset Selection}
-\textbf{LASSO}
+
 \textbf{Ridge Regression}
+
+\textbf{LASSO}
+
 \textbf{Elastic Net}
 
 Im folgendem Abschnitt werden wir sehen, dass die Wahl der Norm verschiedene Effekte auf die Regressionskoeffizienten hat.
@@ -246,18 +304,11 @@ Im folgendem Abschnitt werden wir sehen, dass die Wahl der Norm verschiedene Eff
 \subsection{Fouriertransformation}
 
 
-%----------------------------------------------------------------------------------------
-%	Statistik
-%----------------------------------------------------------------------------------------
 
 
 \section{Signaltheorie}
 
 \subsection{Fouriertransformation}
 \subsection{Nyquist-Shannon Abtasttheorem}
-
-\section{Statistik}
-Varianz, Erwartungswert
-\subsection{Empirische Kovarianzmatrix}
 
 \section{Dictionary Learning}

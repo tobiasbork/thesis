@@ -4,7 +4,7 @@
 % Chapter label
 \label{implementation}
 
-In diesem Kapitel werden wir einen Algorithmus beschreiben, der das Sparse PCA Kriterium minimiert. Dazu werden wir zwischen den beiden Fällen $n > p$ und $n \ll p$ unterscheiden (Fälle nicht exklusiv), um eine effiziente Berechnung zu garantieren. Zu Schluss dieses Kapitels werden wir uns genauer mit der Laufzeit des Algorithmus auseinandersetzen. 
+In diesem Kapitel werden wir einen Algorithmus beschreiben, der das Sparse PCA Kriterium minimiert. Dazu werden wir uns zunächst mit dem allgemeinen Fall beschäftigen bevor wir den Fall $n \ll p$ genauer betrachten, um eine effiziente Berechnung zu garantieren. Zu Schluss dieses Kapitels werden wir uns genauer mit der Laufzeit des Algorithmus auseinandersetzen. 
 
 \section{Numerische Lösung}
 
@@ -41,6 +41,8 @@ $$\text{unter der Nebenbedingung, dass } \mat A \mat A^T = \mat I_{k \times k}$$
 
 Für dieses Optimierungsproblem lässt sich eine explizite Lösung angeben, da es eine Form von Procrustes Rotationsproblem ist, welches wir in Theorem REF beschrieben haben. Sei daher 
 $$(\mat X^T \mat X) \mat B = \mat U \mat D \mat V^T$$ eine Singulärwertzerlegung. Dann ist $\hat{\mat A} = \mat U \mat V^T$.
+
+Es ist sinnvoll zu erwähnen, dass für die Lösung beider Teilprobleme nur die Gram-Matrix $\mat X^T \mat X$ bekannt sein muss. Dies erleichtert die Berechnung.
 
 \section{Algorithmus}
 
