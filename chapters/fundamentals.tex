@@ -253,7 +253,7 @@ bias variance trade-off (Murphy, Machine Learning)
 
 \subsection{Lineare Regressionsmodelle}
 
-Es existiert eine sehr enge Verbindung zwischen der Hauptkomponentenanalyse, die wir in Kapitel \ref{pca} näher kennenlernen werden, und der Regressionsanalyse. Viele der Ideen und Ansätze im folgendem Abschnitt werden wir später gebrauchen und spielen eine maßgebliche Rolle bei der Formulierung der dünnbesetzten Hauptkomponentenanalyse. 
+Es existiert eine sehr enge Verbindung zwischen der Hauptkomponentenanalyse, die wir in Kapitel \ref{pca} näher kennenlernen werden, und der Regressionsanalyse. Viele der Ideen und Ansätze im folgendem Abschnitt werden wir später gebrauchen und spielen eine maßgebliche Rolle bei der Formulierung der dünnbesetzten Hauptkomponentenanalyse.\\
 
 \textbf{Lineare Regression} \cite{hastie_elements}
 
@@ -266,7 +266,7 @@ f(X) = \beta_0 + \sum_{j=1}^p X_j\beta_j
 wobei $\beta_j$ die Regressionskoeffizienten sind.
 Bei der Verwendung dieses Modells nehmen wir an, dass die Regressionsfunktion $\text{E}(Y|X)$ linear ist bzw. ein lineares Modell eine geeignete Approximation ist.
 
-Typischerweise verfügen wir über eine Menge von Trainingsdaten $(x_1, y_1), \ldots, (x_n, y_n)$. Jedes $x_i = (x_{i1}, \ldots, x_{ip})^T$ stellt eine Beobachtung dar, die wir für die Schätzung der Parameter $\beta_j$ benutzen. Die bekannteste Methode für diesen Zweck ist sicherlich die \textit{Methode der kleinsten Quadraten} (Englisch: \textit{Least Squares}), in welcher wir $\beta = (\beta_0, \ldots, \beta_p)^T$ wählen, so dass die Summe der Residuenquadrate (Englisch: \textit{Residual Sum of Squares}, kurz RSS) minimiert wird. Wir definieren
+Typischerweise verfügen wir über eine Menge von Trainingsdaten $(x_1, y_1), \ldots, (x_n, y_n)$. Jedes $x_i = (x_{i1}, \ldots, x_{ip})^T$ stellt eine Beobachtung dar, die wir für die Schätzung der Parameter $\beta_j$ benutzen. Die bekannteste Methode für diesen Zweck ist sicherlich die \textit{Methode der kleinsten Quadraten} (Englisch: \textit{(Ordinary) Least Squares}), in welcher wir $\beta = (\beta_0, \ldots, \beta_p)^T$ wählen, so dass die Summe der Residuenquadrate (Englisch: \textit{Residual Sum of Squares}, kurz RSS) minimiert wird. Wir definieren
 \begin{align}
 \label{RSS}
 \text{RSS}(\beta) & = \sum_{i=1}^{n}(y_i - f(x_i))^2\\
@@ -277,7 +277,7 @@ Typischerweise verfügen wir über eine Menge von Trainingsdaten $(x_1, y_1), \l
 und das dazugehörige Minimierungsproblem
 \begin{align}
 \label{least_squares}
-\hat{\beta} = \argmin_{\beta} \text{RSS}(\beta)
+\hat{\beta}^{\text{OLS}} = \argmin_{\beta} \text{RSS}(\beta)
 \end{align}
 wobei $\mat X \in \mathbb{R}^{n \times (p+1)}$ die Matrix der $x_i$ mit einer 1 an erster Stelle ist und $y = (y_1, \ldots, y_n)^T$. Eine Visualisierung der Methode befindet sich in Abbildung REF. Vielleicht Bild zur Regression in 2 bzw. 3D?
 
@@ -285,45 +285,57 @@ An dieser Stelle möchten wir erwähnen, dass bei Verwendung dieser Methode kein
 
 Falls $\mat X$ vollen Rang hat, ist es ist leicht zu zeigen, dass (\ref{least_squares}) die eindeutige Lösung
 \begin{align}
-\hat{\beta} = (\mat X^T\mat X)^{-1}\mat X^T y
+\hat{\beta}^{\text{OLS}} = (\mat X^T\mat X)^{-1}\mat X^T y
 \end{align}
 besitzt. Die Zielgröße ergibt sich dann durch
 \begin{align}
-\hat{y} = \mat X \hat{\beta} = \mat X (\mat X^T\mat X)^{-1}\mat X^T y
+\hat{y} = \mat X \hat{\beta}^{\text{OLS}} = \mat X (\mat X^T\mat X)^{-1}\mat X^T y
 \end{align}
 Die Matrix $\mat H = \mat X (\mat X^T\mat X)^{-1}\mat X^T$ haben wir bereits in REF kennengelernt. Sie projiziert $y$ orthogonal auf den durch  die Spalten von $\mat X$ aufgespannten Unterraum. Dies ermöglicht eine geometrische Interpretation der linearen Regression.
 
 Wenn $\mat X$ keinen vollen Rang hat, ist die Lösung von (\ref{least_squares}) nicht mehr eindeutig. Dieser Art Probleme ereignen sich häufig in der Bild- und Signalanalyse, da es mehr Variablen als Beobachtungen gibt ($p > n$). Um ein gewünschtes Verhalten der Regression zu gewährleisten, bestehen verschiedene Möglichkeiten der Filterung oder Regularisierung. In letzterem Fall versehen wir den Regressionsterm mit sog. \textit{Straftermen}. Diese werden eine bedeutende Rolle in den folgenden Kapitel spielen.
 
-\textbf{Subset Selection}
-Kurze Erklärung der Idee, warum man das anwenden möchte. Sagen, dass es verschiedene Methoden gibt, um ein geeignetes Subset zu selektieren.
-Dann Probleme nennen.
+Gelegentlich sind wir mit den Ergebnissen der Methode der kleinsten Quadrate nicht zufrieden. Dies kann zum Beispiel an der Multikollinearität des Datensatzes liegen. Mit zunehmender Multikollinearität ist die Methode instabil und bei der Schätzung der Regressionskoeffizienten ungenau. Es ergeben sich die folgenden zwei Probleme:
+\begin{itemize}
+\item Vorhersagegenauigkeit: Meist hat das erzeugte Modell einen niedrigen Bias, aber eine hohe Varianz. Somit sind neue Vorhersagen, die wir auf zuvor ungesehenen Daten treffen, oft sehr ungenau. In manchen Fällen können wir die Ergebnisse durch eine Erhöhung des Bias verbessern, indem wir die Regressionskoeffizienten verkleinern oder sogar auf 0 setzen.
+\item Interpretation: Eine hohe Anzahl an Variablen, die in das Modell einfließen erschwert unzweifelhaft eine Interpretation. Daher kann es von Vorteil sein nur den Teil der Variablen für das Modell auszuwählen, die den größten Effekt für die Vorhersage erzielen.
+\end{itemize}
+
+Ein naheliegender Ansatz zur Lösung dieser Probleme wäre es zu versuchen, die beste Teilmenge an Variablen zu finden, die eine minimale Summe der Residuenquadrate aufweist. In \cite{hastie_elements} werden verschiedene Methoden zur exakten und approximativen Berechnung dieser Teilmenge beschrieben. (Darunter fallen die leaps and bounds Methode (Furnival and Wilson, 1974), Forward Stepwise und Backward Stepwise.) Nicht immer wird die Genauigkeit der Vorhersagen durch Verwendung dieses Ansatzes besser. Dies liegt daran, dass es sich um einen diskreten Prozess handelt und somit Variablen für das Modell entweder ausgewählt oder verworfen werden. Daher beschäftigen wir uns nun mit Methoden, die eine kontinuierliche Schrumpfung der Regressionskoeffizieten erlauben.\\
 
 \textbf{Ridge Regression}
-Motivieren, warum Ridge Regression. Bias-Variance-Tradeoff
-Mathematische Formulierung
+
+Die \textit{Tikhonov Regularisierung}, die auch unter dem Namen \textit{Ridge Regression} bekannt ist, kann genutzt werden, um das Problem der Multikollinearität zu lösen und im Fall $p > n$ eine eindeutige Lösung zu erhalten.
+Wie wir bereits in REF gesehen haben, kann es sinnvoll sein den Bias zu erhöhen, um genauere Vorhersagen treffen zu können. Daher führen wir nun eine \textit{ridge penalty}, einen Strafterm, ein und formulieren das Ridge Regression Problem in der Lagrange Form.
 \begin{align}
-\hat{\beta}^{\text{ridge}} = \argmin_{\beta} \norm{y - \mat X \beta}_2^2 + \lambda \norm{\beta}_{2}^{2}
+\label{ridge_regression}
+\hat{\beta}^{\text{ridge}} = \argmin_{\beta} \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda\sum_{j=1}^p \beta_j^2
 \end{align}
-Mathematische Lösung des Problems
-Plot wie Koeffizienten gegen 0
+wobei $\lambda \geq 0$ ein Parameter ist, der die Stärke der Schrumpfung der Regressionskoeffizienten kontrolliert. Je größer $\lambda$, desto stärker ist die Schrumpfung der $\beta_j$. Man kann zeigen, dass die Lösung von (\ref{ridge_regression}) in zwei Teile aufgeteilt werden kann. Da $\beta_0$ nicht im Strafterm vorkommt, schätzen wir $\beta_0 = \bar{y} = \frac{1}{n}\sum_{i=1}^{n} y_i$ und zentrieren die Eingaben $x_{ij} = x_{ij} - \bar{x}_j$. Die eindeutige Lösung der zentrierten Version von (\ref{ridge_regression}) ist dann gegeben durch
+\begin{align}
+\hat{\beta}^{\text{ridge}}  = (\mat X^T \mat X + \lambda\mat{I})^{-1}\mat{X}^Ty
+\end{align}
+wobei $\beta = (\beta_1, \ldots, \beta_p)$ und $\mat{X} \in \mathbb{R}^{n \times p}$ die Matrix der $x_i$. (Vor der Anwendung von Ridge Regression werden die Daten meist standardisiert, da $\hat{\beta}^{\text{ridge}}$ nicht äquivariant unter Skalierung ist.) \\
 
 
 \textbf{LASSO}
-Das LASSO ist eine 
-In der Signalanalyse ist dieses Problem unter dem Namen \textit{Basis Pursuit} \cite{chen} bekannt.
-Motivieren, warum LASSO. Warum möchte man viele 0 entries?
-Mathematische Formulierung
-\begin{align}
-\hat{\beta}^{\text{lasso}} = \argmin_{\beta} \norm{y - \mat X \beta}_2^2 + \lambda \norm{\beta}_{1}
-\end{align}
-Mathematische Lösung des Problems? (LARS, aber nicht näher erwähnen)
-plot wie Koeffizienten gegen 0
 
-Im folgendem Abschnitt werden wir sehen, dass die Wahl der Norm verschiedene Effekte auf die Regressionskoeffizienten hat
-Plot mit den verschiedenen Normen im $R^2$
-Intuition warum $L_1$ Norm sparsity produced
-Warum nicht $p = 0.5$ als Norm?
+Die durch die Ridge Regression erzeugten Koeffizienten sind also um den Faktor $\frac{1}{1+\lambda}$ gegenüber denen von Least Squares skaliert. Die Regressionskoeffizieten werden also erst für $\lambda \rightarrow 0$ auf Null geschrumpft. Um eine bessere Interpretation des Modells zu ermöglichen kreiert das \textit{Lasso} eine dünnbesetzte Lösung, bei welcher viele Koeffizienten gleich Null sind. Das Lasso wurde erstmals von Tibshirani in \cite{tibshirani_lasso} eingeführt und ist in der Signalanalyse unter dem Namen \textit{Basis Pursuit} \cite{chen} bekannt. Mathematisch erreichen wir eine Dünnbesetzung durch Einbettung eines $l_1$-Strafterms.
+\begin{align}
+\label{lasso}
+\hat{\beta}^{\text{lasso}} = \argmin_{\beta} \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda\sum_{j=1}^p \left|\beta_j\right|
+\end{align}
+Es wird also im Vergleich zu (\ref{ridge_regression}) lediglich die $l_2$-Norm durch eine $l_1$-Norm ausgetauscht. Bevor wir uns mit der Lösung dieses Problems beschäftigen, möchten wir erklären, warum die $l_1$-Norm eine Dünnbesetzung hervorruft. Die lässt sich auf zwei Arten erklären. Zunächst geben wir eine geometrische Erklärung, welche in Abbildung REF zu sehen ist. In Abbildung REF haben wir die $l_1$- und $l_2$-Beschränkungen sowie die Höhenlinien der RSS Funktion in zwei Dimensionen aufgezeichnet. Die optimalen Koeffizienten von Ridge Regression und Lasso ergeben sich nun aus dem Schnittpunkt der Höhenlinie und der Norm-Begrenzung. Im Falle der $l_1$-Norm ist dieser Schnittpunkt mit einer hohen Wahrscheinlichkeit an eine der Ecken und einer der beiden Koeffizienten wird auf Null gesetzt. Im Gegensatz gibt es bei der Wahl einer $l_2$-Begrenzung keine Ecken. Somit kommt jeder Randpunkt der Begrenzung als Schnittpunkt in Frage und es wird keine Dünnbesetzung hervorgerufen. Dieser Effekt verstärkt sich in höheren Dimensionen.
+
+Man kann durchaus auf die Idee kommen, andere Normen zu verwenden. Warum nicht $p = 0.5$ als Norm? Nochmal Plot mit verschiedenen Normen im $R^2$
+
+Um eine mathematisch gründliche Erklärung für die Dünnbesetzung zu liefern, wenden wir uns der Lösung von \ref{lasso} zu. Diese ist gegeben durch
+\begin{align}
+\hat{\beta}^{\text{lasso}} = \text{sign}(\hat{\beta}^{\text{OLS}}) \left(\left|\hat{\beta}^{\text{lasso}}\right| - \frac{\lambda}{2}\right)_{+}
+\end{align}
+Der Beweis kann in \cite{murphy} nachgelesen werden. Der sog. \textit{soft thresholding operator} $(\cdot)_+$ ist in Abbildung REF dargestellt. Warum ist dann sparsity klar? (Murphy)
+Mathematische Lösung des Problems? (LARS, aber nicht näher erwähnen)
+plot wie Koeffizienten gegen 0\\
 
 \textbf{Elastic Net}
 Motivation warum LASSO nicht reicht. 
@@ -331,7 +343,7 @@ Mathematische Formulierung
 \begin{align}
 \hat{\beta}^{\text{en}} = \argmin_{\beta} \norm{y - \mat X \beta}_2^2 + \lambda \norm{\beta}_{2}^{2} + \lambda_{1,j} \norm{\beta}_{1}
 \end{align}
-Lösung des Problems (LARS-EN? oder hier GLM mit coordinate descent?)
+Lösung des Problems (LARS-EN? oder hier GLM mit coordinate descent?)\\
 
 \textbf{Vergleich der Methoden}
 

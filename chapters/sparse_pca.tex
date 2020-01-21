@@ -17,7 +17,7 @@ $$v_{k} = \max_{\norm{v}_2 = 1} v^{T}K_{xx} v$$
 $$v_{k}^Tv_{l} = 0 \quad \forall 1 \leq l < k$$
 $${\text{unter der Nebenbedingung, dass}}\quad \norm{v_{k}}_0 \leq t$$
 
-wobei $K_{xx} = \frac{\mat X^T \mat X}{n-1}$ die empirische Kovarianzmatrix ist. Wir suchen also unter allen Richtungen, die orthogonal zu allen bereits gefundenen Richtungen sind, eine mit maximaler Varianz. Durch die Einführung der $l_0$-Norm beschränken wir uns auf die Suche von Hauptachsen, welche höchstens $t$ von Null verschiedene Einträge haben. Wählen wir $t = p$ reduziert sich das Problem auf die normale Hauptkomponentenanalyse, wie wir sie in Kapitel 3 eingeführt haben. Während dies eine sehr schöne und einfache mathematische Formulierung ist, wurde in CITE gezeigt, dass dieses Problem NP-vollständig ist. Zur Berechnung dünnbesetzter Hauptachsen sind wir also angehalten eine geeignete Relaxation zu finden.
+wobei $K_{xx} = \frac{\mat X^T \mat X}{n-1}$ die empirische Kovarianzmatrix ist. Wir suchen also unter allen Richtungen, die orthogonal zu allen bereits gefundenen Richtungen sind, eine mit maximaler Varianz. Durch die Einführung der $l_0$-Norm beschränken wir uns auf die Suche von Hauptachsen, welche höchstens $t$ von Null verschiedene Einträge haben. Wählen wir $t = p$ reduziert sich das Problem auf die normale Hauptkomponentenanalyse, wie wir sie in Kapitel 3 eingeführt haben. Während dies eine sehr schöne und einfache mathematische Formulierung ist, wurde gezeigt, dass dieses Problem NP-vollständig ist \cite{foucart}. Zur Berechnung dünnbesetzter Hauptachsen sind wir also angehalten eine geeignete Relaxation zu finden.
 
 \section{Relaxation} \label{relaxation}
 
