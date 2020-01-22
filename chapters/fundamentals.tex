@@ -336,11 +336,59 @@ Es wird also im Vergleich zu (\ref{ridge_regression}) lediglich die $l_2$-Norm d
 
 Man kann durchaus auf die Idee kommen, andere Normen zu verwenden. Warum nicht $p = 0.5$ als Norm? Nochmal Plot mit verschiedenen Normen im $R^2$
 
+\begin{figure}
+\centering
+	\begin{subfigure}{0.2\textwidth}
+	\centering
+	\includegraphics[width = \textwidth]{figures/norm_0_5.png}
+	\label{norm_0_5_figure}
+	\end{subfigure} \hspace{0.5cm}
+	%	
+	\begin{subfigure}{0.2\textwidth}
+	\centering
+	\includegraphics[width = \textwidth]{figures/norm_1.png}
+	\label{norm_1_figure}
+	\end{subfigure}\hspace{0.5cm}
+	%
+	\begin{subfigure}{0.2\textwidth}
+	\centering
+	\includegraphics[width = \textwidth]{figures/norm_2.png}
+	\label{norm_2_figure}
+	\end{subfigure}\hspace{0.5cm}
+	%
+	\begin{subfigure}{0.2\textwidth}
+	\centering
+	\includegraphics[width = \textwidth]{figures/norm_4.png}
+	\label{norm_4_figure}
+	\end{subfigure}
+
+\caption{Die Abbildung zeigt die Normen verschiedener Größe ...}
+\label{norm_figure}
+\end{figure}
+
 Um eine mathematisch gründliche Erklärung für die Dünnbesetzung zu liefern, wenden wir uns der Lösung von \ref{lasso} zu. Diese ist gegeben durch
 \begin{align}
 \hat{\beta}^{\text{lasso}} = \text{sign}(\hat{\beta}^{\text{OLS}}) \left(\left|\hat{\beta}^{\text{lasso}}\right| - \frac{\lambda}{2}\right)_{+}
 \end{align}
 Der Beweis kann in \cite{murphy} nachgelesen werden. Der sog. \textit{soft thresholding operator} $(\cdot)_+$ ist in Abbildung REF dargestellt. Warum ist dann sparsity klar? (Murphy)
+
+\begin{figure}
+\centering
+	\begin{subfigure}{0.4\textwidth}
+	\centering
+	\includegraphics[width = \textwidth]{figures/hard_thresholding.png}
+	\label{hard_thresholding}
+	\end{subfigure}\hspace{1cm}
+	%	
+	\begin{subfigure}{0.4\textwidth}
+	\centering
+	\includegraphics[width = \textwidth]{figures/soft_thresholding.png}
+	\label{soft_thresholding}
+	\end{subfigure}
+\caption{Die Abbildung zeigt die beiden Operationen soft und hard thresholding}
+\label{thresholding_figure}
+\end{figure}
+
 Mathematische Lösung des Problems? (LARS, aber nicht näher erwähnen)
 plot wie Koeffizienten gegen 0\\
 
