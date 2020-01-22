@@ -327,6 +327,13 @@ Die durch die Ridge Regression erzeugten Koeffizienten sind also um den Faktor $
 \end{align}
 Es wird also im Vergleich zu (\ref{ridge_regression}) lediglich die $l_2$-Norm durch eine $l_1$-Norm ausgetauscht. Bevor wir uns mit der Lösung dieses Problems beschäftigen, möchten wir erklären, warum die $l_1$-Norm eine Dünnbesetzung hervorruft. Die lässt sich auf zwei Arten erklären. Zunächst geben wir eine geometrische Erklärung, welche in Abbildung REF zu sehen ist. In Abbildung REF haben wir die $l_1$- und $l_2$-Beschränkungen sowie die Höhenlinien der RSS Funktion in zwei Dimensionen aufgezeichnet. Die optimalen Koeffizienten von Ridge Regression und Lasso ergeben sich nun aus dem Schnittpunkt der Höhenlinie und der Norm-Begrenzung. Im Falle der $l_1$-Norm ist dieser Schnittpunkt mit einer hohen Wahrscheinlichkeit an eine der Ecken und einer der beiden Koeffizienten wird auf Null gesetzt. Im Gegensatz gibt es bei der Wahl einer $l_2$-Begrenzung keine Ecken. Somit kommt jeder Randpunkt der Begrenzung als Schnittpunkt in Frage und es wird keine Dünnbesetzung hervorgerufen. Dieser Effekt verstärkt sich in höheren Dimensionen.
 
+\begin{figure}
+\centering
+\includegraphics[width = 0.9\textwidth]{figures/lasso_ridge_regression.jpg}
+\caption{Die Abbildung zeigt die Beschränkungen der $l_1$-Norm (links) und der $l_2$-Norm (rechts) zusammen mit den Höhenlinien der RSS-Funktion, welche $\hat{\beta}^{\text{OLS}}$ als Minimierer besitzt. Verdeutlicht wird hier die geometrische Findung von $\hat{\beta}^{\text{lasso}}$ (links) und $\hat{\beta}^{\text{ridge}}$ (rechts)\\Basiert auf \cite{hastie_elements}}
+\label{lasso_ridge_regression_figure}
+\end{figure}
+
 Man kann durchaus auf die Idee kommen, andere Normen zu verwenden. Warum nicht $p = 0.5$ als Norm? Nochmal Plot mit verschiedenen Normen im $R^2$
 
 Um eine mathematisch gründliche Erklärung für die Dünnbesetzung zu liefern, wenden wir uns der Lösung von \ref{lasso} zu. Diese ist gegeben durch
