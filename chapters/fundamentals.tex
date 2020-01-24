@@ -342,33 +342,37 @@ Man kann durchaus auf die Idee kommen, andere Normen zu verwenden. Warum nicht $
 	\centering
 	\includegraphics[width = \textwidth]{figures/norm_0_5.png}
 	\label{norm_0_5_figure}
+	\caption*{$p = 0.5$}
 	\end{subfigure} \hspace{0.5cm}
 	%	
 	\begin{subfigure}{0.2\textwidth}
 	\centering
 	\includegraphics[width = \textwidth]{figures/norm_1.png}
 	\label{norm_1_figure}
+	\caption*{$p = 1$}
 	\end{subfigure}\hspace{0.5cm}
 	%
 	\begin{subfigure}{0.2\textwidth}
 	\centering
 	\includegraphics[width = \textwidth]{figures/norm_2.png}
 	\label{norm_2_figure}
+	\caption*{$p = 2$}
 	\end{subfigure}\hspace{0.5cm}
 	%
 	\begin{subfigure}{0.2\textwidth}
 	\centering
 	\includegraphics[width = \textwidth]{figures/norm_4.png}
 	\label{norm_4_figure}
+	\caption*{$p = 4$}
 	\end{subfigure}
 
-\caption{Die Abbildung zeigt die Normen verschiedener Größe ...}
+\caption{Die Abbildung zeigt die Begrenzungen der $l_p$-Norm für verschiedene Werte von $p$, also die Mengen $\{x \in \mathbb{R}^2 \colon \norm{x}_{p} \leq c \}$.}
 \label{norm_figure}
 \end{figure}
 
 Um eine mathematisch gründliche Erklärung für die Dünnbesetzung zu liefern, wenden wir uns der Lösung von \ref{lasso} zu. Diese ist gegeben durch
 \begin{align}
-\hat{\beta}^{\text{lasso}} = \text{sign}(\hat{\beta}^{\text{OLS}}) \left(\left|\hat{\beta}^{\text{lasso}}\right| - \frac{\lambda}{2}\right)_{+}
+\hat{\beta}^{\text{lasso}} = \text{sign}(\hat{\beta}^{\text{OLS}}) \left(\left|\hat{\beta}^{\text{OLS}}\right| - \frac{\lambda}{2}\right)_{+}
 \end{align}
 Der Beweis kann in \cite{murphy} nachgelesen werden. Der sog. \textit{soft thresholding operator} $(\cdot)_+$ ist in Abbildung REF dargestellt. Warum ist dann sparsity klar? (Murphy)
 
@@ -396,13 +400,14 @@ plot wie Koeffizienten gegen 0\\
 Motivation warum LASSO nicht reicht. 
 Mathematische Formulierung
 \begin{align}
-\hat{\beta}^{\text{en}} = \argmin_{\beta} \norm{y - \mat X \beta}_2^2 + \lambda \norm{\beta}_{2}^{2} + \lambda_{1,j} \norm{\beta}_{1}
+\label{elastic_net}
+\hat{\beta}^{\text{en}} = \argmin_{\beta} \norm{y - \mat X \beta}_2^2 + \lambda_2 \norm{\beta}_{2}^{2} + \lambda_{1,j} \norm{\beta}_{1}
 \end{align}
 Lösung des Problems (LARS-EN? oder hier GLM mit coordinate descent?)\\
 
 \textbf{Vergleich der Methoden}
 
-Zur anschaulichen Darstellung der oben eingeführten Methoden werden wir diese auf ein Beispiel anwenden. Dabei greifen wir auf einen durch scikit-learn \cite{scikit_learn} bereitgestellten Datensatz, der erstmals durch \cite{efron_lars} öffentlich gemacht worden ist, zurück. In diesem wurden für $n = 442$ Diabetes Patienten zehn verschiedene Variablen gemessen. Dazu gehören Alter (AGE), Geschlecht (SEX), Body Mass Index (BMI), Blutdruck (BP) und verschiedene Blutproben (Serum Measurements). Die Zielgröße $y$ ist eine quantitative Messung des Krankheitsfortschritts ein Jahr nach Behandlungsbeginn. Einen Überblick über den Datensatz befindet sich in Tabelle \ref{diabetes_data_set}.
+Zur Veranschaulichung der oben eingeführten Methoden werden wir diese auf ein Beispiel anwenden. Dabei greifen wir auf einen durch scikit-learn \cite{scikit_learn} bereitgestellten Datensatz, der erstmals durch \cite{efron_lars} öffentlich gemacht worden ist, zurück. In diesem wurden für $n = 442$ Diabetes Patienten $p=10$ verschiedene Variablen gemessen. Dazu gehören Alter (AGE), Geschlecht (SEX), Body Mass Index (BMI), Blutdruck (BP) und verschiedene Blutproben (Serum Measurements). Die Zielgröße $y$ enthält Werte für den Krankheitsfortschritt ein Jahr nach Behandlungsbeginn. Ein Ausschnitt des Datensatzes befindet sich in Tabelle \ref{diabetes_data_set}.
 
 \begin{table}
 \centering
@@ -421,6 +426,59 @@ Zur anschaulichen Darstellung der oben eingeführten Methoden werden wir diese a
 \caption{Diabetes Datensatz \cite{efron_lars, diabetes_data}}
 \label{diabetes_data_set}
 \end{table}
+
+Schrumpfung bei Ridge Regression kontinuierlich.
+Die Ergebnisse der Regressionen können in Abbildung \ref{regression_coefficients} und \ref{regression_coefficients_mse} eingesehen werden. 
+
+Die Implementierung des Elastic Nets in scikit-learn \cite{scikit_learn} beruht auf einer anderen, aber sehr ähnlichen mathematischen Formulierung
+\begin{align}
+\label{elastic_net_python}
+\hat{\beta}^{\text{en}} = \argmin_{\beta} \frac{1}{2n} \norm{y - \mat X \beta}_2^2 + \alpha \gamma \norm{\beta}_{2}^{2} + \frac{1}{2}\alpha (1-\gamma) \norm{\beta}_{1}
+\end{align}
+wobei $n$ die Anzahl an Beobachtungen im Datensatz und $\gamma$ das Verhältnis der $l_2$- zur $l_1$-Norm ist. Wählen wir $\gamma = 0$ so reduziert sich (\ref{elastic_net_python}) auf Ridge Regression und für $\gamma = 1$ auf das Lasso. So können wir mit $\gamma$ das Verhältnis der beiden Regressionen kontrollieren und mit $\alpha$ die Stärke der Bestrafung. Man beachte, dass bei dieser Implementierung nicht die Möglichkeit besteht die Koeffizienten unterschiedlich zu bestrafen.
+Setzt man 
+\begin{align}
+ \alpha = \frac{2\lambda_2 + \lambda_1}{2n} \quad \text{und} \quad \gamma = \frac{\lambda_1}{2\lambda_2 + \lambda_1}
+\end{align}
+so reduziert sich (\ref{elastic_net_python}) auf unser ursprünglich formuliertes Problem.
+
+\begin{figure}
+\centering
+	\begin{subfigure}{0.9\textwidth}
+	\centering
+	\includegraphics[width = \textwidth]{figures/ridge_regression_coefficients.png}
+	\label{ridge_regression_coefficients}
+	\vspace{-0.5cm}
+	\caption{Ridge Regression}
+	\vspace{0.5cm}
+	\end{subfigure}
+	%	
+	\begin{subfigure}{0.9\textwidth}
+	\centering
+	\includegraphics[width = \textwidth]{figures/lasso_regression_coefficients.png}
+	\label{lasso_regression_coefficients}
+	\vspace{-0.5cm}
+	\caption{Lasso Regression}
+	\vspace{0.5cm}
+	\end{subfigure}
+	%
+	\begin{subfigure}{0.9\textwidth}
+	\centering
+	\includegraphics[width = \textwidth]{figures/elastic_net_coefficients.png}
+	\label{elastic_net_coefficients}
+	\vspace{-0.5cm}
+	\caption{Elastic Net, $l_1$-ratio $= 0.95$}
+	\end{subfigure}
+\caption{Schrumpfung der verschiedenen Regressionsmethoden bei Erhöhung des jeweiligen Regularisierungsparameters.}
+\label{regression_coefficients}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\textwidth]{figures/regression_coefficients_mse.png}
+\label{regression_coefficients_mse}
+\caption{Selektion des Modells gemäß der mittleren quadratischen Abweichung für Ridge, Lasso und Elastic Net Regression}
+\end{figure}
 
 
 %----------------------------------------------------------------------------------------
