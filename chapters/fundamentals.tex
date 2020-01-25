@@ -224,6 +224,7 @@ Eine Abbildung $\norm{\cdot} \colon \mathbb{R}^n \longrightarrow {\mathbb {R} }_
 \end{defn}
 
 \begin{defn}[$l_p$-Norm \cite{schaback}] 
+\label{lp_norm}
 Auf dem $\mathbb{R}^n$ sind die $l_p$-Normen für $1 \leq p < \infty$ definiert als
 $$\norm{x}_p \defeq \left( \sum_{i=1}^{n} \abs{x_i}^{p} \right) ^{\frac{1}{p}} \quad x \in \mathbb{R}^{n}$$
 und für $p = \infty$ als
@@ -240,7 +241,7 @@ $$\norm{x}_{0} \defeq \left|\{i \colon \enspace x_i \neq 0 , \quad 1 \leq i \leq
 
 Die übliche Schreibweise $\norm{x}_0$ - die Notation $\norm{x}_{0}^{0}$ wäre angemessener - entspringt der Beobachtung, dass 
 $$\norm{x}_{p}^{p} = \sum_{i=1}^{n} \abs{x_i}^p \quad \underset{p \rightarrow 0}{\longrightarrow} \quad \sum_{i=1}^{n} \mathbb{1}_{\{x_i = 0\}} = \left|\{i \colon \enspace x_i \neq 0\, , \quad 1 \leq i \leq n\}\right|$$
-Wir wollen betonen, dass die $l_0$-\q{Norm} keine wirkliche Norm ist, da die Abbildung nicht homogen ist. Trotzdem ist diese \q{Norm} in der Theorie der komprimierten Erfassung (Englisch: \textit{compressive sensing}) sehr nützlich. (Trotzdem wird sie im Folgenden eine entscheidene Rolle spielen)
+Wir wollen betonen, dass die $l_0$-\q{Norm} keine wirkliche Norm ist, da die Abbildung nicht homogen ist. Trotzdem ist diese \q{Norm} in der Theorie der komprimierten Erfassung (Englisch: \textit{compressive sensing}) sehr nützlich. Des Weiteren werden wir die Notation $\norm{\cdot}_p$ gemäß der Definition in \ref{lp_norm} auch für Werte $0 < p < 1$ verwenden, obwohl durch diese Abbildung ebenfalls keine Norm gegeben ist.
 
 %----------------------------------------------------------------------------------------
 %	Statistik
@@ -293,7 +294,7 @@ besitzt. Die Zielgröße ergibt sich dann durch
 \end{align}
 Die Matrix $\mat H = \mat X (\mat X^T\mat X)^{-1}\mat X^T$ haben wir bereits in REF kennengelernt. Sie projiziert $y$ orthogonal auf den durch  die Spalten von $\mat X$ aufgespannten Unterraum. Dies ermöglicht eine geometrische Interpretation der linearen Regression.
 
-Wenn $\mat X$ keinen vollen Rang hat, ist die Lösung von (\ref{least_squares}) nicht mehr eindeutig. Dieser Art Probleme ereignen sich häufig in der Bild- und Signalanalyse, da es mehr Variablen als Beobachtungen gibt ($p > n$). Um ein gewünschtes Verhalten der Regression zu gewährleisten, bestehen verschiedene Möglichkeiten der Filterung oder Regularisierung. In letzterem Fall versehen wir den Regressionsterm mit sog. \textit{Straftermen}. Diese werden eine bedeutende Rolle in den folgenden Kapitel spielen.
+Wenn $\mat X$ keinen vollen Rang hat, ist die Lösung von (\ref{least_squares}) nicht mehr eindeutig. Dieser Art Probleme ereignen sich häufig in der Bild- und Signalanalyse, da es mehr Variablen als Beobachtungen gibt ($p > n$). Um ein gewünschtes Verhalten der Regression zu gewährleisten, bestehen verschiedene Möglichkeiten der Filterung oder Regularisierung. In letzterem Fall versehen wir den Regressionsterm mit sog. \textit{Straftermen}, welche eine bedeutende Rolle in den folgenden Kapitel spielen werden. Wir werden uns auf die Einführung dieser in linearer Regression beschränken. Das Konzept kann aber allgemeiner auch in logistischer Regression oder anderen verallgemeinerten linearen Modellen verwendet werden. Mit leicht abgewandelten Argumentationen erhalten wir dann bei Einbettung der Strafterme in die jeweilige Zielfunktion dieselben Effekte. Mehr dazu in CITE.
 
 Gelegentlich sind wir mit den Ergebnissen der Methode der kleinsten Quadrate nicht zufrieden. Dies kann zum Beispiel an der Multikollinearität des Datensatzes liegen. Mit zunehmender Multikollinearität ist die Methode instabil und bei der Schätzung der Regressionskoeffizienten ungenau. Es ergeben sich die folgenden zwei Probleme:
 \begin{itemize}
@@ -325,7 +326,7 @@ Die durch die Ridge Regression erzeugten Koeffizienten sind also um den Faktor $
 \label{lasso}
 \hat{\beta}^{\text{lasso}} = \argmin_{\beta} \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda\sum_{j=1}^p \left|\beta_j\right|
 \end{align}
-Es wird also im Vergleich zu (\ref{ridge_regression}) lediglich die $l_2$-Norm durch eine $l_1$-Norm ausgetauscht. Bevor wir uns mit der Lösung dieses Problems beschäftigen, möchten wir erklären, warum die $l_1$-Norm eine Dünnbesetzung hervorruft. Die lässt sich auf zwei Arten erklären. Zunächst geben wir eine geometrische Erklärung, welche in Abbildung REF zu sehen ist. In Abbildung REF haben wir die $l_1$- und $l_2$-Beschränkungen sowie die Höhenlinien der RSS Funktion in zwei Dimensionen aufgezeichnet. Die optimalen Koeffizienten von Ridge Regression und Lasso ergeben sich nun aus dem Schnittpunkt der Höhenlinie und der Norm-Begrenzung. Im Falle der $l_1$-Norm ist dieser Schnittpunkt mit einer hohen Wahrscheinlichkeit an eine der Ecken und einer der beiden Koeffizienten wird auf Null gesetzt. Im Gegensatz gibt es bei der Wahl einer $l_2$-Begrenzung keine Ecken. Somit kommt jeder Randpunkt der Begrenzung als Schnittpunkt in Frage und es wird keine Dünnbesetzung hervorgerufen. Dieser Effekt verstärkt sich in höheren Dimensionen.
+Es wird also im Vergleich zu (\ref{ridge_regression}) lediglich die $l_2$-Norm durch eine $l_1$-Norm ausgetauscht. Bevor wir uns mit der Lösung dieses Problems beschäftigen, möchten wir erklären, warum die $l_1$-Norm eine Dünnbesetzung hervorruft. Die lässt sich auf zwei Arten erklären. Zunächst geben wir eine geometrische Erklärung, welche in Abbildung \ref{lasso_ridge_regression_figure} zu sehen ist. Dort sind die $l_1$- und $l_2$-Beschränkungen sowie die Höhenlinien der RSS Funktion in zwei Dimensionen aufgezeichnet. Die optimalen Koeffizienten von Ridge Regression und Lasso ergeben sich nun aus dem Schnittpunkt der Höhenlinie und der Norm-Begrenzung. Im Falle der $l_1$-Norm ist dieser Schnittpunkt mit einer hohen Wahrscheinlichkeit an eine der Ecken und einer der beiden Koeffizienten wird auf Null gesetzt. Im Gegensatz gibt es bei der Wahl einer $l_2$-Begrenzung keine Ecken. Somit kommt jeder Randpunkt der Begrenzung als Schnittpunkt in Frage und es wird keine Dünnbesetzung, sondern lediglich eine kontinuierliche Schrumpfung der Koeffizienten hervorgerufen. Dieser Effekt verstärkt sich in höheren Dimensionen.
 
 \begin{figure}
 \centering
@@ -334,7 +335,12 @@ Es wird also im Vergleich zu (\ref{ridge_regression}) lediglich die $l_2$-Norm d
 \label{lasso_ridge_regression_figure}
 \end{figure}
 
-Man kann durchaus auf die Idee kommen, andere Normen zu verwenden. Warum nicht $p = 0.5$ als Norm? Nochmal Plot mit verschiedenen Normen im $R^2$
+An dieser Stelle kann man auf den Gedanken kommen, andere Strafterme zu verwenden, welche bei geometrischer Betrachtung die Wahrscheinlichkeit erhöhen eine Dünnbesetzung der Koeffizienten hervorzurufen. So kann man zum Beispiel die $l_p$-Normen als Strafterm für Werte $q < 1$ in Betracht ziehen.
+\begin{align}
+\label{sparse_regression}
+\hat{\beta}^{\text{sparse}} = \argmin_{\beta} \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda\sum_{j=1}^p \left|\beta_j\right|^q
+\end{align}
+In Abbildung \ref{norm_figure} sind die Begrenzungen der $l_p$-Normen für verschiedene Werte eingezeichnet. NOTATION (p Anzahl Variablen) Für $q \rightarrow 0$ entstehen sternförmige Höhenlinien, welche immer weiter zum Ursprung gedrückt werden. Somit wird es immer wahrscheinlicher, dass die Höhenlinien der RSS-Funktion eine Ecke treffen. Das Problem liegt allerdings nicht im Effekt der verschiedenen Strafterme, sondern in der Berechnung. Für $q < 1$ ist (\ref{sparse_regression}) ein nicht-konvexes Optimierungsproblem, da $\norm{\cdot}_q$ dann keine Norm gemäß Definition \ref{norm} ist. Im Extremfall der $l_0$-\q{Norm} wird (\ref{sparse_regression}) sogar NP-schwer. CITE. Somit besteht in beiden Fällen keine effiziente Methode zur Berechnung von $\hat{\beta}^{\text{sparse}}$ zur Verfügung. Der Wert $q = 1$ ist eine Art Kompromisslösung, die einerseits effizient zu berechnen ist und andererseits noch immer eine dünnbesetzte Lösung liefert.
 
 \begin{figure}
 \centering
@@ -342,39 +348,45 @@ Man kann durchaus auf die Idee kommen, andere Normen zu verwenden. Warum nicht $
 	\centering
 	\includegraphics[width = \textwidth]{figures/norm_0_5.png}
 	\label{norm_0_5_figure}
-	\caption*{$p = 0.5$}
+	\caption*{$q = 0.5$}
 	\end{subfigure} \hspace{0.5cm}
 	%	
 	\begin{subfigure}{0.2\textwidth}
 	\centering
 	\includegraphics[width = \textwidth]{figures/norm_1.png}
 	\label{norm_1_figure}
-	\caption*{$p = 1$}
+	\caption*{$q = 1$}
 	\end{subfigure}\hspace{0.5cm}
 	%
 	\begin{subfigure}{0.2\textwidth}
 	\centering
 	\includegraphics[width = \textwidth]{figures/norm_2.png}
 	\label{norm_2_figure}
-	\caption*{$p = 2$}
+	\caption*{$q = 2$}
 	\end{subfigure}\hspace{0.5cm}
 	%
 	\begin{subfigure}{0.2\textwidth}
 	\centering
 	\includegraphics[width = \textwidth]{figures/norm_4.png}
 	\label{norm_4_figure}
-	\caption*{$p = 4$}
+	\caption*{$q = 4$}
 	\end{subfigure}
 
-\caption{Die Abbildung zeigt die Begrenzungen der $l_p$-Norm für verschiedene Werte von $p$, also die Mengen $\{x \in \mathbb{R}^2 \colon \norm{x}_{p} \leq c \}$.}
+\caption{Die Abbildung zeigt die Begrenzungen der $l_p$-Norm im $\mathbb{R}^2$ für verschiedene Werte von $q$, also die Mengen $\{x \in \mathbb{R}^2 \colon \norm{x}_{q} \leq c \}$.}
 \label{norm_figure}
 \end{figure}
 
-Um eine mathematisch gründliche Erklärung für die Dünnbesetzung zu liefern, wenden wir uns der Lösung von \ref{lasso} zu. Diese ist gegeben durch
+Um eine mathematisch gründliche Erklärung für die Dünnbesetzung zu liefern, wenden wir uns der Lösung von (\ref{lasso}) zu. Diese kann nur dann explizit angegeben werden, wenn $\mat X$ orthonormale Spalten hat. Es hilft uns aber trotzdem diese Lösung zu verstehen??
 \begin{align}
-\hat{\beta}^{\text{lasso}} = \text{sign}(\hat{\beta}^{\text{OLS}}) \left(\left|\hat{\beta}^{\text{OLS}}\right| - \frac{\lambda}{2}\right)_{+}
+\hat{\beta}_j^{\text{lasso}} = \text{sign}(\hat{\beta}_j^{\text{OLS}}) \left(\left|\hat{\beta}_j^{\text{OLS}}\right| - \frac{\lambda}{2}\right)_{+}
 \end{align}
-Der Beweis kann in \cite{murphy} nachgelesen werden. Der sog. \textit{soft thresholding operator} $(\cdot)_+$ ist in Abbildung REF dargestellt. Warum ist dann sparsity klar? (Murphy)
+wobei $(\cdot)_+ = max(\cdot, 0)$ ist. Der Beweis kann in \cite{murphy} nachgelesen werden. Die Lösung ist also durch den der sog. \textit{soft thresholding operator} gegeben, welcher durch
+\begin{align}
+\text{soft}_{\delta}(x) = \text{sign}(x)(|x| - \delta)_+
+\end{align}
+definiert wird.
+
+Der Operator ist in Abbildung \ref{thresholding_figure} noch einmal graphisch dargestellt. Nun sind wir auch in der Lage zu verstehen, warum Tibshirani \cite{tibshirani_lasso} den Begriff Lasso eingeführt hat. Dieser steht für \textit{Least absolute selection and shrinkage operator}, was bedeutet, dass ein Teil der Koeffizienten $\hat{\beta}_j^{\text{OLS}}$ ausgewählt und im Betrag geschrumpft wird. Die neuen Lasso Koeffizienten ergeben sich also dadurch, dass zunächst alle Koeffizienten in $\hat{\beta}^{\text{OLS}}$, die kleiner als $\frac{\lambda}{2}$ sind, auf $0$ gesetzt werden und anschließend die Verbliebenden im Betrag um $\frac{\lambda}{2}$ geschrumpft werden. Somit ist klar, dass für $\lambda \geq \lambda_{\text{max}}$ alle Koeffizienten $\hat{\beta}_j^{\text{lasso}} = 0$ sind, wobei $\lambda_{\text{max}} = \norm{\mat X^Ty}_{\infty}$. (Der Wert $\lambda_{\text{max}}$ beruht auf der Beobachtung, dass $0$ der optimale Wert der Koeffizienten ist falls $(\mat X^Ty)_j \in [-\lambda, \lambda]$ für alle $j$.) 
 
 \begin{figure}
 \centering
@@ -393,6 +405,7 @@ Der Beweis kann in \cite{murphy} nachgelesen werden. Der sog. \textit{soft thres
 \label{thresholding_figure}
 \end{figure}
 
+The loss function of the lasso is not differentiable, but a wide variety of techniques from convex analysis and optimization theory have been developed to compute the solutions path of the lasso. These include coordinate descent [20], subgradient methods, least-angle regression (LARS), and proximal gradient methods.[21] Subgradient methods, are the natural generalization of traditional methods such as gradient descent and stochastic gradient descent to the case in which the objective function is not differentiable at all points. LARS is a method that is closely tied to lasso models, and in many cases allows them to be fit very efficiently, though it may not perform well in all circumstances. LARS generates complete solution paths.[21] Proximal methods have become popular because of their flexibility and performance and are an area of active research. The choice of method will depend on the particular lasso variant being used, the data, and the available resources. However, proximal methods will generally perform well in most circumstances. (Wikipedia)
 Mathematische Lösung des Problems? (LARS, aber nicht näher erwähnen)
 plot wie Koeffizienten gegen 0\\
 
@@ -467,7 +480,7 @@ so reduziert sich (\ref{elastic_net_python}) auf unser ursprünglich formulierte
 	\includegraphics[width = \textwidth]{figures/elastic_net_coefficients.png}
 	\label{elastic_net_coefficients}
 	\vspace{-0.5cm}
-	\caption{Elastic Net, $l_1$-ratio $= 0.95$}
+	\caption{Elastic Net, $\gamma = 0.95$}
 	\end{subfigure}
 \caption{Schrumpfung der verschiedenen Regressionsmethoden bei Erhöhung des jeweiligen Regularisierungsparameters.}
 \label{regression_coefficients}
