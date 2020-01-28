@@ -4,7 +4,7 @@
 % Chapter label
 \label{fundamentals}
 
-In diesem Kapitel werden wir die wichtigsten mathematischen Grundlagen, die wir für die Formulierung der dünnbesetzten Hauptkomponentenanalyse benötigen, einführen. 
+In diesem Kapitel werden wir die wichtigsten mathematischen Grundlagen, die wir für die Formulierung der dünnbesetzten Hauptkomponentenanalyse benötigen, einführen. Dazu beschäftigen wir uns zunächst mit Grundbegriffen aus des linearen Algebra, Matrixzerlegungen und ausgewählten Approximationsproblemen in Abschnitt \ref{linear_algebra}. Ein Großteil dieses Kapitel ist linearen Regressionsmodellen gewidmet, welche wir mit verschiedenen Straftermen versehen werden, um gewisse Effekte zu erzielen. Anhand eines Beispiel-Datensatzes werden wir in der Lage sein, diese Effekte visuell nachzuvollziehen. Für den weiteren Verlauf dieser Arbeit ist das Verständnis der Strafterme von entscheidender Bedeutung. Zu Schluss werden wir in Abschnitt \ref{signal_processing} Grundlagen der Signalverarbeitung ausarbeiten, da wir in Kapitel \ref{application} die dünnbesetzte Hauptkomponentenanalyse auf Frequenzdaten anwenden.
 
 
 
@@ -15,9 +15,9 @@ In diesem Kapitel werden wir die wichtigsten mathematischen Grundlagen, die wir 
 
 
 \section{Lineare Algebra}
+\label{linear_algebra}
 
-Ein Großteil der Mathematik der Hauptkomponentenanalyse beruht auf Methoden der linearen Algebra. Daher werden wir im Folgendem die wichtigsten Begriffe einführen. Aufgrund des Anwendungsfalls werden wir uns hier auf reelle Vektorräume beschränken.
-Zunächst Orthogonalität, dann Matrixzerlegungen, dann noch einige weitere Eigenschaften und Theoreme, die wir später benötigen.
+Ein Großteil der Mathematik der Hauptkomponentenanalyse beruht auf Methoden der linearen Algebra. Aufgrund des Anwendungsfalls werden wir uns auf die Einführung der Grundbegriffe in reellen Vektorräumen beschränken.
 
 \subsection{Orthogonalität}
 \begin{defn}[Skalarprodukt \cite{jaenich}]
@@ -36,29 +36,8 @@ linear. $\quad$ (Bilinearität)
 
 Allgemein versteht man unter einem \textit{euklidischem Vektorraum} ein Paar $(V, \inner{\cdot}{\cdot})$, welches aus einem reellem Vektorraum $V$ und einem Skalarprodukt $\inner{\cdot}{\cdot}$ auf $V$ besteht. Durch das Skalarprodukt wird eine Norm auf $V$ induziert:
 $$\norm{v} \defeq \sqrt{\inner{v}{v}}$$
-In den folgenden Kapiteln werden wir uns vor allem mit dem \textit{Standardskalarprodukt} in $\mathbb{R}^n$ beschäftigen. Dies ist gegeben durch 
+In den folgenden Kapiteln werden wir uns vor allem mit dem \textit{Standardskalarprodukt} im $\mathbb{R}^n$ beschäftigen. Dies ist gegeben durch 
 $$\inner{x}{y} = x_1y_1 + \cdots + x_ny_n.$$
-Die dazugehörige Norm ist die \textit{euklidische Norm} oder $l_2$-Norm, welche wir bereits zuvor in \ref{norm} gesehen haben.
-
-\begin{defn}[Orthogonalität \cite{jaenich}]
-Zwei Elemente $v,w$ eines euklidischen Vektorraums $V$ heißen \textit{orthogonal} (geschrieben $v \perp w$) wenn ihr Skalarprodukt null ist, d.h.
-$$v \perp w \iff \inner{v}{w} = 0.$$
-Eine Familie $(v_1, \ldots, v_n)$ in $V$ heißt \textit{orthogonal} oder \textit{Orthogonalsystem}, wenn
-$$v_i \perp v_j \quad \text{für alle} \quad i \neq j.$$
-Gilt zusätzlich $\inner{v_i}{v_i} = 1$ für alle $1 \leq i \leq n$, so spricht man von einem \textit{Orthonormalsystem}.
-\end{defn}
-
-\begin{defn}[Orthonormalbasis \cite{fischer}]
-Sei $\inner{\cdot}{\cdot}: V \times V \longrightarrow \mathbb{R}$ ein Skalarprodukt. Ein System von Vektoren $(v_1, \ldots, v_n)$ in $V$ wird als \textit{Orthogonalbasis} (bzw. \textit{Orthonormalbasis}) bezeichnet, wenn folgende Bedingungen erfüllt sind:
-\begin{enumerate}[(i)]
-\item $(v_1, \ldots, v_n)$ ist eine Basis von $V$
-\item $(v_1, \ldots, v_n)$ ist ein Orthogonalsystem (bzw. Orthonormalsystem)
-\end{enumerate}
-\end{defn}
-
-\begin{thm}[Existenz einer Orthonormalbasis (Fischer Lineare Algebra)]
-Jeder endlichdimensionale euklidische Vektorraum besitzt eine Orthonormalbasis.
-\end{thm}
 
 \begin{thm}[Verallgemeinerter Satz des Pythagoras \cite{anton}]
 \label{pythagoras}
@@ -66,17 +45,37 @@ Für orthogonale Vektoren $u,v$ in einem euklidischem Vektorraum $V$ gilt
 $$\norm{u+v}^2 = \norm u^2 + \norm v^2.$$
 \end{thm}
 
+\begin{defn}[Orthogonalität \cite{jaenich}]
+Zwei Elemente $v, w$ eines euklidischen Vektorraumes $V$ heißen \textit{orthogonal} (geschrieben $v \perp w$) wenn ihr Skalarprodukt null ist, d.h.
+$$v \perp w \iff \inner{v}{w} = 0.$$
+Eine Familie $(v_1, \ldots, v_n)$ in $V$ heißt \textit{orthogonal} oder \textit{Orthogonalsystem}, wenn
+$$v_i \perp v_j \quad \text{für alle} \quad i \neq j.$$
+Gilt zusätzlich $\inner{v_i}{v_i} = 1$ für alle $1 \leq i \leq n$, so spricht man von einem \textit{Orthonormalsystem}.
+\end{defn}
+
+%\begin{defn}[Orthonormalbasis \cite{fischer}]
+%Sei $\inner{\cdot}{\cdot}: V \times V \longrightarrow \mathbb{R}$ ein Skalarprodukt. Ein System von Vektoren $(v_1, \ldots, v_n)$ in $V$ wird als \textit{Orthogonalbasis} (bzw. \textit{Orthonormalbasis}) bezeichnet, wenn folgende Bedingungen erfüllt sind:
+%\begin{enumerate}[(i)]
+%\item $(v_1, \ldots, v_n)$ ist eine Basis von $V$
+%\item $(v_1, \ldots, v_n)$ ist ein Orthogonalsystem (bzw. Orthonormalsystem)
+%\end{enumerate}
+%\end{defn}
+
+\begin{thm}[Existenz einer Orthonormalbasis \cite{fischer}]
+Jeder endlichdimensionale euklidische Vektorraum besitzt eine Orthonormalbasis.
+\end{thm}
+
 Der Begriff der Orthogonalität lässt sich auf Matrizen übertragen.
 
 \begin{defn}[Orthogonale Matrix \cite{anton}]
-Eine Matrix $A \in \mathbb{M}(n \times n, \mathbb{R})$ heißt 		\textit{orthogonal}, falls deren Zeilen und Spalten jeweils paarweise orthonormal sind, d.h.
-$$\mat A^T \mat A = \mathbb{1}_n$$
+Eine Matrix $\mat A \in \mathbb{R}^{n \times n}$ heißt 		\textit{orthogonal}, falls deren Zeilen- und Spaltenvektoren paarweise orthonormal bezüglich des Standardskalarprodukts sind, d.h.
+$$\mat A^{\top} \mat A = \mathbb{1}_n$$
 \end{defn}
 
-\begin{defn}[Orthogonalprojektion (Wikipedia)]
-Eine \textit{Orthogonalprojektion} auf einen Untervektorraum $U$ eines Vektorraums $V$ ist eine lineare Abbildung $P_U \colon V \rightarrow V$, die für alle Vektoren $v\in V$ die beiden Eigenschaften
+\begin{defn}[Orthogonalprojektion \cite{anton}]
+Eine \textit{Orthogonalprojektion} auf einen Untervektorraum $U$ eines Vektorraumes $V$ ist eine lineare Abbildung $P_U \colon V \rightarrow V$, die für alle Vektoren $v \in V$ die beiden Eigenschaften
 \begin{enumerate}[(i)]
-\item $P_U(v) \in U \quad$   (Projektion)
+\item $P_U(v) \in U \quad$ (Projektion)
 \item $\langle P_U(v) - v , u \rangle = 0$ für alle $u \in U \quad$ (Orthogonalität)
 \end{enumerate}
 erfüllt.
@@ -85,32 +84,33 @@ erfüllt.
 Mithilfe einer Orthogonalbasis für $U$ lässt sich aus dieser Definition eine Lösung für die Orthogonalprojektion $P_U(v)$ herleiten.
 
 \begin{thm}[\cite{anton}]
+\label{orthogonal_projection_theorem}
 Ist $(u_1, \ldots, u_n)$ eine Orthogonalbasis von $U$, so gilt für alle $v \in V$
 $$P_{U}(v) = \sum_{i=1}^n \frac{\langle v, u_i \rangle}{\langle u_i, u_i \rangle} u_i$$
 \end{thm}
 
-In späteren Kapiteln werden wir die Orthogonalprojektion in einer anderen Form nutzen. Wir können die Projektion auch als Matrix-Vektor-Produkt auffassen. Verwenden wir das Standardskalarprodukt so gilt mit einer Orthogonalbasis $(u_1, \ldots, u_n)$ von $U$:
-$$P_U(v) = \sum_{i=1}^n \frac{v^T u_i}{u_i^T u_i} u_i = \sum_{i=1}^n \frac{u_i u_i^T}{u_i^T u_i}v = \mat A \mat A^T v$$
-wobei die Spalten von $\mat A$ die normalisierten Vektoren der Orthogonalbasis sind, d.h. $\mat A = \begin{bmatrix} \frac{u_1}{\norm{u_1}} & \cdots & \frac{u_n}{\norm{u_n}} \end{bmatrix}$
-
-(Von Wikipedia)
-The orthonormality condition can also be dropped. If $u_{1},\ldots ,u_{k}$ is a (not necessarily orthonormal) basis, and $\mat A$ is the matrix with these vectors as columns, then the projection is:
-$$P_{A}=A(A^{\mathrm{T}}A)^{-1}A^{\mathrm{T}}$$
-
-Mithilfe von \ref{pythagoras} lässt sich zeigen, dass der orthogonal auf den Unterraum projizierte Vektor den Abstand zwischen dem Ausgangsvektor und dem Unterraum minimiert.
+Später werden wir die Orthogonalprojektion in einer anderen Form nutzen. Wir können die Projektion auch als Matrix-Vektor-Produkt auffassen. Verwenden wir das Standardskalarprodukt gilt mit einer Orthogonalbasis $(u_1, \ldots, u_n)$ von $U$:
+\begin{align}
+P_U(v) = \sum_{i=1}^n \frac{v^{\top} u_i}{u_i^{\top} u_i} u_i = \sum_{i=1}^n \frac{u_i u_i^{\top}}{u_i^{\top} u_i}v = \mat A \mat A^{\top} v
+\end{align}
+wobei $\mat A = \begin{bmatrix} \frac{u_1}{\norm{u_1}} & \cdots & \frac{u_n}{\norm{u_n}} \end{bmatrix}$. Die Orthonormalitätsbedingung in Theorem \ref{orthogonal_projection_theorem} kann auch weggelassen werden. Ist $(u_{1},\ldots ,u_{n})$ eine beliebige Basis von $U$, so gilt:
+\begin{align}
+P_U(v) = \mat A (\mat A^\top \mat A)^{-1} \mat A^\top v
+\end{align}
+Wir nennen $\mat H = \mat A (\mat A^\top \mat A)^{-1} \mat A^\top$ die \textit{orthogonale Projektionsmatrix}. Mithilfe von Theorem \ref{pythagoras} lässt sich zeigen, dass der orthogonal auf den Unterraum projizierte Vektor den Abstand zwischen dem Ausgangsvektor und dem Unterraum minimiert.
 
 \begin{thm}[\cite{anton}]
-Sei $U$ ein Unterraum eines euklidischen Vektorraums $V$. Dann ist $P_U(v)$ die beste Näherung von $u$ in $U$, d.h.
+Sei $U$ ein Unterraum eines euklidischen Vektorraumes $V$. Dann ist $P_U(v)$ die beste Näherung von $u$ in $U$, d.h.
 $$\norm{P_U(v) - v}^2 \leq \norm{u - v}^2 \quad \text{für alle } u \in U$$
 \end{thm}
 
 
 \subsection{Matrixzerlegungen}
 
-In diesem Abschnitt werden wir uns mit verschiedenen Matrixzerlegungen beschäftigen. Dazu werden wir zunächst ...
+In diesem Abschnitt führen wir zwei wichtige Matrixzerlegungen ein, die auch in vielen Bereichen der Numerik Anwendung finden.
 
 \begin{defn}[Eigenwert, Eigenvektor \cite{anton}]
-Sei $\mat{A} \in \rnn$. Ein von Null verschiedener Vektor $x \in \rn$ heißt \textit{Eigenvektor} von $\mat{A}$, wenn
+Sei $\mat{A} \in \rnn$. Ein von Null verschiedener Vektor $x \in \rn$ heißt \textit{Eigenvektor} von $\mat{A}$, falls
 $$\mat{A}x = \lambda x$$
 für einen Skalar $\lambda \in \mathbb{R}$. Die Zahl $\lambda$ heißt \textit{Eigenwert} von $\mat{A}$.
 \end{defn}
@@ -119,10 +119,10 @@ für einen Skalar $\lambda \in \mathbb{R}$. Die Zahl $\lambda$ heißt \textit{Ei
 Eine quadratische Matrix $\mat A \in \rnn$ heißt \textit{diagonalisierbar}, wenn eine invertierbare Matrix $\mat P$ existiert, so dass $\mat{D} = \mat{P}^{-1}\mat{A}\mat{P}$ Diagonalgestalt hat.
 \end{defn}
 
-Es gibt nun viele verschiedene Kriterien, wann eine Matrix diagonalisierbar ist. Für unsere spätere Anwendung interessieren wir uns vor allem für die Frage, ob es zu einer gegebenen Matrix $\mat{A} \in \rnn$ eine orthogonale Matrix $\mat{P}$ gibt, die $\mat{A}$ diagonalisiert. Eine derartige Diagonalisierung wird auch als \textit{Hauptachsentransformation} bezeichnet. Dieser Name stammt ursprünglich aus der Theorie der Kegelschnitte. Hierbei ist eine Hauptachsentransformation eine orthogonale Abbildung, welche die Koordinatenachsen in die Richtungen der beiden \textit{Hauptachsen} überführt. Wir wollen uns aber vorerst nicht mit dieser geometrischen Interpretation beschäftigen, sondern mit einem mathematisch äquivalenten, in den Anwendungen aber wichtigeren Problem.
+Es gibt verschiedene Kriterien für die Diagonalisierbarkeit von Matrizen. Für unsere spätere Anwendung interessieren wir uns vor allem für die Frage, ob es zu einer gegebenen Matrix $\mat{A} \in \rnn$ eine orthogonale Matrix $\mat{P}$ gibt, die $\mat{A}$ diagonalisiert. Eine derartige Diagonalisierung wird auch als \textit{Hauptachsentransformation} bezeichnet. Dieser Name stammt ursprünglich aus der Theorie der Kegelschnitte. Hierbei ist eine Hauptachsentransformation eine orthogonale Abbildung, welche die Koordinatenachsen in die Richtungen der beiden \textit{Hauptachsen} überführt. Wir wollen uns aber vorerst nicht mit dieser geometrischen Interpretation beschäftigen, sondern mit einem mathematisch äquivalenten, in den Anwendungen aber wichtigeren Problem.
 
 \begin{thm}[Hauptachsentransformation \cite{jaenich}]
-Ist $\mat{A} \in \rnn$ eine symmetrische Matrix, so gibt es eine orthogonale Transformation $\mat{P}$, welche $\mat{A}$ in eine Diagonalmatrix $\mat{D} \defeq \mat{P}^{-1}\mat{A}\mat{P}$ der Gestalt
+Sei $\mat{A} \in \rnn$ eine symmetrische Matrix. Dann gibt es eine orthogonale Transformation $\mat{P}$, welche $\mat{A}$ in eine Diagonalmatrix $\mat{D} \defeq \mat{P}^{-1}\mat{A}\mat{P}$ der Gestalt
 $$\mat{D} = \begin{bmatrix}
     \lambda_{1} & & & & & & \\
     & \ddots & & & & & \\
@@ -135,13 +135,13 @@ $$\mat{D} = \begin{bmatrix}
 überführt. Hierbei sind $\lambda_1, \ldots, \lambda_r$ die verschiedenen Eigenwerte von $\mat{A}$.
 \end{thm}
 
-Wir können also eine symmetrische Matrix $\mat{A}$ zerlegen in $\mat A = \mat P \mat D \mat P^T$. Man kann $\mat{P}$ so konstruieren, dass die Spalten genau den Eigenvektoren von $\mat{A}$ entsprechen. Wir werden diese Umformung in späteren Kapiteln unter dem Begriff \textit{Eigenwertzerlegung} (Englisch: Eigenvalue Decomposition) verwenden. 
+Zusammenfassend besitzt eine symmetrische Matrix also eine Zerlegung $\mat A = \mat P \mat D \mat P^{\top}$. Man kann $\mat{P}$ konstruieren, so dass die Spalten genau den Eigenvektoren von $\mat{A}$ entsprechen. Wir werden diese Umformung in späteren Kapiteln unter dem Begriff \textit{Eigenwertzerlegung} (Englisch: \textit{Eigenvalue Decomposition}) verwenden. 
 
-Eine eng verwandte, aber vielseitigere Faktorisierung von Matrizen ist die \textit{Singulärwertzerlegung}. Sie ermöglicht eine Zerlegung auch von nicht quadratischen oder nicht symmetrischen Matrizen.
+Eine eng verwandte, aber vielseitigere Faktorisierung von Matrizen ist die \textit{Singulärwertzerlegung}. Sie ermöglicht eine allgemeine Zerlegung von nicht quadratischen oder nicht symmetrischen Matrizen.
 
 \begin{thm}[Singulärwertzerlegung \cite{schaback}]
 Jede Matrix $\mat{A} \in \rmn$ besitzt eine \textit{Singulärwertzerlegung} 
-$$\mat{A} = \mat{U}\mat{D}\mat{V}^{T}$$
+$$\mat{A} = \mat{U}\mat{D}\mat{V}^{\top}$$
 mit orthogonalen Matrizen $\mat U \in \mathbb{R}^{m \times m}$ und $\mat V \in \rnn$, sowie der Diagonalmatrix $\mat{D} = (\sigma_j\delta_{ij}) \in \rmn$.
 \end{thm}
 
@@ -149,57 +149,58 @@ mit orthogonalen Matrizen $\mat U \in \mathbb{R}^{m \times m}$ und $\mat V \in \
 Die positiven Diagonaleinträge $\sigma_{i} > 0$ von $\mat D$ werden \textit{Singulärwerte} genannt.
 \end{defn}
 
-Nach Konvention werden die Singulärwerte von $\mat D$ absteigend sortiert, d.h. $\sigma _{1} \geq \cdots \geq \sigma _{r}$. Außerdem sind die Singulärwerte eindeutig bestimmt und stehen durch $\sigma_i = \sqrt{\lambda_i}$ in einer engen Beziehung mit den Eigenwerten $\lambda_i$ von $\mat A$. Geometrisch bedeutet diese Faktorisierung, dass sich die Matrix $A$ in zwei Drehungen $\mat U, \mat V$ und eine Streckung unterteilen lässt. Dabei korrespondieren die Streckungsfaktoren mit den Einträgen der Diagonalmatrix $\mat D$.
+Singulärwerte einer Matrix $\mat A$ sind eindeutig bestimmt und stehen durch $\sigma_i = \sqrt{\lambda_i}$ in einer engen Beziehung mit den Eigenwerten $\lambda_i$. Konventionell werden die Singulärwerte von $\mat D$ absteigend sortiert, d.h. $\sigma _{1} \geq \cdots \geq \sigma _{r}$. Geometrisch bedeutet diese Zerlegung, dass sich die Matrix $\mat A$ in zwei Drehungen $\mat U, \mat V$ und eine Streckung unterteilen lässt. Dabei korrespondieren die Streckungsfaktoren mit den Einträgen der Diagonalmatrix $\mat D$.
 
 
 \subsection{Matrix Approximation}
 
-Das Konzept von Normen lässt sich auch auf Matrizen übertragen. In späteren Kapiteln werden wir vor allem Gebrauch folgender Norm machen.
+In diesem Abschnitt werden wir zwei Approximationsprobleme für Matrizen formulieren, die eine explizite Lösung besitzen. Zunächst führen wir dafür eine Matrixnorm ein, von welcher wir auch später sehr häufig Gebrauch machen werden.
 
 \begin{defn}[Frobeniusnorm \cite{schaback}]
-Für eine Matrix $A \in \rmn$ ist die \textit{Frobeniusnorm} definiert durch
+Für eine Matrix $\mat A \in \rmn$ ist die \textit{Frobeniusnorm} definiert durch
 $$\norm{\mat A}_F = \left( \sum_{i=1}^{m} \sum_{j=1}^{n} \lvert a_{ij} \rvert ^{2} \right) ^{\frac{1}{2}}.$$
 \end{defn}
 
-Man zeigt leicht, dass $\norm{\mat A}_F^2 = \spur{\mat A^T \mat A}$ gilt.
+Man zeigt leicht, dass $\norm{\mat A}_F^2 = \spur{\mat A^{\top} \mat A}$ gilt.
 Eine weitere wichtige Eigenschaft von Matrizen ist der \textit{Rang}.
 
 \begin{defn}[Rang \cite{anton}]
 Die Dimension des Zeilen- und des Spaltenraumes einer Matrix $\mat A$ heißt \textit{Rang} von $\mat A$ und wird mit $\rang{\mat A}$ bezeichnet.
 \end{defn}
 
-Später werden wir eine Matrix $\mat A$ durch eine andere, simplere Matrix $\widehat{\mat A}$ mit niedrigerem Rang approximieren. Dieses Problem ist unter dem Namen \textit{low rank approximation} im Englischen bekannt.
-Mithilfe der Singulärwertzerlegung können wir eine explizite Lösung für dieses Problem angeben.
+Wir möchten nun eine Matrix $\mat A$ durch eine andere, simplere Matrix $\widehat{\mat A}$ mit niedrigerem Rang approximieren. Dieses Problem fällt unter die Kategorie \textit{low rank approximation}, welche eine enge Verbindung zur Hauptkomponentenanalyse aufweist. In Anwendung korrespondiert die Rang-Bedingung mit der Komplexität eines Modells. Mithilfe der Singulärwertzerlegung können wir eine explizite Lösung angeben.
 
 \begin{thm}[Eckart-Young-Mirsky-Theorem \cite{eckart}]
-Sei
-$$\mat{A} = \mat{U}\mat{D} \mat{V}^{\top} \in \mathbb{R}^{m\times n}, \quad m \leq n$$
-
-die Singulärwertzerlegung von $\mat{A}$ und partitioniere $\mat{U}, \mat{D}$ und $\mat{V}$ wie folgt:
-
+Sei $\mat A \in \rmn$ mit $m \leq n$ und 
+$$\mat{A} = \mat{U}\mat{D} \mat{V}^{\top}$$
+eine Singulärwertzerlegung von $\mat{A}$. Wir partitionieren $\mat{U}, \mat{D}$ und $\mat{V}$ wie folgt:
 $$\mat{U} =: \begin{bmatrix} \mat{U}_1 & \mat{U}_2\end{bmatrix}, \quad 
 \mat{D} =: \begin{bmatrix} \mat{D}_1 & 0 \\ 0 & \mat{D}_2 \end{bmatrix},\quad \mat{V} =: \begin{bmatrix} \mat{V}_1 & \mat{V}_2 \end{bmatrix},$$
-
 wobei $\mat{U}_{1} \in \mathbb{R}^{m\times r}$, $\mat{D} _{1} \in \mathbb{R}^{r\times r}$ und $\mat{V}_{1} \in \mathbb{R}^{n\times r}$. Dann löst die abgeschnittene Singulärwertzerlegung (Englisch: \textit{truncated singular value decomposition)}
-
-$$\widehat \mat{A}^* = \mat{U}_1 \mat{D}_1 \mat{V}_1^{\top},$$
-
+$$\widehat{\mat{A}}^* = \mat{U}_1 \mat{D}_1 \mat{V}_1^{\top},$$
 das Approximationsproblem
-
-$$\min_{\operatorname{rank}(\widehat \mat{A}) \leq r} \|\mat{A}-\widehat \mat{A}\|_{\text{F}} = \|\mat{A}-\widehat \mat{A}^*\|_{\text{F}} = \sqrt{\sigma^2_{r+1} + \cdots + \sigma^2_m},$$
-
-wobei $\sigma_i$ die Singulärwerte von $\mat A$ bzw. die Diagonaleinträge von $\mat D$ sind. Der Minimierer $\widehat \mat{A}^*$ ist genau dann eindeutig, wenn $\sigma_{r+1} \neq \sigma_{r}$.
+\begin{align}
+\min_{\operatorname{rank}(\widehat{\mat{A}}) \leq r} \|\mat{A}-\widehat{\mat{A}}\|_{\text{F}} = \|\mat{A}-\widehat{\mat{A}}^*\|_{\text{F}} = \sqrt{\sigma^2_{r+1} + \cdots + \sigma^2_m},
+\end{align}
+wobei $\sigma_i$ die Singulärwerte von $\mat A$ sind. Der Minimierer $\widehat{\mat{A}}^*$ ist genau dann eindeutig, wenn $\sigma_{r+1} \neq \sigma_{r}$.
 \end{thm}
 
-Ein weiteres Problem, was unter diese Kategorie fällt ist Procrustes Rotationsproblem.
+Das Eckart-Young-Mirsky-Theorem wird es uns in Abschnitt \ref{pca_theorems} ermöglichen, eine wertvolle Eigenschaft der Hauptkomponentenanalyse zu zeigen.
+
+Ein anderes Approximationsproblem für Matrizen ist das \textit{orthogonale Procrustes Rotationsproblem}. Hierbei sind uns zwei Matrizen $\mat M$ und $\mat N$ gegeben, welche durch eine orthogonale Transformation ineinander überführt werden sollen. Wieder hilft uns die Singulärwertzerlegung bei der Findung einer Lösung.
 
 \begin{thm}[Procrustes Rotationsproblem \cite{gower}]
-Seien $\mat M \in \mathbb{R}^{n \times p}$, $\mat N \in \mathbb{R}^{n \times k}$ und $\mat M^T \mat N = \mat{U}\mat{D} \mat{V}^{\top}$ eine Singulärwertzerlegung. Dann löst
-$$\hat{\mat A} = \mat U \mat V^T$$
+Seien $\mat M \in \mathbb{R}^{n \times p}$, $\mat N \in \mathbb{R}^{n \times k}$ und $\mat M^{\top} \mat N = \mat{U}\mat{D} \mat{V}^{\top}$ eine Singulärwertzerlegung. Dann löst
+$$\widehat{\mat A} = \mat U \mat V^{\top}$$
 das Approximationsproblem
-$$\hat{\mat A} = \argmin_{\mat A} \norm{\mat M - \mat N \mat A^T}_F^2$$
-$$\text{unter der Nebenbedingung, dass } \mat A^T \mat A = \mat I_{k \times k}.$$
+\begin{align}
+\label{procrustes_rotation}
+\widehat{\mat A} = \argmin_{\mat A} \norm{\mat M - \mat N \mat A^{\top}}_F^2
+\end{align}
+$$\text{unter der Nebenbedingung, dass } \mat A^{\top} \mat A = \mat I_{k \times k}.$$
 \end{thm}
+
+In Abschnitt \ref{spca_numerical_solution} wird sich (\ref{procrustes_rotation}) als Subproblem der dünnbesetzten Hauptkomponentenanalyse herausstellen.
 
 
 %----------------------------------------------------------------------------------------
@@ -208,6 +209,7 @@ $$\text{unter der Nebenbedingung, dass } \mat A^T \mat A = \mat I_{k \times k}.$
 
 
 \section{Analysis}
+\label{analysis}
 
 In diesem Abschnitt möchten wir die 
 
@@ -223,7 +225,7 @@ Eine Abbildung $\norm{\cdot} \colon \mathbb{R}^n \longrightarrow {\mathbb {R} }_
 \end{enumerate}
 \end{defn}
 
-\begin{defn}[$l_p$-Norm \cite{schaback}] 
+\begin{defn}[$\ell_p$-Norm \cite{schaback}] 
 \label{lp_norm}
 Auf dem $\mathbb{R}^n$ sind die $l_p$-Normen für $1 \leq p < \infty$ definiert als
 $$\norm{x}_p \defeq \left( \sum_{i=1}^{n} \abs{x_i}^{p} \right) ^{\frac{1}{p}} \quad x \in \mathbb{R}^{n}$$
@@ -232,31 +234,70 @@ $$\norm{x}_{\infty} \defeq \max_{1 \leq i \leq n} \abs{x_i} \quad x \in \mathbb{
 Im Fall $p = \infty$ spricht man auch von der \textit{Maximumsnorm} und im Fall $p = 2$ von der \textit{euklidischen Norm}.
 \end{defn}
 
-Eine weitere wichtige Norm, die wir im Zuge dieser Arbeit verwenden werden ist die $l_0$-\q{Norm}. Diese zählt die von null verschiedenen Einträge eines Vektors und misst somit, ob ein Vektor dünnbesetzt ist.
+Um Verwirrung auszuschließen werden wir im Folgenden von der $\ell_q$-Norm sprechen, da wir mit $p$ die Anzahl an Variablen in einem Modell bezeichnen. Eine weitere wichtige Norm, die wir im Zuge dieser Arbeit verwenden werden ist die $\ell_0$-\q{Norm}. Diese zählt die von null verschiedenen Einträge eines Vektors und misst somit, ob ein Vektor dünnbesetzt ist.
 
-\begin{defn}[$l_0$-\q{Norm} \cite{foucart}]
-Die sogenannte $l_0$-\q{Norm} ist definiert durch
+\begin{defn}[$\ell_0$-\q{Norm} \cite{foucart}]
+Die sogenannte $\ell_0$-\q{Norm} ist definiert durch
 $$\norm{x}_{0} \defeq \left|\{i \colon \enspace x_i \neq 0 , \quad 1 \leq i \leq n\}\right|.$$
 \end{defn}
 
 Die übliche Schreibweise $\norm{x}_0$ - die Notation $\norm{x}_{0}^{0}$ wäre angemessener - entspringt der Beobachtung, dass 
-$$\norm{x}_{p}^{p} = \sum_{i=1}^{n} \abs{x_i}^p \quad \underset{p \rightarrow 0}{\longrightarrow} \quad \sum_{i=1}^{n} \mathbb{1}_{\{x_i = 0\}} = \left|\{i \colon \enspace x_i \neq 0\, , \quad 1 \leq i \leq n\}\right|$$
-Wir wollen betonen, dass die $l_0$-\q{Norm} keine wirkliche Norm ist, da die Abbildung nicht homogen ist. Trotzdem ist diese \q{Norm} in der Theorie der komprimierten Erfassung (Englisch: \textit{compressive sensing}) sehr nützlich. Des Weiteren werden wir die Notation $\norm{\cdot}_p$ gemäß der Definition in \ref{lp_norm} auch für Werte $0 < p < 1$ verwenden, obwohl durch diese Abbildung ebenfalls keine Norm gegeben ist.
+$$\norm{x}_{q}^{q} = \sum_{i=1}^{n} \abs{x_i}^q \quad \underset{q \rightarrow 0}{\longrightarrow} \quad \sum_{i=1}^{n} \mathbb{1}_{\{x_i = 0\}} = \left|\{i \colon \enspace x_i \neq 0\, , \quad 1 \leq i \leq n\}\right|$$
+Wir wollen betonen, dass die $\ell_0$-\q{Norm} keine wirkliche Norm ist, da die Abbildung nicht homogen ist. Trotzdem ist diese \q{Norm} in der Theorie der komprimierten Erfassung (Englisch: \textit{compressive sensing}) sehr nützlich. Des Weiteren werden wir die Notation $\norm{\cdot}_q$ gemäß der Definition in \ref{lp_norm} auch für Werte $0 < q < 1$ verwenden, obwohl durch diese Abbildung ebenfalls keine Norm gegeben ist.
 
 %----------------------------------------------------------------------------------------
 %	Statistik
 %----------------------------------------------------------------------------------------
 
-\section{Statistik}
-Varianz, Erwartungswert
-bias variance trade-off (Murphy, Machine Learning)
-\subsection{Empirische Kovarianzmatrix}
-
-\subsection{Lineare Regressionsmodelle}
+\section{Generalisierte lineare Modelle}
+\label{generalized_linear_models}
 
 Es existiert eine sehr enge Verbindung zwischen der Hauptkomponentenanalyse, die wir in Kapitel \ref{pca} näher kennenlernen werden, und der Regressionsanalyse. Viele der Ideen und Ansätze im folgendem Abschnitt werden wir später gebrauchen und spielen eine maßgebliche Rolle bei der Formulierung der dünnbesetzten Hauptkomponentenanalyse.\\
 
-\textbf{Lineare Regression} \cite{hastie_elements}
+\subsection{Grundlagen aus der Statistik}
+
+Seien $(x_1, \ldots, x_n)$ Datenpunkte.
+Es bezeichne
+$\overline{X}=\frac{1}{n}\sum _{i=1}^{n}X_{i}$
+das Stichprobenmittel.
+Stichprobenvarianz
+$$s_x^2 = \frac{1}{n-1}\sum_{i=1}^n(x_i - \bar{x}_n)^2$$
+Empirische Kovarianzmatrix!
+
+Sei $g\colon \Theta \to \mathbb {R}$ eine zu schätzende reelle Parameterfunktion in einem statistischem Modell $(X,{\mathcal {A}},\mathcal{P})$ wobei $\mathcal{P} = \{P_{\vartheta } \colon \vartheta \in \Theta \}$. Wir werden nun einige wichtige Grundbegriffe für einen Schätzer $d \colon (X, \mathcal{A}) \rightarrow (\mathbb{R}, \mathcal{B}(\mathbb{R}))$ in $\mathcal{L}^1(\mathcal{P})$ einführen.
+
+\begin{defn}[Verzerrung \cite{rueschendorf}]
+Die \textit{Verzerrung} (Englisch: \textit{Bias}) des Schätzers $d$ bei $\vartheta$ ist definiert durch
+$$\operatorname {Bias} _{\vartheta }(d) \defeq \operatorname {E} _{\vartheta }(d)-g(\vartheta ).$$
+\end{defn}
+
+%\begin{defn}[Erwartungstreuer Schätzer \cite{rueschendorf}]
+%Ein Schätzer $d$ heißt \textit{erwartungstreu} für $g$, falls
+%$$\operatorname {Bias} _{\vartheta }(d) = 0 \quad \forall \vartheta \in \Theta.$$
+%\end{defn}
+
+Um verschiedene Schätzer miteinander zu vergleichen bedienen wir uns häufig des \textit{mittleren quadratischen Fehlers}. Dieser gibt an, welche Abweichung zwischen dem Schätzer und dem wahrem Parameter zu erwarten ist.
+
+\begin{defn}[Mittlerer quadratischer Fehler \cite{kohn} (Def 15.7)]
+Der \textit{mittlere quadratische Fehler} (Englisch: \textit{Mean Squared Error (MSE)} ist definiert durch
+$$\operatorname {MSE} (d,\vartheta ) \defeq \operatorname{E} _{\vartheta}\left(\left(d-g(\vartheta )\right)^{2}\right).$$
+\end{defn}
+
+\begin{thm}[Verschiebungssatz \cite{kohn} ()]
+Der mittlere quadratische Fehler zerfällt in Varianz und Bias, d.h.
+$$\operatorname{MSE} (d,\vartheta ) = \operatorname{Var}_{\vartheta }(d)+\left(\operatorname{Bias}_{\vartheta}(d)\right)^{2}$$
+\end{thm}
+
+Für die Bewertung von Schätzern ist also sowohl Verzerrung als auch Varianz eines Schätzers zu berücksichtigen. Im Bereich des überwachten maschinellen Lernens ist das Problem der gleichzeitigen Minimierung der beiden Fehlerquellen unter dem \textit{Verzerrung-Varianz-Dilemma} (Englisch: \textit{bias-variance tradeoff}) bekannt. Aufgrund von falschen Annahmen kann es bei einem Lernalgorithmus zu einer hohen Verzerrung kommen. Beziehungen zwischen Eingabe und Ausgabe können nicht geeignet modelliert werden und man spricht in diesem Fall von einer \textit{Unteranpassung} (Englisch: \textit{underfitting}). Eine hohe Varianz hingegen kann zu einer Überanpassung (Englisch: \textit{overfitting}) führen, welche auf die Empfindlichkeit kleinerer Schwankungen in den Trainingsdaten zurückzuführen ist. In diesem Fall passt sich das Modell dem Rauschen der Trainingsdaten an und lässt keine Verallgemeinerung der Daten zu. Idealerweise wählt man ein Modell, welches sowohl die Gesetzmäßigkeiten in den Trainingsdaten genau erfasst, als sich auch auf ungesehene Testdaten generalisieren lässt. Diese Idee haben wir in \ref{bias_variance_tradeoff} veranschaulicht.
+
+\begin{figure}
+\centering
+\includegraphics[width = 0.9\textwidth]{figures/bias_variance_tradeoff_labeled.jpg}
+\caption{Verzerrung-Varianz-Dilemma}
+\label{bias_variance_tradeoff}
+\end{figure}
+
+\subsection{Lineare Regression} \cite{hastie_elements}
 
 Bei der Regressionsanalyse werden Zusammenhänge zwischen
 mehreren Merkmalen untersucht. Man versucht eine unabhängige Variable $Y$ durch eine oder mehrere abhängige Variablen $X_1, \ldots, X_p$ zu erklären. Ein lineares Regressionsmodell hat also die Form
@@ -267,12 +308,12 @@ f(X) = \beta_0 + \sum_{j=1}^p X_j\beta_j
 wobei $\beta_j$ die Regressionskoeffizienten sind.
 Bei der Verwendung dieses Modells nehmen wir an, dass die Regressionsfunktion $\text{E}(Y|X)$ linear ist bzw. ein lineares Modell eine geeignete Approximation ist.
 
-Typischerweise verfügen wir über eine Menge von Trainingsdaten $(x_1, y_1), \ldots, (x_n, y_n)$. Jedes $x_i = (x_{i1}, \ldots, x_{ip})^T$ stellt eine Beobachtung dar, die wir für die Schätzung der Parameter $\beta_j$ benutzen. Die bekannteste Methode für diesen Zweck ist sicherlich die \textit{Methode der kleinsten Quadraten} (Englisch: \textit{(Ordinary) Least Squares}), in welcher wir $\beta = (\beta_0, \ldots, \beta_p)^T$ wählen, so dass die Summe der Residuenquadrate (Englisch: \textit{Residual Sum of Squares}, kurz RSS) minimiert wird. Wir definieren
+Typischerweise verfügen wir über eine Menge von Trainingsdaten $(x_1, y_1), \ldots, (x_n, y_n)$. Jedes $x_i = (x_{i1}, \ldots, x_{ip})^{\top}$ stellt eine Beobachtung dar, die wir für die Schätzung der Parameter $\beta_j$ benutzen. Die bekannteste Methode für diesen Zweck ist sicherlich die \textit{Methode der kleinsten Quadraten} (Englisch: \textit{(Ordinary) Least Squares}), in welcher wir $\beta = (\beta_0, \ldots, \beta_p)^{\top}$ wählen, so dass die Summe der Residuenquadrate (Englisch: \textit{Residual Sum of Squares}, kurz RSS) minimiert wird. Wir definieren
 \begin{align}
 \label{RSS}
 \text{RSS}(\beta) & = \sum_{i=1}^{n}(y_i - f(x_i))^2\\
 & = \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2\\
-& = (y - \mat X \beta)^T(y-\mat X \beta)\\
+& = (y - \mat X \beta)^{\top}(y-\mat X \beta)\\
 & = \norm{y - \mat X \beta}_{2}^{2}
 \end{align}
 und das dazugehörige Minimierungsproblem
@@ -280,19 +321,19 @@ und das dazugehörige Minimierungsproblem
 \label{least_squares}
 \hat{\beta}^{\text{OLS}} = \argmin_{\beta} \text{RSS}(\beta)
 \end{align}
-wobei $\mat X \in \mathbb{R}^{n \times (p+1)}$ die Matrix der $x_i$ mit einer 1 an erster Stelle ist und $y = (y_1, \ldots, y_n)^T$. Eine Visualisierung der Methode befindet sich in Abbildung REF. Vielleicht Bild zur Regression in 2 bzw. 3D?
+wobei $\mat X \in \mathbb{R}^{n \times (p+1)}$ die Matrix der $x_i$ mit einer 1 an erster Stelle ist und $y = (y_1, \ldots, y_n)^{\top}$. Eine Visualisierung der Methode befindet sich in Abbildung REF. Vielleicht Bild zur Regression in 2 bzw. 3D?
 
 An dieser Stelle möchten wir erwähnen, dass bei Verwendung dieser Methode keine Aussage über die Gültigkeit des Modells getroffen, sondern lediglich die beste lineare Approximation gefunden wird.
 
 Falls $\mat X$ vollen Rang hat, ist es ist leicht zu zeigen, dass (\ref{least_squares}) die eindeutige Lösung
 \begin{align}
-\hat{\beta}^{\text{OLS}} = (\mat X^T\mat X)^{-1}\mat X^T y
+\hat{\beta}^{\text{OLS}} = (\mat X^{\top}\mat X)^{-1}\mat X^{\top} y
 \end{align}
 besitzt. Die Zielgröße ergibt sich dann durch
 \begin{align}
-\hat{y} = \mat X \hat{\beta}^{\text{OLS}} = \mat X (\mat X^T\mat X)^{-1}\mat X^T y
+\hat{y} = \mat X \hat{\beta}^{\text{OLS}} = \mat X (\mat X^{\top}\mat X)^{-1}\mat X^{\top} y
 \end{align}
-Die Matrix $\mat H = \mat X (\mat X^T\mat X)^{-1}\mat X^T$ haben wir bereits in REF kennengelernt. Sie projiziert $y$ orthogonal auf den durch  die Spalten von $\mat X$ aufgespannten Unterraum. Dies ermöglicht eine geometrische Interpretation der linearen Regression.
+Die Matrix $\mat H = \mat X (\mat X^{\top}\mat X)^{-1}\mat X^{\top}$ haben wir bereits in REF kennengelernt. Sie projiziert $y$ orthogonal auf den durch  die Spalten von $\mat X$ aufgespannten Unterraum. Dies ermöglicht eine geometrische Interpretation der linearen Regression.
 
 Wenn $\mat X$ keinen vollen Rang hat, ist die Lösung von (\ref{least_squares}) nicht mehr eindeutig. Dieser Art Probleme ereignen sich häufig in der Bild- und Signalanalyse, da es mehr Variablen als Beobachtungen gibt ($p > n$). Um ein gewünschtes Verhalten der Regression zu gewährleisten, bestehen verschiedene Möglichkeiten der Filterung oder Regularisierung. In letzterem Fall versehen wir den Regressionsterm mit sog. \textit{Straftermen}, welche eine bedeutende Rolle in den folgenden Kapitel spielen werden. Wir werden uns auf die Einführung dieser in linearer Regression beschränken. Das Konzept kann aber allgemeiner auch in logistischer Regression oder anderen verallgemeinerten linearen Modellen verwendet werden. Mit leicht abgewandelten Argumentationen erhalten wir dann bei Einbettung der Strafterme in die jeweilige Zielfunktion dieselben Effekte. Mehr dazu in CITE.
 
@@ -304,7 +345,7 @@ Gelegentlich sind wir mit den Ergebnissen der Methode der kleinsten Quadrate nic
 
 Ein naheliegender Ansatz zur Lösung dieser Probleme wäre es zu versuchen, die beste Teilmenge an Variablen zu finden, die eine minimale Summe der Residuenquadrate aufweist. In \cite{hastie_elements} werden verschiedene Methoden zur exakten und approximativen Berechnung dieser Teilmenge beschrieben. (Darunter fallen die leaps and bounds Methode (Furnival and Wilson, 1974), Forward Stepwise und Backward Stepwise.) Nicht immer wird die Genauigkeit der Vorhersagen durch Verwendung dieses Ansatzes besser. Dies liegt daran, dass es sich um einen diskreten Prozess handelt und somit Variablen für das Modell entweder ausgewählt oder verworfen werden. Daher beschäftigen wir uns nun mit Methoden, die eine kontinuierliche Schrumpfung der Regressionskoeffizieten erlauben.\\
 
-\textbf{Ridge Regression}
+\subsection{Ridge Regression}
 
 Die \textit{Tikhonov Regularisierung}, die auch unter dem Namen \textit{Ridge Regression} bekannt ist, kann genutzt werden, um das Problem der Multikollinearität zu lösen und im Fall $p > n$ eine eindeutige Lösung zu erhalten.
 Wie wir bereits in REF gesehen haben, kann es sinnvoll sein den Bias zu erhöhen, um genauere Vorhersagen treffen zu können. Daher führen wir nun eine \textit{ridge penalty}, einen Strafterm, ein und formulieren das Ridge Regression Problem in der Lagrange Form.
@@ -314,33 +355,33 @@ Wie wir bereits in REF gesehen haben, kann es sinnvoll sein den Bias zu erhöhen
 \end{align}
 wobei $\lambda \geq 0$ ein Parameter ist, der die Stärke der Schrumpfung der Regressionskoeffizienten kontrolliert. Je größer $\lambda$, desto stärker ist die Schrumpfung der $\beta_j$. Man kann zeigen, dass die Lösung von (\ref{ridge_regression}) in zwei Teile aufgeteilt werden kann. Da $\beta_0$ nicht im Strafterm vorkommt, schätzen wir $\beta_0 = \bar{y} = \frac{1}{n}\sum_{i=1}^{n} y_i$ und zentrieren die Eingaben $x_{ij} = x_{ij} - \bar{x}_j$. Die eindeutige Lösung der zentrierten Version von (\ref{ridge_regression}) ist dann gegeben durch
 \begin{align}
-\hat{\beta}^{\text{ridge}}  = (\mat X^T \mat X + \lambda\mat{I})^{-1}\mat{X}^Ty
+\hat{\beta}^{\text{ridge}}  = (\mat X^{\top} \mat X + \lambda\mat{I})^{-1}\mat{X}^{\top}y
 \end{align}
 wobei $\beta = (\beta_1, \ldots, \beta_p)$ und $\mat{X} \in \mathbb{R}^{n \times p}$ die Matrix der $x_i$. (Vor der Anwendung von Ridge Regression werden die Daten meist standardisiert, da $\hat{\beta}^{\text{ridge}}$ nicht äquivariant unter Skalierung ist.) \\
 
 
-\textbf{LASSO}
+\subsection{LASSO}
 
-Die durch die Ridge Regression erzeugten Koeffizienten sind also um den Faktor $\frac{1}{1+\lambda}$ gegenüber denen von Least Squares skaliert. Die Regressionskoeffizieten werden also erst für $\lambda \rightarrow 0$ auf Null geschrumpft. Um eine bessere Interpretation des Modells zu ermöglichen kreiert das \textit{Lasso} eine dünnbesetzte Lösung, bei welcher viele Koeffizienten gleich Null sind. Das Lasso wurde erstmals von Tibshirani in \cite{tibshirani_lasso} eingeführt und ist in der Signalanalyse unter dem Namen \textit{Basis Pursuit} \cite{chen} bekannt. Mathematisch erreichen wir eine Dünnbesetzung durch Einbettung eines $l_1$-Strafterms.
+Die durch die Ridge Regression erzeugten Koeffizienten sind also um den Faktor $\frac{1}{1+\lambda}$ gegenüber denen von Least Squares skaliert. Die Regressionskoeffizieten werden also erst für $\lambda \rightarrow 0$ auf Null geschrumpft. Um eine bessere Interpretation des Modells zu ermöglichen kreiert das \textit{Lasso} eine dünnbesetzte Lösung, bei welcher viele Koeffizienten gleich Null sind. Das Lasso wurde erstmals von Tibshirani in \cite{tibshirani_lasso} eingeführt und ist in der Signalanalyse unter dem Namen \textit{Basis Pursuit} \cite{chen} bekannt. Mathematisch erreichen wir eine Dünnbesetzung durch Einbettung eines $\ell_1$-Strafterms.
 \begin{align}
 \label{lasso}
 \hat{\beta}^{\text{lasso}} = \argmin_{\beta} \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda\sum_{j=1}^p \left|\beta_j\right|
 \end{align}
-Es wird also im Vergleich zu (\ref{ridge_regression}) lediglich die $l_2$-Norm durch eine $l_1$-Norm ausgetauscht. Bevor wir uns mit der Lösung dieses Problems beschäftigen, möchten wir erklären, warum die $l_1$-Norm eine Dünnbesetzung hervorruft. Die lässt sich auf zwei Arten erklären. Zunächst geben wir eine geometrische Erklärung, welche in Abbildung \ref{lasso_ridge_regression_figure} zu sehen ist. Dort sind die $l_1$- und $l_2$-Beschränkungen sowie die Höhenlinien der RSS Funktion in zwei Dimensionen aufgezeichnet. Die optimalen Koeffizienten von Ridge Regression und Lasso ergeben sich nun aus dem Schnittpunkt der Höhenlinie und der Norm-Begrenzung. Im Falle der $l_1$-Norm ist dieser Schnittpunkt mit einer hohen Wahrscheinlichkeit an eine der Ecken und einer der beiden Koeffizienten wird auf Null gesetzt. Im Gegensatz gibt es bei der Wahl einer $l_2$-Begrenzung keine Ecken. Somit kommt jeder Randpunkt der Begrenzung als Schnittpunkt in Frage und es wird keine Dünnbesetzung, sondern lediglich eine kontinuierliche Schrumpfung der Koeffizienten hervorgerufen. Dieser Effekt verstärkt sich in höheren Dimensionen.
+Es wird also im Vergleich zu (\ref{ridge_regression}) lediglich die $\ell_2$-Norm durch eine $\ell_1$-Norm ausgetauscht. Bevor wir uns mit der Lösung dieses Problems beschäftigen, möchten wir erklären, warum die $\ell_1$-Norm eine Dünnbesetzung hervorruft. Die lässt sich auf zwei Arten erklären. Zunächst geben wir eine geometrische Erklärung, welche in Abbildung \ref{lasso_ridge_regression_figure} zu sehen ist. Dort sind die $\ell_1$- und $\ell_2$-Beschränkungen sowie die Höhenlinien der RSS Funktion in zwei Dimensionen aufgezeichnet. Die optimalen Koeffizienten von Ridge Regression und Lasso ergeben sich nun aus dem Schnittpunkt der Höhenlinie und der Norm-Begrenzung. Im Falle der $\ell_1$-Norm ist dieser Schnittpunkt mit einer hohen Wahrscheinlichkeit an eine der Ecken und einer der beiden Koeffizienten wird auf Null gesetzt. Im Gegensatz gibt es bei der Wahl einer $\ell_2$-Begrenzung keine Ecken. Somit kommt jeder Randpunkt der Begrenzung als Schnittpunkt in Frage und es wird keine Dünnbesetzung, sondern lediglich eine kontinuierliche Schrumpfung der Koeffizienten hervorgerufen. Dieser Effekt verstärkt sich in höheren Dimensionen.
 
 \begin{figure}
 \centering
 \includegraphics[width = 0.9\textwidth]{figures/lasso_ridge_regression.jpg}
-\caption{Die Abbildung zeigt die Beschränkungen der $l_1$-Norm (links) und der $l_2$-Norm (rechts) zusammen mit den Höhenlinien der RSS-Funktion, welche $\hat{\beta}^{\text{OLS}}$ als Minimierer besitzt. Verdeutlicht wird hier die geometrische Findung von $\hat{\beta}^{\text{lasso}}$ (links) und $\hat{\beta}^{\text{ridge}}$ (rechts)\\Basiert auf \cite{hastie_elements}}
+\caption{Die Abbildung zeigt die Beschränkungen der $\ell_1$-Norm (links) und der $\ell_2$-Norm (rechts) zusammen mit den Höhenlinien der RSS-Funktion, welche $\hat{\beta}^{\text{OLS}}$ als Minimierer besitzt. Verdeutlicht wird hier die geometrische Findung von $\hat{\beta}^{\text{lasso}}$ (links) und $\hat{\beta}^{\text{ridge}}$ (rechts)\\Basiert auf \cite{hastie_elements}}
 \label{lasso_ridge_regression_figure}
 \end{figure}
 
-An dieser Stelle kann man auf den Gedanken kommen, andere Strafterme zu verwenden, welche bei geometrischer Betrachtung die Wahrscheinlichkeit erhöhen eine Dünnbesetzung der Koeffizienten hervorzurufen. So kann man zum Beispiel die $l_p$-Normen als Strafterm für Werte $q < 1$ in Betracht ziehen.
+An dieser Stelle kann man auf den Gedanken kommen, andere Strafterme zu verwenden, welche bei geometrischer Betrachtung die Wahrscheinlichkeit erhöhen eine Dünnbesetzung der Koeffizienten hervorzurufen. So kann man zum Beispiel die $\ell_q$-Normen als Strafterm für Werte $q < 1$ in Betracht ziehen.
 \begin{align}
 \label{sparse_regression}
 \hat{\beta}^{\text{sparse}} = \argmin_{\beta} \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda\sum_{j=1}^p \left|\beta_j\right|^q
 \end{align}
-In Abbildung \ref{norm_figure} sind die Begrenzungen der $l_p$-Normen für verschiedene Werte eingezeichnet. NOTATION (p Anzahl Variablen) Für $q \rightarrow 0$ entstehen sternförmige Höhenlinien, welche immer weiter zum Ursprung gedrückt werden. Somit wird es immer wahrscheinlicher, dass die Höhenlinien der RSS-Funktion eine Ecke treffen. Das Problem liegt allerdings nicht im Effekt der verschiedenen Strafterme, sondern in der Berechnung. Für $q < 1$ ist (\ref{sparse_regression}) ein nicht-konvexes Optimierungsproblem, da $\norm{\cdot}_q$ dann keine Norm gemäß Definition \ref{norm} ist. Im Extremfall der $l_0$-\q{Norm} wird (\ref{sparse_regression}) sogar NP-schwer. CITE. Somit besteht in beiden Fällen keine effiziente Methode zur Berechnung von $\hat{\beta}^{\text{sparse}}$ zur Verfügung. Der Wert $q = 1$ ist eine Art Kompromisslösung, die einerseits effizient zu berechnen ist und andererseits noch immer eine dünnbesetzte Lösung liefert.
+In Abbildung \ref{norm_figure} sind die Begrenzungen der $\ell_q$-Normen für verschiedene Werte eingezeichnet. NOTATION (p Anzahl Variablen) Für $q \rightarrow 0$ entstehen sternförmige Höhenlinien, welche immer weiter zum Ursprung gedrückt werden. Somit wird es immer wahrscheinlicher, dass die Höhenlinien der RSS-Funktion eine Ecke treffen. Das Problem liegt allerdings nicht im Effekt der verschiedenen Strafterme, sondern in der Berechnung. Für $q < 1$ ist (\ref{sparse_regression}) ein nicht-konvexes Optimierungsproblem, da $\norm{\cdot}_q$ dann keine Norm gemäß Definition \ref{norm} ist. Im Extremfall der $\ell_0$-\q{Norm} wird (\ref{sparse_regression}) sogar NP-schwer. CITE. Somit besteht in beiden Fällen keine effiziente Methode zur Berechnung von $\hat{\beta}^{\text{sparse}}$ zur Verfügung. Der Wert $q = 1$ ist eine Art Kompromisslösung, die einerseits effizient zu berechnen ist und andererseits noch immer eine dünnbesetzte Lösung liefert.
 
 \begin{figure}
 \centering
@@ -372,7 +413,7 @@ In Abbildung \ref{norm_figure} sind die Begrenzungen der $l_p$-Normen für versc
 	\caption*{$q = 4$}
 	\end{subfigure}
 
-\caption{Die Abbildung zeigt die Begrenzungen der $l_p$-Norm im $\mathbb{R}^2$ für verschiedene Werte von $q$, also die Mengen $\{x \in \mathbb{R}^2 \colon \norm{x}_{q} \leq c \}$.}
+\caption{Die Abbildung zeigt die Begrenzungen der $\ell_q$-Norm im $\mathbb{R}^2$ für verschiedene Werte von $q$, also die Mengen $\{x \in \mathbb{R}^2 \colon \norm{x}_{q} \leq c \}$.}
 \label{norm_figure}
 \end{figure}
 
@@ -386,7 +427,7 @@ wobei $(\cdot)_+ = max(\cdot, 0)$ ist. Der Beweis kann in \cite{murphy} nachgele
 \end{align}
 definiert wird.
 
-Der Operator ist in Abbildung \ref{thresholding_figure} noch einmal graphisch dargestellt. Nun sind wir auch in der Lage zu verstehen, warum Tibshirani \cite{tibshirani_lasso} den Begriff Lasso eingeführt hat. Dieser steht für \textit{Least absolute selection and shrinkage operator}, was bedeutet, dass ein Teil der Koeffizienten $\hat{\beta}_j^{\text{OLS}}$ ausgewählt und im Betrag geschrumpft wird. Die neuen Lasso Koeffizienten ergeben sich also dadurch, dass zunächst alle Koeffizienten in $\hat{\beta}^{\text{OLS}}$, die kleiner als $\frac{\lambda}{2}$ sind, auf $0$ gesetzt werden und anschließend die Verbliebenden im Betrag um $\frac{\lambda}{2}$ geschrumpft werden. Somit ist klar, dass für $\lambda \geq \lambda_{\text{max}}$ alle Koeffizienten $\hat{\beta}_j^{\text{lasso}} = 0$ sind, wobei $\lambda_{\text{max}} = \norm{\mat X^Ty}_{\infty}$. (Der Wert $\lambda_{\text{max}}$ beruht auf der Beobachtung, dass $0$ der optimale Wert der Koeffizienten ist falls $(\mat X^Ty)_j \in [-\lambda, \lambda]$ für alle $j$.) 
+Der Operator ist in Abbildung \ref{thresholding_figure} noch einmal graphisch dargestellt. Nun sind wir auch in der Lage zu verstehen, warum Tibshirani \cite{tibshirani_lasso} den Begriff Lasso eingeführt hat. Dieser steht für \textit{Least absolute selection and shrinkage operator}, was bedeutet, dass ein Teil der Koeffizienten $\hat{\beta}_j^{\text{OLS}}$ ausgewählt und im Betrag geschrumpft wird. Die neuen Lasso Koeffizienten ergeben sich also dadurch, dass zunächst alle Koeffizienten in $\hat{\beta}^{\text{OLS}}$, die kleiner als $\frac{\lambda}{2}$ sind, auf $0$ gesetzt werden und anschließend die Verbliebenden im Betrag um $\frac{\lambda}{2}$ geschrumpft werden. Somit ist klar, dass für $\lambda \geq \lambda_{\text{max}}$ alle Koeffizienten $\hat{\beta}_j^{\text{lasso}} = 0$ sind, wobei $\lambda_{\text{max}} = \norm{\mat X^{\top}y}_{\infty}$. (Der Wert $\lambda_{\text{max}}$ beruht auf der Beobachtung, dass $0$ der optimale Wert der Koeffizienten ist falls $(\mat X^{\top}y)_j \in [-\lambda, \lambda]$ für alle $j$.) 
 
 \begin{figure}
 \centering
@@ -405,20 +446,29 @@ Der Operator ist in Abbildung \ref{thresholding_figure} noch einmal graphisch da
 \label{thresholding_figure}
 \end{figure}
 
-The loss function of the lasso is not differentiable, but a wide variety of techniques from convex analysis and optimization theory have been developed to compute the solutions path of the lasso. These include coordinate descent [20], subgradient methods, least-angle regression (LARS), and proximal gradient methods.[21] Subgradient methods, are the natural generalization of traditional methods such as gradient descent and stochastic gradient descent to the case in which the objective function is not differentiable at all points. LARS is a method that is closely tied to lasso models, and in many cases allows them to be fit very efficiently, though it may not perform well in all circumstances. LARS generates complete solution paths.[21] Proximal methods have become popular because of their flexibility and performance and are an area of active research. The choice of method will depend on the particular lasso variant being used, the data, and the available resources. However, proximal methods will generally perform well in most circumstances. (Wikipedia)
-Mathematische Lösung des Problems? (LARS, aber nicht näher erwähnen)
-plot wie Koeffizienten gegen 0\\
+Wir wenden uns nun einer mathematischen Lösung des Lasso zu. Im Gegensatz zu Ridge Regression kann man im Allgemeinen keine explizite Lösung angeben. Nur für den Fall, dass.
+Da $\norm{\beta}_1$ nicht differenzierbar ist wenn $\beta_j = 0$ ist, sind wir bei (\ref{lasso}) mit einem nicht glattem Optimierungsproblem konfrontiert. Seit der Problemformulierung in 1996 wurde eine Vielzahl an Algorithmen entwickelt bzw. adaptiert, die eine numerische Lösung liefern. Dazu gehören Least-angle Regression (LARS) \cite{efron_lars}, Koordinaten-Abstiegsverfahren \cite{friedman}, Subdifferential Methoden und  Näherungs-Gradientenverfahren \cite{yang, vandenberghe}. Letztere sind eine natürliche Erweiterung von Gradientenverfahren wenn die Zielfunktion nicht differenzierbar ist. Wir werden später auf das Koordinaten-Abstiegsverfahren näher eingehen, welches wir bei der Implementierung der dünnbesetzten Hauptkomponentenanalyse nutzen.
 
-\textbf{Elastic Net}
-Motivation warum LASSO nicht reicht. 
-Mathematische Formulierung
+Es stellt sich heraus, dass das Lasso zwei wesentliche Nachteile besitzt. Falls es im Datensatz Gruppen stark korrelierter Variablen gibt, so tendiert die Methode dazu nur eine Variable aus einer Gruppe statt die Gruppe als Ganzes auszuwählen. In vielen Anwendungen ist man aber gerade daran interessiert. Zum Beispiel bei der Suche nach Genen, welche mit einer bestimmten Krankheit verbunden sind, möchte man alle assoziierten Koeffizienten finden anstatt nur einem Gen aus einer Gruppe. Darüber hinaus führt dies oft dazu, dass der Vorhersagefehler vergrößert wird und somit die Methode nicht ganz so robust ist. Um diesem Problem zu entgegnen kann man das sog. \textit{Group Lasso} verwenden \cite{yuan}, bei welcher man zuvor Gruppen im Datensatz festlegen kann. Der im Zuge dieser Arbeit aber wichtigere Aspekt ist, dass das Lasso im Fall $p > n$ maximal $n$ Variablen selektieren kann. Dies ist für moderne Datensätze, für welche $p \gg n$ gilt oft nicht ausreichend. Der Grund dafür wird in ... klar.\\
+
+\subsection{Elastic Net}
+
+Damit im Fall $p > n$ mehr als $n$ Variablen selektiert werden, kann man die beiden vorgestellten Methoden kombinieren. Durch die Einbettung einer $\ell_1$ und $\ell_2$-Norm erhalten wir das sog. \textit{Elastic Net} \cite{zou_elasticnet}.
 \begin{align}
 \label{elastic_net}
 \hat{\beta}^{\text{en}} = \argmin_{\beta} \norm{y - \mat X \beta}_2^2 + \lambda_2 \norm{\beta}_{2}^{2} + \lambda_{1,j} \norm{\beta}_{1}
 \end{align}
-Lösung des Problems (LARS-EN? oder hier GLM mit coordinate descent?)\\
+Wie zuvor wird durch den $\ell_1$-Strafterm ein dünnbesetztes Modell generiert. Der $\ell_2$-Strafterm fördert den Gruppeneffekt, stabilisiert den $\ell_1$ Regularisierungspfad und lässt eine beliebige Anzahl zu selektierender Variablen zu.
 
-\textbf{Vergleich der Methoden}
+Ähnlich wie bei der Lasso Regression kann nur im Fall orthogonaler Spalten von $\mat X$ eine explizite Lösung mithilfe des soft thresholding operators von (\ref{elastic_net}) angegeben werden. Mit leichten Modifikationen der Algorithmen für das Lasso erhalten wir eine numerische Lösung. So wurde LARS-EN \cite{zou_elasticnet} oder ein Koordinatenabstiegsverfahren vorgeschlagen \cite{friedman}.
+
+We propose an efficient algorithm called LARS-EN to solve the elastic net efficiently, which is
+based on the recently proposed algorithmLARSof Efron et al. (2004). They proved that, starting
+from zero, the lasso solution paths grow piecewise linearly in a predictable way. They proposed
+a new algorithm called LARS to solve the entire lasso solution path efficiently by using the same
+order of computations as a single OLS fit\\
+
+\subsection{Vergleich der Regressionsmethoden}
 
 Zur Veranschaulichung der oben eingeführten Methoden werden wir diese auf ein Beispiel anwenden. Dabei greifen wir auf einen durch scikit-learn \cite{scikit_learn} bereitgestellten Datensatz, der erstmals durch \cite{efron_lars} öffentlich gemacht worden ist, zurück. In diesem wurden für $n = 442$ Diabetes Patienten $p=10$ verschiedene Variablen gemessen. Dazu gehören Alter (AGE), Geschlecht (SEX), Body Mass Index (BMI), Blutdruck (BP) und verschiedene Blutproben (Serum Measurements). Die Zielgröße $y$ enthält Werte für den Krankheitsfortschritt ein Jahr nach Behandlungsbeginn. Ein Ausschnitt des Datensatzes befindet sich in Tabelle \ref{diabetes_data_set}.
 
@@ -448,7 +498,7 @@ Die Implementierung des Elastic Nets in scikit-learn \cite{scikit_learn} beruht 
 \label{elastic_net_python}
 \hat{\beta}^{\text{en}} = \argmin_{\beta} \frac{1}{2n} \norm{y - \mat X \beta}_2^2 + \alpha \gamma \norm{\beta}_{2}^{2} + \frac{1}{2}\alpha (1-\gamma) \norm{\beta}_{1}
 \end{align}
-wobei $n$ die Anzahl an Beobachtungen im Datensatz und $\gamma$ das Verhältnis der $l_2$- zur $l_1$-Norm ist. Wählen wir $\gamma = 0$ so reduziert sich (\ref{elastic_net_python}) auf Ridge Regression und für $\gamma = 1$ auf das Lasso. So können wir mit $\gamma$ das Verhältnis der beiden Regressionen kontrollieren und mit $\alpha$ die Stärke der Bestrafung. Man beachte, dass bei dieser Implementierung nicht die Möglichkeit besteht die Koeffizienten unterschiedlich zu bestrafen.
+wobei $n$ die Anzahl an Beobachtungen im Datensatz und $\gamma$ das Verhältnis der $\ell_2$- zur $\ell_1$-Norm ist. Wählen wir $\gamma = 0$ so reduziert sich (\ref{elastic_net_python}) auf Ridge Regression und für $\gamma = 1$ auf das Lasso. So können wir mit $\gamma$ das Verhältnis der beiden Regressionen kontrollieren und mit $\alpha$ die Stärke der Bestrafung. Man beachte, dass bei dieser Implementierung nicht die Möglichkeit besteht die Koeffizienten unterschiedlich zu bestrafen.
 Setzt man 
 \begin{align}
  \alpha = \frac{2\lambda_2 + \lambda_1}{2n} \quad \text{und} \quad \gamma = \frac{\lambda_1}{2\lambda_2 + \lambda_1}
@@ -459,7 +509,7 @@ so reduziert sich (\ref{elastic_net_python}) auf unser ursprünglich formulierte
 \centering
 	\begin{subfigure}{0.9\textwidth}
 	\centering
-	\includegraphics[width = \textwidth]{figures/ridge_regression_coefficients.png}
+	\includegraphics[width = \textwidth]{figures/ridge_regression_coefficients_cv.png}
 	\label{ridge_regression_coefficients}
 	\vspace{-0.5cm}
 	\caption{Ridge Regression}
@@ -468,7 +518,7 @@ so reduziert sich (\ref{elastic_net_python}) auf unser ursprünglich formulierte
 	%	
 	\begin{subfigure}{0.9\textwidth}
 	\centering
-	\includegraphics[width = \textwidth]{figures/lasso_regression_coefficients.png}
+	\includegraphics[width = \textwidth]{figures/lasso_regression_coefficients_cv.png}
 	\label{lasso_regression_coefficients}
 	\vspace{-0.5cm}
 	\caption{Lasso Regression}
@@ -477,12 +527,12 @@ so reduziert sich (\ref{elastic_net_python}) auf unser ursprünglich formulierte
 	%
 	\begin{subfigure}{0.9\textwidth}
 	\centering
-	\includegraphics[width = \textwidth]{figures/elastic_net_coefficients.png}
+	\includegraphics[width = \textwidth]{figures/elastic_net_coefficients_cv.png}
 	\label{elastic_net_coefficients}
 	\vspace{-0.5cm}
-	\caption{Elastic Net, $\gamma = 0.95$}
+	\caption{Elastic Net, $\gamma = 0.98$}
 	\end{subfigure}
-\caption{Schrumpfung der verschiedenen Regressionsmethoden bei Erhöhung des jeweiligen Regularisierungsparameters.}
+\caption{Schrumpfung der Koeffizienten für verschiedene Regressionsmethoden bei Erhöhung des jeweiligen Regularisierungsparameters. Die vertikalen Linien stellen den Wert des jeweiligen Parameters dar, der durch ein 10-faches Kreuzvalidierungsverfahren bestimmt worden ist. (Erstellt mit scikit-learn)}
 \label{regression_coefficients}
 \end{figure}
 
@@ -500,8 +550,7 @@ so reduziert sich (\ref{elastic_net_python}) auf unser ursprünglich formulierte
 
 
 \section{Signaltheorie}
+\label{signal_processing}
 
 \subsection{Fouriertransformation}
 \subsection{Nyquist-Shannon Abtasttheorem}
-
-\section{Dictionary Learning}

@@ -10,22 +10,24 @@ Im Folgenden werden wir zunächst eine naheliegende mathematische Formulierung d
 
 Die wohl einfachste Möglichkeit dünnbesetzte Hauptachsen zu erhalten ist, alle Koeffizienten, die kleiner als ein bestimmter Schwellenwert sind, zu vernachlässigen, indem man sie auf 0 setzt. Eine solche Prozedur kann aber in vielen Fällen irreführend sein, unter welcher die Qualität der Ergebnisse leidet. (Hier wäre ein Beispiel sehr hilfreich) In der Literatur wurde eine Vielzahl an Alternativen betrachtet, von welchen wir Ausgewählte im Folgenden kennenlernen werden.
 
-\section{Problemformulierung} \label{problem_formulation}
+\section{Problemformulierung}
+\label{problem_formulation}
 Gegeben sei wieder eine Datenmatrix $\mat X \in \rnp$, wobei $n$ die Anzahl an Beobachtungen und $p$ die Anzahl an Variablen ist. Des Weiteren gehen wir davon aus, dass die Matrix $\mat X$ zuvor spaltenweise zentriert wurde. Dann kann die dünnbesetzte Hauptkomponentenanalyse als sukzessives Maximierungsproblem formuliert werden:
 
 $$v_{k} = \max_{\norm{v}_2 = 1} v^{T}K_{xx} v$$
 $$v_{k}^Tv_{l} = 0 \quad \forall 1 \leq l < k$$
 $${\text{unter der Nebenbedingung, dass}}\quad \norm{v_{k}}_0 \leq t$$
 
-wobei $K_{xx} = \frac{\mat X^T \mat X}{n-1}$ die empirische Kovarianzmatrix ist. Wir suchen also unter allen Richtungen, die orthogonal zu allen bereits gefundenen Richtungen sind, eine mit maximaler Varianz. Durch die Einführung der $l_0$-Norm beschränken wir uns auf die Suche von Hauptachsen, welche höchstens $t$ von Null verschiedene Einträge haben. Wählen wir $t = p$ reduziert sich das Problem auf die normale Hauptkomponentenanalyse, wie wir sie in Kapitel 3 eingeführt haben. Während dies eine sehr schöne und einfache mathematische Formulierung ist, wurde gezeigt, dass dieses Problem NP-vollständig ist \cite{foucart}. Zur Berechnung dünnbesetzter Hauptachsen sind wir also angehalten eine geeignete Relaxation zu finden.
+wobei $K_{xx} = \frac{\mat X^T \mat X}{n-1}$ die empirische Kovarianzmatrix ist. Wir suchen also unter allen Richtungen, die orthogonal zu allen bereits gefundenen Richtungen sind, eine mit maximaler Varianz. Durch die Einführung der $\ell_0$-Norm beschränken wir uns auf die Suche von Hauptachsen, welche höchstens $t$ von Null verschiedene Einträge haben. Wählen wir $t = p$ reduziert sich das Problem auf die normale Hauptkomponentenanalyse, wie wir sie in Kapitel 3 eingeführt haben. Während dies eine sehr schöne und einfache mathematische Formulierung ist, wurde gezeigt, dass dieses Problem NP-vollständig ist \cite{foucart}. Zur Berechnung dünnbesetzter Hauptachsen sind wir also angehalten eine geeignete Relaxation zu finden.
 
-\section{Relaxation} \label{relaxation}
+\section{Relaxation}
+\label{relaxation}
 
 Es existiert eine Vielfalt an Ansätzen, um das Problem zu relaxieren. Wir wollen zunächst einen kleinen Überblick über die unterschiedlichen Ideen geben und uns anschließend mit einer genauer beschäftigen. Eine selektive Übersicht der verschiedenen Ansätze haben wir hier erstellt:
 
 \textbf{SCoTLASS}
 
-Inspiriert von der LASSO Regression \ref{tibshirani_lasso} schlugen Jolliffe, Trendafilov und Uddin (2003) \cite{scotlass} vor die $l_1$-Norm anstelle der $l_0$-Norm zu verwenden. Wie wir bereits in Kapitel \ref{fundamentals} (2.2) gesehen haben, kann die $l_1$-Norm genutzt werden, um dünnbesetzte Vektoren zu erhalten. Somit liegt es nahe diesen Ansatz zu verfolgen. Das Problem wird analog zu oben formuliert.
+Inspiriert von der LASSO Regression \ref{tibshirani_lasso} schlugen Jolliffe, Trendafilov und Uddin (2003) \cite{scotlass} vor die $\ell_1$-Norm anstelle der $\ell_0$-Norm zu verwenden. Wie wir bereits in Kapitel \ref{fundamentals} (2.2) gesehen haben, kann die $\ell_1$-Norm genutzt werden, um dünnbesetzte Vektoren zu erhalten. Somit liegt es nahe diesen Ansatz zu verfolgen. Das Problem wird analog zu oben formuliert.
 
 $$v_{k} = \max_{\norm{v}_2 = 1} v^{T}K_{xx} v$$
 $$v_{k}^Tv_{l} = 0 \quad \forall 1 \leq l < k$$
@@ -51,7 +53,8 @@ Ein interessierter Leser
 
 
 
-\section{Konstruktion Sparse PCA} \label{construction}
+\section{Konstruktion Sparse PCA}
+\label{construction}
 
 Wir werden uns nun mit dem von Zou, Hastie und Tibshirani (2006) in \cite{zou_sparsepca} eingeführten Ansatz ausführlich beschäftigen. Zou und Hastie führten zuvor in \cite{zou_elasticnet} das sog. \textit{elastic net} ein, welches den Grundstein für die mathematische Formulierung legt.
 
@@ -78,7 +81,8 @@ oblique projections AB
 
 \section{Anpassung der Varianzen}
 
-\section{Theoretische Aussagen} \label{theoretical results}
+\section{Theoretische Aussagen} 
+\label{spca_theorems}
 z.B. wie werden neue Varianzen berechnet
 
 Alexandre d’Aspremont, Optimal Solutions for Sparse Principal Component Analysis
