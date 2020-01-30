@@ -35,6 +35,10 @@ $${\text{unter der Nebenbedingung, dass}}\quad \norm{v_{k}}_1 \leq t$$
 
 Mit der Wahl der Parameters $t$ hat man Einfluss auf die Dünnbesetzung der Hauptachsen. Aufgrund der hohen Berechnungskosten ist SCoTLASS allerdings für hochdimensionale Daten ungeeignet. Diese sind vor allem darauf zurückzuführen, dass das oben genannte Problem (REF) kein konvexes Optimierungsproblem ist. Des Weiteren ergeben sich Schwierigkeiten bei der Wahl des Hyperparameters $t$. Auch wenn eine passende Wahl eine gewünschte Dünnbesetzung hervorruft, gibt es kaum Orientierungshilfen. Zusammen mit den hohen Berechnungskosten ist dieser Ansatz in der Praxis daher meist impraktikabel.
 
+In addition, the
+number of nonzero elements in p SL is upper-bounded by the number of
+observations in the data, which is a structural limitation of the lasso constraint.
+
 \textbf{ein semidefiniter Programming Ansatz}
 
 \textbf{iterative Schwellenwert-Methoden}
