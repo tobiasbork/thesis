@@ -4,49 +4,101 @@
 % Chapter label
 \label{sparse_pca}
 
-Ein wesentlicher Nachteil der Hauptkomponentenanalyse besteht darin, dass sich die neuen Variablen aus einer Linearkombination aller bestehenden Variablen zusammensetzt. Dies erschwert besonders für hochdimensionale Daten eine Interpretation der Hauptachsen. Während zuvor jede Variable eine Bedeutung hatte, sind wir nach der Transformation meist nicht in der Lage den Hauptachsen eine Bedeutung im Kontext zuzuweisen. Damit man verstehen kann, was die Hauptachsen im Modell repräsentieren kann es besonders hilfreich sein, wenn sich diese nur aus wenigen Variablen ergeben. Des Weiteren ist nicht jede Variable relevant zur Strukturerkennung.
+Ein wesentlicher Nachteil der Hauptkomponentenanalyse besteht darin, dass sich die neuen Variablen aus einer Linearkombination \textit{aller} bestehenden Variablen zusammensetzt. Dies erschwert besonders für hochdimensionale Daten eine Interpretation der Hauptachsen. Während zuvor jede Variable eine Bedeutung hatte, sind wir nach der Transformation meist nicht in der Lage den Hauptachsen eine Bedeutung im Kontext zuzuweisen. Um zu verstehen, was die Hauptachsen im Modell repräsentieren kann es besonders hilfreich sein, wenn diese \textit{dünnbesetzt} sind, sich also nur aus wenigen Variablen zusammensetzen. Treffen wir irgendwelche Annahmen? Des Weiteren ist nicht jede Variable relevant zur Strukturerkennung. impose extra constraints, which sacrifices some variance in order to improve interpretability. Interpretation ist oberstes Ziel!!!
 
-Im Folgenden werden wir zunächst eine naheliegende mathematische Formulierung des Problems beschreiben. In Abschnitt \ref{relaxation} werden wir dann verschiedene Wege aufzeigen, dass Problem zu relaxieren. Später werden wir uns mit einem Ansatz intensiv beschäftigen und in Kapitel \ref{implementation} einen Algorithmus dafür implementieren. 
-
-Die wohl einfachste Möglichkeit dünnbesetzte Hauptachsen zu erhalten ist, alle Koeffizienten, die kleiner als ein bestimmter Schwellenwert sind, zu vernachlässigen, indem man sie auf 0 setzt. Eine solche Prozedur kann aber in vielen Fällen irreführend sein, unter welcher die Qualität der Ergebnisse leidet. (Hier wäre ein Beispiel sehr hilfreich) In der Literatur wurde eine Vielzahl an Alternativen betrachtet, von welchen wir Ausgewählte im Folgenden kennenlernen werden.
+Zu Anfang dieses Kapitels werden wir eine naheliegende mathematische Formulierung des Problems beschreiben. Leider wird sich diese als NP-vollständig herausstellen, weshalb wir in Abschnitt \ref{relaxation} verschiedene Wege aufzeigen, dass Problem zu relaxieren. In \ref{sparse_pca_construction} möchten wir uns mit einem dieser Ansätze intensiv beschäftigen, welcher den Ausgangspunkt für den weiteren Verlauf dieser Arbeit darstellt. Der Rest dieses Kapitels ist den Details dieses Ansatzes gewidmet.
 
 \section{Problemformulierung}
 \label{problem_formulation}
-Gegeben sei wieder eine Datenmatrix $\mat X \in \rnp$, wobei $n$ die Anzahl an Beobachtungen und $p$ die Anzahl an Variablen ist. Des Weiteren gehen wir davon aus, dass die Matrix $\mat X$ zuvor spaltenweise zentriert wurde. Dann kann die dünnbesetzte Hauptkomponentenanalyse als sukzessives Maximierungsproblem formuliert werden:
 
-$$v_{k} = \max_{\norm{v}_2 = 1} v^{T}K_{xx} v$$
-$$v_{k}^Tv_{l} = 0 \quad \forall 1 \leq l < k$$
-$${\text{unter der Nebenbedingung, dass}}\quad \norm{v_{k}}_0 \leq t$$
+Wir möchten nun Hauptachsen eines gegebenen Datensatzes identifizieren mit der Zusatzbedingung, dass diese dünnbesetzt sind. Die wohl einfachste Möglichkeit dafür ist, zuerst die gewöhnliche Hauptkomponentenanalyse durchzuführen und anschließend ein Schwellwertmethode (Englisch: simple thresholding) auf die Hauptachsen anzuwenden. Hierbei vernachlässigt man alle Koeffizienten, die kleiner als ein bestimmter Schwellenwert sind, indem man sie auf 0 setzt. Eine solche Prozedur kann aber in vielen Fällen irreführend sein, unter welcher die Qualität der Ergebnisse leidet. \cite{cadima} Die Wichtigkeit einer Variable in den Hauptachsen wird nicht allein durch den Koeffizient bestimmt. Zu berücksichtigen sind unter anderem sowohl die Standardabweichung als auch die Korrelationen mit anderen Variablen. Bei einer Schwellwertmethode werden diese Faktoren nicht beachtet, weshalb den Ergebnissen im Allgemeinen nicht vertraut werden darf.
 
-wobei $K_{xx} = \frac{\mat X^T \mat X}{n-1}$ die empirische Kovarianzmatrix ist. Wir suchen also unter allen Richtungen, die orthogonal zu allen bereits gefundenen Richtungen sind, eine mit maximaler Varianz. Durch die Einführung der $\ell_0$-Norm beschränken wir uns auf die Suche von Hauptachsen, welche höchstens $t$ von Null verschiedene Einträge haben. Wählen wir $t = p$ reduziert sich das Problem auf die normale Hauptkomponentenanalyse, wie wir sie in Kapitel 3 eingeführt haben. Während dies eine sehr schöne und einfache mathematische Formulierung ist, wurde gezeigt, dass dieses Problem NP-vollständig ist \cite{foucart}. Zur Berechnung dünnbesetzter Hauptachsen sind wir also angehalten eine geeignete Relaxation zu finden.
+Hier Regression on ordinary PCA's mit Zou et al?
+
+Anstelle eines zweischrittigen Ansatzes kann die Dünnbesetzung direkt in die Problemformulierung mit eingebaut werden. Gegeben sei dazu wieder eine Datenmatrix $\mat X \in \rnp$, wobei $n$ die Anzahl an Beobachtungen und $p$ die Anzahl an Variablen ist. Des Weiteren gehen wir davon aus, dass die Matrix $\mat X$ zuvor spaltenweise zentriert wurde. Dann kann die dünnbesetzte Hauptkomponentenanalyse als sukzessives Maximierungsproblem formuliert werden:
+\begin{gather}
+\label{sparse_pca_np}
+\begin{split}
+v_{k} = \argmax_{\norm{v}_2 = 1} v^{T}\mat{K}_{xx} v\\
+v_{k}^Tv_{l} = 0 \quad \forall 1 \leq l < k\\
+{\text{unter der Nebenbedingung, dass }} \norm{v_{k}}_0 \leq t
+\end{split}
+\end{gather}
+wobei $\mat{K}_{xx} = \frac{\mat X^T \mat X}{n-1}$ die empirische Kovarianzmatrix ist. Der einzige Unterschied zu der gewöhnlichen Hauptkomponentenanalyse, wie wir sie in (\ref{pca_variance_maximization}) beschrieben haben, besteht in der Einführung der $\ell_0$-Norm. Somit beschränken wir uns auf die Suche von Hauptachsen, welche höchstens $t$ von Null verschiedene Einträge haben. Wählen wir $t = p$ reduziert sich das Problem auf die gewöhnliche Hauptkomponentenanalyse. Während (\ref{sparse_pca_np}) eine sehr schöne und einfache mathematische Formulierung ist, wurde gezeigt, dass dieses Problem NP-vollständig ist \cite{foucart}. Zur Berechnung dünnbesetzter Hauptachsen sind wir also angehalten eine geeignete Relaxation zu finden.
 
 \section{Relaxation}
 \label{relaxation}
 
-Es existiert eine Vielfalt an Ansätzen, um das Problem zu relaxieren. Wir wollen zunächst einen kleinen Überblick über die unterschiedlichen Ideen geben und uns anschließend mit einer genauer beschäftigen. Eine selektive Übersicht der verschiedenen Ansätze haben wir hier erstellt:
+Es existiert eine Vielfalt an Ansätzen, um das Problem zu relaxieren. Wir wollen zunächst einen kleinen Überblick über die unterschiedlichen Ideen geben und uns anschließend mit einer genauer beschäftigen. Eine selektive Übersicht der verschiedenen Ansätze haben wir hier erstellt.\\
 
 \textbf{SCoTLASS}
 
-Inspiriert von der LASSO Regression \ref{tibshirani_lasso} schlugen Jolliffe, Trendafilov und Uddin (2003) \cite{scotlass} vor die $\ell_1$-Norm anstelle der $\ell_0$-Norm zu verwenden. Wie wir bereits in Kapitel \ref{fundamentals} (2.2) gesehen haben, kann die $\ell_1$-Norm genutzt werden, um dünnbesetzte Vektoren zu erhalten. Somit liegt es nahe diesen Ansatz zu verfolgen. Das Problem wird analog zu oben formuliert.
+Inspiriert von der LASSO Regression \cite{tibshirani_lasso} schlugen Jolliffe et al. \cite{scotlass} vor, die $\ell_1$-Norm anstelle der $\ell_0$-Norm als Strafterm zu verwenden. Wie wir bereits in Abschnitt \ref{lasso} gesehen haben, kann die $\ell_1$-Norm genutzt werden, um dünnbesetzte Vektoren zu erhalten. Somit liegt es nahe das Problem wie folgt zu formulieren.
+\begin{gather}
+\label{scotlass}
+\begin{split}
+v_{k} = \argmax_{\norm{v}_2 = 1} v^{T}\mat{K}_{xx} v\\
+v_{k}^Tv_{l} = 0 \quad \forall 1 \leq l < k\\
+{\text{unter der Nebenbedingung, dass }} \norm{v_{k}}_1 \leq t
+\end{split}
+\end{gather}
+Wie in (\ref{sparse_pca_np}) hat man mit der Wahl der Parameters $t$ Einfluss auf die Dünnbesetzung der Hauptachsen. Aufgrund der hohen Berechnungskosten ist SCoTLASS allerdings für hochdimensionale Daten ungeeignet. Diese sind vor allem darauf zurückzuführen, dass (\ref{scotlass}) kein konvexes Optimierungsproblem ist. Des Weiteren ergeben sich Schwierigkeiten bei der Wahl des Hyperparameters $t$. Auch wenn eine passende Wahl eine gewünschte Dünnbesetzung hervorruft, gibt es kaum Orientierungshilfen. Dabei hat ScoTLASS dasselbe grundlegende Problem wie das Lasso. Die Anzahl von null verschiedener Einträge ist durch die Anzahl Beobachtungen im Datensatz limitiert, welches die Brauchbarkeit des Modells deutlich einschränkt. Zusammen mit den hohen Berechnungskosten ist dieser Ansatz in der Praxis daher meist impraktikabel.\\
 
-$$v_{k} = \max_{\norm{v}_2 = 1} v^{T}K_{xx} v$$
-$$v_{k}^Tv_{l} = 0 \quad \forall 1 \leq l < k$$
-$${\text{unter der Nebenbedingung, dass}}\quad \norm{v_{k}}_1 \leq t$$
+\textbf{Semidefinite Programmierung}
 
-Mit der Wahl der Parameters $t$ hat man Einfluss auf die Dünnbesetzung der Hauptachsen. Aufgrund der hohen Berechnungskosten ist SCoTLASS allerdings für hochdimensionale Daten ungeeignet. Diese sind vor allem darauf zurückzuführen, dass das oben genannte Problem (REF) kein konvexes Optimierungsproblem ist. Des Weiteren ergeben sich Schwierigkeiten bei der Wahl des Hyperparameters $t$. Auch wenn eine passende Wahl eine gewünschte Dünnbesetzung hervorruft, gibt es kaum Orientierungshilfen. Zusammen mit den hohen Berechnungskosten ist dieser Ansatz in der Praxis daher meist impraktikabel.
+Konvexe Relaxation ist eine Standard-Technik, um mit schwierigen nichtkonvexen Problemen umzugehen. d'Aspremont et al. \cite{daspremont_semidefinite} entwickeln eine Ansatz, welcher sich als semidefinites Programmierungsproblem ausdrücken lässt. Zunächst werden wir (\ref{sparse_pca_np}) dafür mit Matrizen reformulieren.
 
-In addition, the
-number of nonzero elements in p SL is upper-bounded by the number of
-observations in the data, which is a structural limitation of the lasso constraint.
+Sei $\mat V = v_kv_k^{\top}$. Dann übersetzen sich die Nebenbedingungen 
+\begin{align}
+\label{semidefinite_programming_naive}
+\begin{split}
+\argmax_{\mat P} = \spur{\mat K_{xx}\mat P}\\
+\spur{\mat P} = 1, \quad \norm{\mat P}_0 \leq k^2, \quad \mat P \geq 0, \quad \rang{\mat P} = 1
+\end{split}
+\end{align}
 
-\textbf{ein semidefiniter Programming Ansatz}
+Diese Formulierung ist noch immer nichtkonvex aufgrund der Rang-Bedingung  und der $\ell_0$-Strafterm. 
+Per Definition ist $\mat P$ symmetrisch und $\mat P^2 = \mat P$. Somit ist
+$$\norm{\mat P}_{F}^{2} = \spur{\mat P^{\top}\mat P} = \spur{\mat P} = 1$$
+und mit der Cauchy-Schwarz-Ungleichung folgt
+$$\mat{1}_p^{\top} |\mat P| \mat{1}_p \leq \sqrt{\norm{\mat{P}}_0 \norm{\mat{P}}_F^2} \leq k$$
+Ersetzen wir die $\ell_0$-Strafterm und lassen die Rang-Bedingung fallen erhalten wir die DSPCA-Formulierung
+\begin{align}
+\label{semidefinite_programming}
+\begin{split}
+\argmax_{\mat P} = \spur{\mat K_{xx}\mat P}\\
+\spur{\mat P} = 1, \quad \mat{1}_p^{\top} |\mat P| \mat{1}_p \leq k, \quad \mat P \geq 0
+\end{split}
+\end{align}
+Dies stellt ein semidefinites Programmierungsproblem dar, bei welcher die zu optimierenden Variablen symmetrische Matrizen sind unter der Nebenbedingung, dass sie positiv semidefinit sind. Für kleine Probleme kann (\ref{semidefinite_programming}) effizient durch \textit{Innere-Punkte-Verfahren} (English: \textit{interior-point methods}) gelöst werden. SDPT3 \cite{toh}.
 
-\textbf{iterative Schwellenwert-Methoden}
+In (\ref{semidefinite_programming}) wird allerdings $\mat P$ berechnet und nicht die eigentliche Hauptachse. Hierfür kürzen d'Aspremont et al. die Matrix $\mat P$ und behalten nur den größten Eigenvektor $v_k$. Anschließend erhält man weitere Hauptachsen durch Matrix Deflation, indem wir $\mat K_{xx}$ durch
+$$\mat K_{xx} - (v_k^{\top}\mat K_{xx}v_k) v_kv_k^{\top}$$ 
+ersetzen. Für größere Probleme wird eine Methode von Nesterov benutzt, um eine Laufzeit von $\mathcal{O}(\frac{p^4\sqrt{\log{p}}}{\epsilon})$ zu erreichen.\\
 
-\textbf{eine verallgemeinerte Potenzmethode}
+\textbf{Iterative Schwellenwert-Methode}
+
+Basierend auf der Formulierung REF von PCA als beste Rang $k$ Approximation an die Datenmatrix $\mat X$ haben Shen und Huang \cite{shen} das folgende Optimierungsproblem formuliert
+\begin{align}
+\label{iterative_thresholding}
+\begin{split}
+(u_1, v_1) = \argmin_{u, v} \norm{\mat X - u v^{\top}}_{F}^{2}  + \lambda \norm{v}_{1}\\
+\norm{u}_2 = 1
+\end{split}
+\end{align}
+Somit erhält man mit $\frac{v_1}{\norm{v_1}}$ die erste dünnbesetzte Hauptachse. Auch hier werden die restlichen Hauptachsen sequentiell berechnet durch Ersetzen der Datenmatrix $\mat X_{(k+1)} = \mat X - \sum_{i=1}^k u_iv_i^{\top}$. Jede Iteration kann durch ein alternierendes Minimierungsverfahren gelöst werden. Fixiert man $v$, so ist das optimale $u$ gegeben durch $u = \frac{\mat Xv}{\norm{\mat Xv}}$. Andererseits reduziert sich (\ref{iterative_thresholding}) für festes $u$ auf
+$$\argmin_{v} -2\spur{\mat X^{\top}uv^{\top}} + \norm{v}^{2} + \lambda \norm{v}_1.$$
+Eine explizite Lösung ist durch den soft-thresholding Operator gegeben
+$$v = \operatorname{soft}_{\frac{\lambda}{2}}(\mat X^{\top} U)$$
+welcher in Abschnitt \ref{generalized_linear_models} eingeführt worden ist.
+
+Diese Methode ist sehr ähnlich zu der von Zou et al. \cite{zou_sparsepca} , mit welcher wir uns im folgenden Abschnitt beschäftigen werden. Der große Unterschied besteht darin, dass die Hauptachsen dort nicht sequentiell, sondern gleichzeitig berechnet werden. Witten et al. haben in \cite{witten} ebenfalls eine Methode entwickelt, die unter diese Kategorie fällt.\\
+
+\textbf{Weitere Relaxationsideen}
 
 Es gibt noch eine Reihe weiterer Ideen, die in der Literatur betrachtet wurden. Dazu gehören
 \begin{itemize}
+\item eine verallgemeinerte Potenzmethode \cite{journee}
 \item ein alternierendes Maximierungs-Netzwerk \cite{richtarik}
 \item vorwärts und rückwärts greedy Suche und exakte Methoden mittels Branch-and-Bound-Verfahren \cite{moghaddam}
 \item ein Bayes Formulierung \cite{guan}
@@ -60,7 +112,7 @@ Ein interessierter Leser
 \section{Konstruktion Sparse PCA}
 \label{construction}
 
-Wir werden uns nun mit dem von Zou, Hastie und Tibshirani (2006) in \cite{zou_sparsepca} eingeführten Ansatz ausführlich beschäftigen. Zou und Hastie führten zuvor in \cite{zou_elasticnet} das sog. \textit{elastic net} ein, welches den Grundstein für die mathematische Formulierung legt.
+Wir werden uns nun mit dem von Zou, Hastie und Tibshirani in \cite{zou_sparsepca} eingeführten Ansatz ausführlich beschäftigen. Zou und Hastie führten zuvor in \cite{zou_elasticnet} das sog. \textit{elastic net} ein, welches den Grundstein für die mathematische Formulierung legt.
 
 Zunächst werden wir einen zweischrittigen Ansatz betrachten???
 
@@ -83,11 +135,35 @@ $$(\hat{\mat{A}}, \hat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \no
 subject to $\mat{A}^T\mat{A} = I_{k \times k}$
 oblique projections AB
 
-\section{Anpassung der Varianzen}
+\section{Anpassung der Transformation, Residuen und Varianzen}
+
+Bei der Verwendung der dünnbesetzten Hauptkomponentenanalyse übertragen sich viele der Eigenschaften der gewöhnlichen Variante nicht. Gerade im Kontext einer besseren Interpretation der Daten gilt es folgende Punkte zu berücksichtigen.
+
+\textbf{Korrelation der transformierten Variablen}
+
+In einer klassischen Hauptkomponentenanalyse sind die Variablen nach Transformation unkorreliert. Dagegen kommt es bei der dünnbesetzten Variante häufig vor, dass die entstehenden Variablen korreliert sind. (WARUM?) Diese Korrelation ermöglicht zwar eine flexiblere Modellierung, allerdings erschwert dies auch eine geeignete Visualisierung. Besonders bei der Berechnung der erfassten Varianz des Datensatzes, welches oft als Bewertungsmittel dient, gilt besondere Vorsicht.
+
+\textbf{Orthogonalität der Hauptachsen}
+
+Für die Auswertung von PCA Ergebnissen
+Correlation of loadings is a relevant problem, in particular when
+scatter plots of scores are used for interpretation. The visualization in
+scatter plots assumes orthogonal axes in the original variable space. This
+holds for the standard PCA components, but it does not necessarily hold
+for sparse components. Again, care should be taken when computing the
+captured variance with correlated loadings.
+
+\textbf{Varianzverlust der Hauptkomponenten}
+
+Der Erfolg der Hauptkomponentenanalyse beruht vor allem darauf, dass die Hauptkomponenten optimal bezüglich erklärter Varianz sind. Oft kann ein Großteil an Information eines Datensatzes durch eine geringe Anzahl an Hauptkomponenten beschrieben werden, welches eine Visualisierung und Interpretation hochdimensionaler Daten ermöglicht. Bei der dünnbesetzten Hauptkomponentenanalyse opfern wir einen Teil der erklärten Varianz für simplere Hauptachsen. Um einen genauso großen Teil an Information des Datensatzes zu erklären, benötigen wir daher mehr Hauptkomponenten.
+
+Aufgrund fehlender Restriktionen an 
+In einem erst vor Kurzem erschienen wissenschaftlichen Artikel zeigen Camacho et al. \cite{camacho}, dass viele der Varianten von Sparse PCA erhebliche Probleme aufweisen. 
+
 
 \section{Theoretische Aussagen} 
 \label{spca_theorems}
-z.B. wie werden neue Varianzen berechnet
+
 
 Alexandre d’Aspremont, Optimal Solutions for Sparse Principal Component Analysis
 We then use the same relaxation to derive sufficient conditions for global optimality of a

@@ -59,8 +59,13 @@ Mathematisch gesehen wendet man das Verfahren also nicht auf die Kovarianzmatrix
 Wir wollen nun die Intuition des minimalen Informationsverlust mathematisch beschreiben. Gegeben sei dazu eine Matrix $\mat{X} \in \mathbb{R}^{n\times p}$, wobei $n$ die Anzahl der Samples bzw. Beobachtungen und $p$ die Anzahl der Variablen ist. Wir nehmen im Folgenden ohne Beschränkung der Allgemeinheit an, dass die Variablen zuvor zentriert wurden. Aufgabe der Hauptkomponentenanalyse ist es nun sukzessive Richtungen größter Varianz zu finden. Die erste Hauptkomponente ist definiert durch $Z_1 = \sum_{j=1}^p v_{1j}X_j = \mat{X}v$ (Ist v*X korrekt?) wobei die Hauptachse $v_1 = (v_{11}, \ldots, v_{1p})^T$ so gewählt wird, dass die Varianz von $Z_1$ maximiert wird, d.h.
 $$v_1 = \argmax_{\norm{v}_2 = 1} \text{Var}[\mat{X}v] = \argmax_{\norm{v}_2 = 1} v^T \mat{K}_{xx} v$$
 mit $\mat{K_{xx}} = \frac{\mat{X}^T\mat{X}}{n-1}$ als Stichprobenkovarianzmatrix. Die restlichen Hauptachsen können nun sukzessive definiert werden.
-$$v_{k+1} = \argmax_{\norm{v} = 1} v^T \mat{K}_{xx} v$$ 
-$$v_{k+1}^Tv_l = 0 \quad \forall 1 \leq l \leq k$$
+\begin{align}
+\label{pca_variance_maximization}
+\begin{split}
+v_{k+1} = \argmax_{\norm{v} = 1} v^T \mat{K}_{xx} v\\
+v_{k+1}^Tv_l = 0 \quad \forall 1 \leq l \leq k
+\end{split}
+\end{align}
 Man sucht also unter den Richtungen, die orthogonal zu allen bisherigen Hauptachsen sind, diejenige, die die Varianz maximiert. Wie oben beschrieben erhält man dann die Hauptkomponenten, also die Darstellung der Daten bezüglich der neu gefundenen Hauptachsen, durch Projektion der Daten $Z_i = \mat{X}v_i$.
 \cite{zou_overview}
 CITE JOLLIFE
@@ -77,7 +82,7 @@ Es gibt einen engen Zusammenhang zwischen der Diagonalisierung der Kovarianzmatr
 $$ \mat{X} = \mat{U}\mat{D}\mat{V}^T $$
 wobei $\mat{D}$ eine Diagonalmatrix mit Singulärwerten $d_1,\ldots,d_p$, $\mat{U}$ eine orthogonale $n \times p$ und $\mat{V}$ eine orthogonale $p \times p$ Matrix ist. Nun sieht man aufgrund der Orthogonalität von $\mat U$, dass
 $$\mat{K}_{xx} = \mat X^T \mat X = \mat{V}\mat{D}\mat{U}^T \mat{U}\mat{D}\mat{V}^T = \mat V \mat{D}^2 \mat V^T$$
-Wegen der Eindeutigkeit der Diagonalisierung(stimmt das?) ist $\mat V$ nun wie zuvor die Matrix der Eigenvektoren und somit der Hauptachsen. Ebenso stehen die Singulärwerte durch 
+Wegen der Eindeutigkeit der Diagonalisierung(stimmt das?) ist $\mat V$ nun wie zuvor die Matrix der Eigenvektoren von $K_{xx}$ und somit der Hauptachsen. Ebenso stehen die Singulärwerte durch 
 $$\lambda_i = \frac{d_i^2}{n-1}$$
 in Beziehung mit den Eigenwerten der Kovarianzmatrix. Die Hauptkomponenten kann man somit auch durch $\mat X \mat V = \mat U \mat D$ erhalten.
 
@@ -181,29 +186,10 @@ $$\text{subject to} \quad \underbrace{\mat U \in \Omega_u, \mat V \in \Omega_v}_
 \caption{Allgemeines Schema zu PCA Erweiterungen}
 \end{table}
 
-\section{Implementierung}
-
-Allgemein ist dies kein konvexes Problem, aber bikonvex, also in jeder Komponente. Somit ergibt sich der einfache folgende Algorithmus
-
-\begin{algorithm}
-    \caption{Alternating minimization}
-    \label{alternating_minimization}
-    \begin{algorithmic}[1]
-        \Procedure{Alternate}{$U,V$}
-        	\State choose initial starting Points $\mat W^{(0)}$ and $\mat C^{(0)}$
-        	\State $n \gets 0$
-            \While{not converged} \Comment{Definiere Abbruchkriterium}
-                \State $\mat W^{(n+1)} \gets$ minimize over $\mat W$ while holding $\mat C = \mat C^{(n)}$ constant.
-                \State $\mat C^{(n+1)} \gets$ minimize over $\mat C$ while holding $\mat W = \mat W^{(n+1)}$ constant.
-                \State $n \gets n+1$
-            \EndWhile
-        \EndProcedure
-    \end{algorithmic}
-\end{algorithm} 
-
-
 \section{Theoretische Aussagen}
 \label{pca_theorems}
+
+PCA Variablen sind unkorelliert und die Loadings orthogonal. Liegt wahrscheinlich daran, dass wie die Eigenvektoren für symmetrische Matrizen $\mat X^{\top}\mat X$ orthogonal sind und die Kovarianzmatrix der Hauptkomponenten $(\mat X \mat V)^{\top}\mat X \mat V = \mat V^{\top}\mat K_{xx} \mat V$ eine Diagonalmatrix ist.
 
 non convex problem that can be solved efficiently by truncated SVD.
 
