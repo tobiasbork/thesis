@@ -52,7 +52,7 @@ Sei $\mat V = v_kv_k^{\top}$. Dann übersetzen sich die Nebenbedingungen
 \begin{align}
 \label{semidefinite_programming_naive}
 \begin{split}
-\argmax_{\mat P} = \spur{\mat K_{xx}\mat P}\\
+\argmax_{\mat P} = \spur{\mat \Sigma\mat P}\\
 \spur{\mat P} = 1, \quad \norm{\mat P}_0 \leq k^2, \quad \mat P \geq 0, \quad \rang{\mat P} = 1
 \end{split}
 \end{align}
@@ -66,14 +66,14 @@ Ersetzen wir die $\ell_0$-Strafterm und lassen die Rang-Bedingung fallen erhalte
 \begin{align}
 \label{semidefinite_programming}
 \begin{split}
-\argmax_{\mat P} = \spur{\mat K_{xx}\mat P}\\
+\argmax_{\mat P} = \spur{\mat \Sigma\mat P}\\
 \spur{\mat P} = 1, \quad \mat{1}_p^{\top} |\mat P| \mat{1}_p \leq k, \quad \mat P \geq 0
 \end{split}
 \end{align}
 Dies stellt ein semidefinites Programmierungsproblem dar, bei welcher die zu optimierenden Variablen symmetrische Matrizen sind unter der Nebenbedingung, dass sie positiv semidefinit sind. Für kleine Probleme kann (\ref{semidefinite_programming}) effizient durch \textit{Innere-Punkte-Verfahren} (English: \textit{interior-point methods}) gelöst werden. SDPT3 \cite{toh}.
 
-In (\ref{semidefinite_programming}) wird allerdings $\mat P$ berechnet und nicht die eigentliche Hauptachse. Hierfür kürzen d'Aspremont et al. die Matrix $\mat P$ und behalten nur den größten Eigenvektor $v_k$. Anschließend erhält man weitere Hauptachsen durch Matrix Deflation, indem wir $\mat K_{xx}$ durch
-$$\mat K_{xx} - (v_k^{\top}\mat K_{xx}v_k) v_kv_k^{\top}$$ 
+In (\ref{semidefinite_programming}) wird allerdings $\mat P$ berechnet und nicht die eigentliche Hauptachse. Hierfür kürzen d'Aspremont et al. die Matrix $\mat P$ und behalten nur den größten Eigenvektor $v_k$. Anschließend erhält man weitere Hauptachsen durch Matrix Deflation, indem wir $\mat \Sigma$ durch
+$$\mat \Sigma - (v_k^{\top}\mat \Sigma v_k) v_kv_k^{\top}$$ 
 ersetzen. Für größere Probleme wird eine Methode von Nesterov benutzt, um eine Laufzeit von $\mathcal{O}(\frac{p^4\sqrt{\log{p}}}{\epsilon})$ zu erreichen.\\
 
 \textbf{Iterative Schwellenwert-Methode}
