@@ -148,22 +148,52 @@ Wir haben bereits gesehen, dass die abgeschnittene Singulärwertzerlegung $\mat 
 \rang{\mat X_k} \leq k.
 \end{split}
 \end{align}
-Somit ist $\widehat{\mat X}_k$ diejenige Matrix mit Rang $k$, die $X$ am Besten approximiert. Die Rang-Bedingung legt also die Komplexität des Modells fest.
+Somit ist $\widehat{\mat X}_k$ diejenige Matrix mit Rang $k$, die $X$ am Besten approximiert. Mithilfe dieser Formulierung können wir den Fehler, der durch die Dimensionsreduktion entsteht, explizit angeben:
+\begin{align*}
+\norm{\mat X - \widehat{\mat X}_k}_F^2 = \sum_{i=k+1}^p \sigma_i^2.
+\end{align*}
+Infolgedessen können wir Bewertungskriterien definieren, welche es uns ermöglichen verschiedene Modelle miteinander zu vergleichen. Wir wollen uns nun mit der Frage beschäftigen, welche Hauptkomponenten eine geeignete Modellierung des Datensatzes darstellen.
 
 \section{Selektion der Hauptkomponenten}
 \label{selection_principal_components}
 
-Die Frage nach der Wahl der Komplexität eines Modells ist nicht immer einfach zu beantworten. Auch bei Dimensionsreduktionsverfahren kennen wir oft die intrinsische Dimension unserer Daten a priori nicht. Daher ist es schwer zu sagen, wie viele Hauptkomponenten benötigt werden, um die Daten geeignet zu modellieren. Es gilt einen Punkt der Balance zwischen kleinem Rekonstruktionsfehler und starker Dimensionsreduktion $k \ll \min\{n, p\}$ zu finden. 
+Optimale Hyperparameter für ein Modell zu finden ist selten einfach. Auch bei Dimensionsreduktionsverfahren kennen wir oft die intrinsische Dimension unserer Daten a priori nicht. Daher ist es schwer zu sagen, wie viele Hauptkomponenten benötigt werden, um die Daten passend zu modellieren. Es gilt einen Punkt der Balance zwischen Rekonstruktionsfehler und Modellkomplexität zu finden, welcher vom Anwendungsfall abhängen kann. Als Maß für die Modellkomplexität eignet sich aufgrund der natürlichen Ordnung in diesem Fall die Anzahl an Hauptkomponenten bzw. der Rang von $\widehat{\mat X}_k$. Arbeiten wir auf rauschfreien Daten können wir $k$ durch $\rang{\mat X}$ schätzen. In der Regel ist unser Datensatz aber durch Rauschen gestört, weshalb $\mat X$ vollen Rang hat.
 
-Aufgrund der einfachen Lösung der Hauptkomponentenanalyse wählt man oft den Ansatz zunächst alle $k = \min\{n, p\}$ Hauptkomponenten zu berechnen. Selbst für große $n$ und $p$ stehen effiziente Algorithmen zur Verfügung. Anschließend bewertet man die Ergebnisse anhand der erklärten Varianz $\lambda_i$ jeder Hauptkomponente. 
+Da für die Singulärwertzerlegung einer Matrix effiziente Algorithmen zur Verfügung stehen, berechnet man häufig zunächst alle $k \leq \min\{n, p\}$ Hauptkomponenten. Die eigentliche Dimensionsreduktion findet dann durch Selektion statt. Bewertet werden die verschiedenen Modelle mithilfe des Rekonstruktionsfehlers bzw. der erklärten Varianz $\sigma_i^2$ der einzelnen Hauptkomponenten. So können wir $k$ zum Beispiel so wählen, dass der Rekonstruktionsfehler durch einen Parameter $\tau$ beschränkt ist, d.h.
+\begin{align}
+\label{pca_model_selection}
+\widehat{k} = \min_k \left\{k \colon \sum_{i = k+1}^{p} \sigma_i^2 < \tau \right\} \quad \text{oder} \quad \widehat{k} = \min_k \left\{k \colon \sigma_{k+1}^2 < \tau \right\}.
+\end{align}
+Das zweite Auswahlkriterium wird in Abbildung REF veranschaulicht.
+In der Praxis ist aber sehr schwer, $\tau$ angemessen zu wählen, da die Singulärwerte von $\mat X$ nicht invariant unter Skalierung sind. Daher werden die Singulärwerte meist normiert:
+\begin{align}
+\label{pca_model_selection_normed}
+\widehat{k} = \min_k \left\{k \colon \frac{\sum_{i = k+1}^{p} \sigma_i^2}{\sum_{i=1}^k \sigma_i^2} < \tau \right\} \quad \text{oder} \quad \widehat{k} = \min_k \left\{k \colon \frac{\sigma_{k+1}^2}{\sum_{i=1}^k \sigma_i^2} < \tau \right\}.
+\end{align}
+Das erste Auswahlkriterium in (\ref{pca_model_selection_normed}) ist weit verbreitet. Man wählt genau so viele Hauptkomponenten aus, dass höchstens ein gewisser Anteil der Varianz verloren geht. Typische Werte für $\tau$ liegen zwischen 10\% und 20\%. 
 
-Meist wird eine Faustregel herangezogen. Eine simple Methode wäre so viele Hauptkomponenten auszuwählen, damit insgesamt ein vorher festgelegter Wert (z.B. 90\%) der Varianz erhalten bleibt. Bildliche Darstellung der Varianzen (vgl. Abbildung) werden in einem sog. \textit{scree plot} dargestellt. In manchen Fällen gibt es eine klare Trennung in der Größe der Eigenwerte. CITE schlagen vor nach einem starkem Knick in der Kurve zu suchen. Allerdings sind dieser Art Verfahren sehr subjektiv, da es einen solchen Knick nicht zwangsläufig geben muss bzw. es auch mehrere geben kann.
-
-Die eigentliche Dimensionsreduktion findet dann durch Selektion statt. Je nach Komplexität des Modells, welches man erreichen möchte, können so mehr oder weniger Hauptkomponenten ausgewählt werden. Je mehr Hauptkomponenten man auswählt, desto mehr Information erhält man über den Datensatz. Allerdings wird das Modell mit steigender Anzahl an Variablen immer komplizierter. Es gilt einen Punkt der Balance zu finden, der ein gutes Mittel aus Information und Komplexität liefert. Dieser kann vom Anwendungsfall abhängen. 
+In manchen Fällen gibt es eine klare Trennung in der Größe der Singulärwerte. Vidal et al. \cite{vidal} definieren ein Kriterium, welches nach einem starkem Einbruch sucht:
+\begin{align}
+\widehat{k} = \argmin_{k} \quad \alpha\sigma_{k+1}^2 + \beta k
+\end{align}
+Mit $\alpha, \beta > 0$ haben wir damit direkten Einfluss auf das Verhältnis zwischen Rekonstruktionsfehler und Modellkomplexität. In Abbildung REF haben wir die resultierende Gerade eingezeichnet, welche im wesentlichem nach einem Knick sucht. Allerdings möchten wir betonen, dass es nicht zwangsläufig einen solchen geben muss bzw. es auch mehrere geben kann.
 
 Abbildung Scree Plot
 
-Optimal singular threshold \cite{gavish}
+In der Literatur existieren weitere Heuristiken auf die wir hier nicht näher eingehen werden. Dazu gehören beispielsweise das \textit{Bayes-Informationskriterium (BIC)} und das \textit{Akaike-Informationskriterium (AIC)} aus der Informationstheorie. Bis vor Kurzem gab es keinerlei theoretische Resultate für die optimale Modellwahl bei der Hauptkomponentenanalyse. Gavish und Donoho \cite{gavish} haben erstmals ein optimales Kriterium im asymptotischem Fall angeben können. Unter der Annahme, dass
+
+We consider recovery of low-rank matrices from
+noisy data by hard thresholding of singular values, in which
+empirical singular values below a threshold λ are set to 0.
+We study the asymptotic mean squared error (AMSE) in a
+framework, where the matrix size is large compared with the
+rank of the matrix to be recovered, and the signal-to-noise ratio
+of the low-rank piece stays constant. The AMSE-optimal choice of
+hard threshold, in the case of n-by-n matrix in white noise
+of level σ,
+
+Essentially, the optimal[7] procedure boils down to estimating the noise in the dataset, , and then throwing away all components whose singular values are below a specified threshold. For a square  matrix, this threshold is: There is a similar threshold for non-square datasets explained in the paper. As with any theoretical study, the result comes with a few assumptions and caveats,[8] but their work appears robust and useful in practice.
+
 
 \section{Grenzen der Anwendbarkeit} \label{theo_results}
 
