@@ -72,64 +72,94 @@ wobei $\mat{L}$ eine Diagonalmatrix mit Eigenwerten $\lambda_i$ und $\mat V$ die
 $$\mat Z = \mat X \mat V$$
 Die $i$-te Spalte in $\mat{Z}$ entspricht also der $i$-ten Hauptkomponente und die einzelnen Beobachtungen bezüglich der neuen Darstellung sind die Zeilen von $\mat{Z}$.
 
-Es gibt einen engen Zusammenhang zwischen der Eigenwertzerlegung von $mat X^T \mat X$ und der Singulärwertzerlegung von $\mat X$. Diese Beziehung können wir nutzen, um die Lösung noch einfacher zu gestalten. Eine Singulärwertzerlegung der Matrix $\mat X$ ergibt
-$$ \mat{X} = \mat{U}\mat{D}\mat{V}^T $$
-wobei $\mat{D}$ eine Diagonalmatrix mit Singulärwerten $d_1,\ldots,d_p$, $\mat{U}$ eine orthogonale $n \times p$ und $\mat{V}$ eine orthogonale $p \times p$ Matrix ist. Nun sieht man aufgrund der Orthogonalität von $\mat U$, dass
+Es gibt einen engen Zusammenhang zwischen der Eigenwertzerlegung von $\mat X^T \mat X$ und der Singulärwertzerlegung von $\mat X$. Diese Beziehung können wir nutzen, um die Lösung noch einfacher zu gestalten. Eine Singulärwertzerlegung ergibt
+$$\mat{X} = \mat{U}\mat{D}\mat{V}^T$$
+wobei $\mat{D}$ die Diagonalmatrix der Singulärwerte, $\mat{U}$ eine orthogonale $n \times n$ und $\mat{V}$ eine orthogonale $p \times p$ Matrix ist. Nun sieht man aufgrund der Orthogonalität von $\mat U$, dass
 $$\mat{\Sigma} = \frac{1}{n-1}\mat X^T \mat X = \frac{1}{n-1}\mat{V}\mat{D}\mat{U}^T \mat{U}\mat{D}\mat{V}^T = \frac{1}{n-1}\mat V \mat{D}^2 \mat V^T.$$
-Die Singulärwerte stehen also durch $d_i^2 = \lambda_i$ in Beziehung mit den Eigenvektoren von $\mat V$. 
+Die Singulärwerte stehen also durch $d_i^2 = \lambda_i$ in Beziehung mit den Eigenvektoren von $\mat \Sigma$. 
 
-Zusammengefasst können also alle relevanten Ergebnisse einer Hauptkomponentenanalyse mithilfe einer einzelnen Singulärwertzerlegung von $\mat X$ angegeben werden. Die Hauptachsen entsprechen den Eigenvektoren in $\mat V$, die Hauptkomponenten $\mat X \mat V = \mat U \mat D$ und die jeweiligen Varianzen sind durch $d_i^2$ gegeben. Für die Berechnung einer solchen Zerlegung stehen äußert effiziente Verfahren zur Verfügung, welche sowohl den $n<p$ als auch den $p<n$ Fall schnell lösen können.  
+Zusammengefasst können also alle relevanten Ergebnisse einer Hauptkomponentenanalyse mithilfe einer einzelnen Singulärwertzerlegung von $\mat X$ angegeben werden. Die Hauptachsen entsprechen den Eigenvektoren in $\mat V$, die Hauptkomponenten der Matrix $\mat Z = \mat X \mat V = \mat U \mat D$ und die zugehörigen Varianzen sind durch $d_i^2$ gegeben. Für die Berechnung einer solchen Zerlegung stehen äußert effiziente Verfahren zur Verfügung, welche sowohl den $n<p$ als auch den $p<n$ Fall schnell in $\mathcal{O}(np \cdot \min\{n,p\})$ lösen können. 
 
-Computing PCA using Eigen value decomposition of the sample covariance matrix:
-We first have to compute the covariance matrix, which is $\mathcal{O}(p^2n)$ and then compute its eigenvalue decomposition which is $\mathcal{O}(p^3)$ giving a total cost of $\mathcal{O}(p^2n+p^3)$ (https://arxiv.org/pdf/1503.05214.pdf)
-
-Computing PCA using SVD of the data matrix:
-Svd has a computational cost of $\mathcal{O}(p^2n)$
+(So können wir eine Hauptkomponentenanalyse  durchführen. In der Praxis wird meist nur die kompakte Singulärwertzerlegung, die nur von Null verschiedene Singulärwerte berücksichtigt, berechnet. Die Anzahl ist gegeben durch den Rang von $\mat X$Es sei $k \leq \min\{n,p\}$ der Rang von $\mat X$.)
 
 \subsection{Formulierung als Regressionsproblem}
 
+Wir widmen uns nun einer anderen Sichtweise auf die Hauptkomponentenanalyse, welche einen Zusammenhang zur linearen Regression herstellt und eine geometrische Interpretation ermöglicht. Hierbei möchte man einen $k$-dimensionalen Unterraum finden, der die Daten bestmöglich approximiert wenn sie darauf projiziert werden. Mathematisch ausgedrückt minimieren wir also die Residuen der Projektion.
+
+Sei dazu $x_i$ die $i$-te Beobachtung, also die $i$-te Zeile von $\mat X$ und $\mat V_k = \begin{bmatrix} v_1 & \cdots & v_k \end{bmatrix}$ eine $p \times k$ orthonormale Matrix. Wie in Abschnitt \ref{orthogonality} beschrieben wird durch den Operator $\mat V_k \mat V_k^T$ jede Beobachtung orthogonal auf den durch $V_1, \ldots , V_k$ aufgespannten Unterraum projiziert. Eine bestmögliche $\ell_2$-Approximation der Daten ist gegeben wenn wir die Distanz zwischen jeder Beobachtung und seiner Projektion minimieren \cite{zou_sparsepca}:
+\begin{align}
+\label{pca_regression_formulation}
+\begin{split}
+\mat{\widehat{V}}_k = \argmin_{\mat{V}_k} \sum_{i=1}^{n} \norm{x_i - \mat{V}_k \mat{V}_k^Tx_i}_2^2\\
+\mat{V}_k^T\mat{V}_k = I_{k \times k}
+\end{split}
+\end{align}
+Ein mathematisch rigoroser Beweis, dass die Lösung von (\ref{pca_regression_formulation}) genau den ersten $k$ Hauptachsen entspricht, befindet sich in \cite{vidal}. Wir möchten hier eine intuitive Erklärung für diese Äquivalenz geben. Wenn wir von der Varianz eines Datensatzes sprechen, reden wir von der Summe der Varianzen der einzelnen Variablen. Somit ist die Gesamtvarianz durch $\frac{1}{n-1}\norm{\mat X}_{F}^{2}$ gegeben. Mithilfe des verallgemeinerten Satzes von Pythagoras erhalten wir
+\begin{align*}
+\norm{\mat X}_{F}^{2} & = \sum_{i=1}^{n} \norm{x_i}_{2}^{2}\\
+& = \sum_{i=1}^{n} \norm{x_i - \mat V_k \mat V_k^T x_i + \mat V_k \mat V_k^T x_i}_{2}^{2}\\
+& = \sum_{i=1}^{n} \norm{x_i - \mat V_k \mat V_k^T x_i}_2^2 + \norm{\mat V_k \mat V_k^T x_i}_{2}^{2}\\
+& = \norm{\mat X - \mat X \mat V_k \mat V_k^T}_{F}^{2} + \norm{\mat X \mat V_k \mat V_k^T}_{F}^{2}.
+\end{align*}
+Weiter sehen wir, dass
+\begin{align*}
+\norm{\mat X \mat V_k \mat V_k^T}_{F}^{2} & = \spur{\mat X \mat V_k \mat V_k^T (\mat X \mat V_k \mat V_k^T)^T}\\
+& = \spur{\mat V_k^T \mat X^T \mat X \mat V_k}\\
+& = \sum_{i=1}^{k} v_i^T (\mat X^T \mat X) v_i
+\end{align*}
+In (\ref{pca_variance_maximization_first}) und (\ref{pca_variance_maximization_rest}) haben wir den Term $v_i^T \mat \Sigma v_i$, der die Varianz der $i$-ten Hauptkomponente beschreibt, sequentiell maximiert. Drücken wir (\ref{pca_variance_maximization_first}) und (\ref{pca_variance_maximization_rest}) in einem gemeinsamen Berechnungsproblem aus ergibt sich
+\begin{align}
+\label{pca_variance_maximization}
+\begin{split}
+\widehat{\mat V}_k = \argmax_{\mat V_k}\sum_{i=1}^{k} v_i^T \mat \Sigma v_i\\
+\mat V_k^T\mat V_k = \mat I_{k \times k}
+\end{split}
+\end{align}
+Kommen wir nun zurück auf die Zerlegung der Gesamtvarianz
+\begin{align*}
+\frac{1}{n-1}\norm{\mat X}_{F}^{2} = \frac{1}{n-1}\norm{\mat X - \mat X \mat V_k \mat V_k^T}_{F}^{2} + \sum_{i=1}^{k} v_i^T \mat \Sigma v_i
+\end{align*} 
+Mathematisch gesehen macht es keinen Unterschied, ob wir die Varianz der Hauptkomponenten $\sum_{i=1}^{k} v_i^T \mat \Sigma v_i$ maximieren oder die Residuen der Projektion $\frac{1}{n-1}\norm{\mat X - \mat X \mat V_k \mat V_k^T}_{F}^{2}$ minimieren. Diese Idee ist geometrisch in Abbildung \ref{pca_projection_explanation} veranschaulicht. Hierbei versucht man im ersten Fall eine Hauptachse durch den Datensatz zu finden, so dass die Varianz entlang dieser maximiert werden. Anders versucht man im zweitem Fall eine Hauptachse zu finden, so dass die Summe der Distanzen zwischen Datenpunkt und seiner Projektion minimiert wird.
 \begin{figure}
 \centering
 \includegraphics[width = 0.8\textwidth]{figures/pca_projection_explanation_german.png}
-\caption{Die Abbildung zeigt die Äquivalenz von Maximierung der Varianz und Minimierung der Distanz der orthogonalen Projektion}
+\caption{Die Abbildung zeigt die Äquivalenz von Maximierung der Varianz und Minimierung der Residuen in zwei Dimensionen.}
 \label{pca_projection_explanation}
-\end{figure}
+\end{figure} 
 
-Wir widmen uns nun einer letzten Formulierung der Hauptkomponentenanalyse, die eine geometrische Interpretation ermöglicht. Hierbei versucht man einen $k$-dimensionalen $(k < n)$ Unterraum zu finden, der die Daten bestmöglich approximiert. Wir werden diese Problemstellung nun mathematisch formulieren.
+Da die Daten auf den niedrigdimensionaleren Raum linear transformiert werden gehört die Hauptkomponentenanalyse zu den linearen Dimensionsreduktionsverfahren. Anhand von (\ref{pca_regression_formulation}) erkennt man zudem einen starken Zusammenhang zur linearen Regression, bei welcher ebenfalls die Summe der Residuenquadrate minimiert werden. Neben der unterschiedlichen Motivation der beiden Verfahren liegt die entscheidende Differenz in der Art der Projektion. Während bei linearer Regression die Projektion orthogonal bezüglich der unabhängigen Koordinatenachsen ist, werden die Daten bei der Hauptkomponentenanalyse orthogonal auf die Hauptachsen projiziert. Ausgehend von (\ref{pca_regression_formulation}) werden wir im nächsten Kapitel die Variante der dünnbesetzten Hauptkomponentenanalyse beschreiben.
 
-Sei dazu $x_i$ die i-te Beobachtung, also die i-te Zeile von $\mat X$ und $\mat V_k = \begin{bmatrix} V_1 & \cdots & V_k \end{bmatrix}$ eine $p \times k$ orthonormale Matrix. Nun projizieren wir jede Beobachtung orthogonal auf den durch $V_1, \ldots V_k$ aufgespannten Unterraum. Die orthogonale Projektion wird wie in REF beschrieben durch Multiplikation mit dem Operator $\mat V_k \mat V_k^T$ erreicht. Die auf den linearen Unterraum projizierten Daten ergeben sich also durch $\mat V_k \mat V_k^T x_i$. Um die Daten bestmöglich in diesem niedrigdimensionalen Raum darzustellen minimiert man nun die Distanz zwischen jeder Beobachtung und seiner Projektion. Ein Weg, um die beste Projektion zu definieren ist $l_2$ Approximation erhält man folgendes Problem \cite{zou_sparsepca}: (Hier auch noch schreiben warum man den zweiten Term braucht, Eindeutigkeit von PCA)
+\subsection{Weitere Formulierungen} 
 
-\label{pca_regression_formulation}
-$$\mat{\hat{V}}_k = \argmin_{\mat{V}_k} \sum_{i=1}^{n} \norm{x_i - \mat{V}_k \mat{V}_k^Tx_i}^2$$
-$$\mat{V}_k^T\mat{V}_k = I_{k \times k}$$
+Wir werden nun kurz auf zwei weiteren Formulierungen eingehen anhand welcher weitere Eigenschaften der Hauptkomponentenanalyse deutlich werden. Da $\mat Z_k = \mat X \mat V_k$ die ersten $k$ Hauptkomponenten beinhaltet, kann (\ref{pca_regression_formulation}) auch geschrieben werden als
+\begin{align}
+\label{pca_minimize_reconstruction_error}
+\begin{split}
+(\widehat{\mat{Z}}_k, \widehat{\mat V}_k) = \argmin_{\mat Z_k, \mat V_k} \norm{\mat X - \mat Z_k \mat V_k^T}_{F}^{2}\\
+\mat V_k^T\mat V_k = \mat I_{k \times k}.
+\end{split}
+\end{align}
+Durch $\mat Z_k \mat V_k^T$ ist also eine bestmögliche Rekonstruktion der Datenmatrix $X$ gegeben. In anderen Worten wird in (\ref{pca_minimize_reconstruction_error}) also der $\ell_2$-Rekonstruktionsfehler minimiert. Diese Formulierung werden wir als Grundlage für Verallgemeinerungen der Hauptkomponentenanalyse in Abschnitt \ref{pca_extensions} wählen.
 
-Man kann zeigen, dass die Lösung dieses Problems genau den ersten $k$ Hauptachsen entspricht. Wir haben dies in einem Theorem \ref{theo_results} festgehalten.  \cite{vidal} Zum besseren Verständnis hilft \ref{pca_projection_explanation}, welches die Äquivalenz von Maximierung der Varianz und Minimierung der orthogonalen Projektion verdeutlichen soll. Jeder Datenpunkt ist hier in 2 Dimensionen dargestellt. Versucht man nun die Daten bestmöglich auf einen 1-dimensionalen Unterraum, also eine Linie, orthogonal zu projizieren erhält man denselben Vektor, den man aus Sicht der Varianzmaximierung auch erhalten hätte. 
-
-Aus dieser Interpretation leitet sich auch der Name des linearen Dimensionsreduktionsverfahrens ab, denn die Daten werden auf den niedrigdimensionaleren Raum linear transformiert. Ausgehend von dieser Formulierung als Regressionsproblem werden wir im nächsten Kapitel die Variante der dünnbesetzten Hauptkomponentenanalyse beschreiben.
-
-\subsection{Formulierung als beste Rang k Rekonstruktion}
-
-Further multiplying the first k PCs by the corresponding principal axes $\mat V^T k$ yields $\mat X_k = \mat U_k \mat S_k \mat{V}_k^T$ matrix that has the original $n \times p$ size but is of lower rank (of rank k). This matrix $\mat X_k$ provides a reconstruction of the original data from the first k PCs. It has the lowest possible reconstruction error
-
+Wir haben bereits gesehen, dass die abgeschnittene Singulärwertzerlegung $\mat X_k = \mat U_k \mat D_k \mat{V}_k^T \in \mathbb{R}^{n \times k}$ die optimale Lösung für die Hauptkomponentenanalyse liefert. Diese ist aufgrund des Eckart-Young-Mirsky-Theorem, welches wir bereits in Abschnitt \ref{matrix_approximation} kennengelernt haben, Lösung des Problems
+\begin{align}
+\begin{split}
+\widehat{\mat X}_k = \argmin_{\mat X_k} \norm{\mat X - \mat X_k}_F^2\\
+\rang{\mat X_k} \leq k.
+\end{split}
+\end{align}
+Somit ist $\widehat{\mat X}_k$ diejenige Matrix mit Rang $k$, die $X$ am Besten approximiert. Die Rang-Bedingung legt also die Komplexität des Modells fest.
 
 \section{Selektion der Hauptkomponenten}
 \label{selection_principal_components}
 
-Die eigentliche Dimensionsreduktion findet dann durch Selektion statt. Je nach Komplexität des Modells, welches man erreichen möchte, können so mehr oder weniger Hauptkomponenten ausgewählt werden. Je mehr Hauptkomponenten man auswählt, desto mehr Information erhält man über den Datensatz. Allerdings wird das Modell mit steigender Anzahl an Variablen immer komplizierter. Es gilt einen Punkt der Balance zu finden, der ein gutes Mittel aus Information und Komplexität liefert. Dieser kann vom Anwendungsfall abhängen. Wir werden uns mit diesem Thema weiter in \ref{selection_principal_components} beschäftigen.
-Zusammenfassend haben wir somit unseren ursprünglichen Datensatz in neuen Hauptkomponenten konzentriert, die aber trotzdem einen Großteil an Information beinhalten.
+Die Frage nach der Wahl der Komplexität eines Modells ist nicht immer einfach zu beantworten. Auch bei Dimensionsreduktionsverfahren kennen wir oft die intrinsische Dimension unserer Daten a priori nicht. Daher ist es schwer zu sagen, wie viele Hauptkomponenten benötigt werden, um die Daten geeignet zu modellieren. Es gilt einen Punkt der Balance zwischen kleinem Rekonstruktionsfehler und starker Dimensionsreduktion $k \ll \min\{n, p\}$ zu finden. 
 
-Wie viele Hauptkomponenten sollen wir auswählen?
+Aufgrund der einfachen Lösung der Hauptkomponentenanalyse wählt man oft den Ansatz zunächst alle $k = \min\{n, p\}$ Hauptkomponenten zu berechnen. Selbst für große $n$ und $p$ stehen effiziente Algorithmen zur Verfügung. Anschließend bewertet man die Ergebnisse anhand der erklärten Varianz $\lambda_i$ jeder Hauptkomponente. 
 
-A simple approach is to choose the number of
-PCs for the variance to achieve a predetermined
-percentage. say 95%
-Most existing approaches to determining the number of PC's use an index that is monotonlcally
-decreasing. The number of PC's is chosen when
-there is no significant decrease in the index after
-adding a PC. These approaches based on monotonic indices are subjective because (i) there may
-be a rather constant decrement in the index; and
-(ii) there can be more than one location which
-satisfies the criterion
+Meist wird eine Faustregel herangezogen. Eine simple Methode wäre so viele Hauptkomponenten auszuwählen, damit insgesamt ein vorher festgelegter Wert (z.B. 90\%) der Varianz erhalten bleibt. Bildliche Darstellung der Varianzen (vgl. Abbildung) werden in einem sog. \textit{scree plot} dargestellt. In manchen Fällen gibt es eine klare Trennung in der Größe der Eigenwerte. CITE schlagen vor nach einem starkem Knick in der Kurve zu suchen. Allerdings sind dieser Art Verfahren sehr subjektiv, da es einen solchen Knick nicht zwangsläufig geben muss bzw. es auch mehrere geben kann.
+
+Die eigentliche Dimensionsreduktion findet dann durch Selektion statt. Je nach Komplexität des Modells, welches man erreichen möchte, können so mehr oder weniger Hauptkomponenten ausgewählt werden. Je mehr Hauptkomponenten man auswählt, desto mehr Information erhält man über den Datensatz. Allerdings wird das Modell mit steigender Anzahl an Variablen immer komplizierter. Es gilt einen Punkt der Balance zu finden, der ein gutes Mittel aus Information und Komplexität liefert. Dieser kann vom Anwendungsfall abhängen. 
 
 Abbildung Scree Plot
 
@@ -162,10 +192,11 @@ Darüber hinaus gibt es noch eine Reihe Spezialfälle, bei denen Probleme auftre
 Das wohl wichtigste/größte Hindernis im Zuge dieser Arbeit ist sicherlich die durch die Transformation entstehenden Interpretationsschwierigkeiten. Jede Hauptkomponente entsteht wie oben beschrieben durch eine Linearkombination der Ausgangsvariablen. Während die Ausgangsvariablen Bedeutungen wie Gewicht oder Größe hatten ist in vor allem in hochdimensionalen Fällen eine Interpretation der Hauptkomponenten nur schwer möglich (Rotation Techniques CITE). Dieser Interpretationsverlust ist Ausgangspunkt der Idee der dünnbesetzten Hauptkomponentenanalyse, genannt sparse PCA. Diesem Verfahren ist das folgende Kapitel gewidmet.
 
 \section{Erweiterungen der Hauptkomponentenanalyse}
+\label{pca_extensions}
 Wie wir bereits gesehen haben, gibt es viele verschiedene Erweiterungen von PCA. Die meisten kann man unter folgendem Schema zusammenfassen: (Welche genau?)
 
-$$\min_{\mat{U},\mat{V}} \underbrace{\norm{\mat{X} - \mat{U}\mat{V}^T}_F}_{\text{Loss Function}} + \underbrace{\lambda_u f_u(\mat U) + \lambda_v f_v(\mat V)}_{\text{Regularisierung}}$$
-$$\text{subject to} \quad \underbrace{\mat U \in \Omega_u, \mat V \in \Omega_v}_{\text{Nebenbedingungen}}$$
+$$\min_{\mat{Z},\mat{V}} \underbrace{\norm{\mat{X} - \mat{Z}\mat{V}^T}_F}_{\text{Loss Function}} + \underbrace{\lambda_z f_z(\mat Z) + \lambda_v f_v(\mat V)}_{\text{Regularisierung}}$$
+$$\text{subject to} \quad \underbrace{\mat Z \in \Omega_z, \mat V \in \Omega_v}_{\text{Nebenbedingungen}}$$
 
 \begin{table}
 \centering

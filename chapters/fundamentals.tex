@@ -20,6 +20,8 @@ In diesem Kapitel werden wir die wichtigsten mathematischen Grundlagen, die wir 
 Ein Großteil der Mathematik der Hauptkomponentenanalyse beruht auf Methoden der linearen Algebra. Aufgrund des Anwendungsfalls werden wir uns auf die Einführung der Grundbegriffe in reellen Vektorräumen beschränken.
 
 \subsection{Orthogonalität}
+\label{orthogonality}
+
 \begin{defn}[Skalarprodukt \cite{jaenich}]
 Sei $V$ ein reeller Vektorraum. Ein \textit{Skalarprodukt} in $V$ ist eine Abbildung $\inner{\cdot}{\cdot}: V \times V \longrightarrow \mathbb{R}$ mit den folgenden Eigenschaften:
 \begin{enumerate}[(i)]
@@ -97,7 +99,7 @@ wobei $\mat A = \begin{bmatrix} \frac{u_1}{\norm{u_1}} & \cdots & \frac{u_n}{\no
 \begin{align}
 P_U(v) = \mat A (\mat A^\top \mat A)^{-1} \mat A^\top v
 \end{align}
-Wir nennen $\mat H = \mat A (\mat A^\top \mat A)^{-1} \mat A^\top$ die \textit{orthogonale Projektionsmatrix}. Mithilfe von Theorem \ref{pythagoras} lässt sich zeigen, dass der orthogonal auf den Unterraum projizierte Vektor den Abstand zwischen dem Ausgangsvektor und dem Unterraum minimiert.
+Wir nennen $\mat P = \mat A (\mat A^\top \mat A)^{-1} \mat A^\top$ die \textit{orthogonale Projektionsmatrix}. Mithilfe von Theorem \ref{pythagoras} lässt sich zeigen, dass der orthogonal auf den Unterraum projizierte Vektor den Abstand zwischen dem Ausgangsvektor und dem Unterraum minimiert.
 
 \begin{thm}[\cite{anton}]
 Sei $U$ ein Unterraum eines euklidischen Vektorraumes $V$. Dann ist $P_U(v)$ die beste Näherung von $u$ in $U$, d.h.
@@ -154,6 +156,7 @@ Singulärwerte einer Matrix $\mat A$ sind eindeutig bestimmt und stehen durch $\
 
 
 \subsection{Matrix Approximation}
+\label{matrix_approximation}
 
 In diesem Abschnitt werden wir zwei Approximationsprobleme für Matrizen formulieren, die eine explizite Lösung besitzen. Zunächst führen wir dafür eine Matrixnorm ein, von welcher wir auch später sehr häufig Gebrauch machen werden.
 
@@ -338,7 +341,7 @@ besitzt. Die Zielgröße ergibt sich dann durch
 \begin{align}
 \hat{y} = \mat X \hat{\beta}^{\text{OLS}} = \mat X (\mat X^{\top}\mat X)^{-1}\mat X^{\top} y
 \end{align}
-Die Matrix $\mat H = \mat X (\mat X^{\top}\mat X)^{-1}\mat X^{\top}$ haben wir bereits in REF kennengelernt. Sie projiziert $y$ orthogonal auf den durch  die Spalten von $\mat X$ aufgespannten Unterraum. Dies ermöglicht eine geometrische Interpretation der linearen Regression.
+Die Matrix $\mat P = \mat X (\mat X^{\top}\mat X)^{-1}\mat X^{\top}$ haben wir bereits in REF kennengelernt. Sie projiziert $y$ orthogonal auf den durch  die Spalten von $\mat X$ aufgespannten Unterraum. Dies ermöglicht eine geometrische Interpretation der linearen Regression.
 
 Wenn $\mat X$ keinen vollen Rang hat, ist die Lösung von (\ref{least_squares}) nicht mehr eindeutig. Dieser Art Probleme ereignen sich häufig in der Bild- und Signalanalyse, da es mehr Variablen als Beobachtungen gibt ($p > n$). Um ein gewünschtes Verhalten der Regression zu gewährleisten, bestehen verschiedene Möglichkeiten der Filterung oder Regularisierung. In letzterem Fall versehen wir den Regressionsterm mit sog. \textit{Straftermen}, welche eine bedeutende Rolle in den folgenden Kapitel spielen werden. Wir werden uns auf die Einführung dieser in linearer Regression beschränken. Das Konzept kann aber allgemeiner auch in logistischer Regression oder anderen verallgemeinerten linearen Modellen verwendet werden. Mit leicht abgewandelten Argumentationen erhalten wir dann bei Einbettung der Strafterme in die jeweilige Zielfunktion dieselben Effekte. Mehr dazu in CITE.
 
