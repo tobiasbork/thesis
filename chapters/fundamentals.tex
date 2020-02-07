@@ -272,7 +272,7 @@ Sei $g\colon \Theta \to \mathbb {R}$ eine zu schätzende reelle Parameterfunktio
 
 \begin{defn}[Verzerrung \cite{rueschendorf}]
 Die \textit{Verzerrung} (Englisch: \textit{Bias}) des Schätzers $d$ bei $\vartheta$ ist definiert durch
-$$\operatorname {Bias} _{\vartheta }(d) \defeq \operatorname {E} _{\vartheta }(d)-g(\vartheta ).$$
+$$\operatorname {Bias} _{\vartheta }[d] \defeq \operatorname {E} _{\vartheta }[d]-g(\vartheta ).$$
 \end{defn}
 
 %\begin{defn}[Erwartungstreuer Schätzer \cite{rueschendorf}]
@@ -284,12 +284,12 @@ Um verschiedene Schätzer miteinander zu vergleichen bedienen wir uns häufig de
 
 \begin{defn}[Mittlerer quadratischer Fehler \cite{kohn} (Def 15.7)]
 Der \textit{mittlere quadratische Fehler} (Englisch: \textit{Mean Squared Error (MSE))} ist definiert durch
-$$\operatorname {MSE} (d,\vartheta ) \defeq \operatorname{E} _{\vartheta}\left(\left(d-g(\vartheta )\right)^{2}\right).$$
+$$\operatorname {MSE} (d,\vartheta ) \defeq \operatorname{E} _{\vartheta}\left[\left(d-g(\vartheta )\right)^{2}\right].$$
 \end{defn}
 
 \begin{thm}[Verschiebungssatz \cite{kohn} ()]
 Der mittlere quadratische Fehler zerfällt in Varianz und Bias, d.h.
-$$\operatorname{MSE} (d,\vartheta ) = \operatorname{Var}_{\vartheta }(d)+\left(\operatorname{Bias}_{\vartheta}(d)\right)^{2}$$
+$$\operatorname{MSE} (d,\vartheta) = \operatorname{Var}_{\vartheta}[d]+\left(\operatorname{Bias}_{\vartheta}[d]\right)^{2}$$
 \end{thm}
 
 Für die Bewertung eines Schätzers ist also sowohl Verzerrung als auch Varianz zu berücksichtigen. Leider ist in der Praxis selten möglich, beide Fehlerquellen zeitgleich zu minimieren. Im Bereich des überwachten maschinellen Lernens ist das Problem unter dem \textit{Verzerrung-Varianz-Dilemma} (Englisch: \textit{bias-variance tradeoff}) bekannt. Idealerweise versucht man ein Modell zu wählen, welches sowohl die Gesetzmäßigkeiten in den Trainingsdaten genau erfasst, als sich auch auf ungesehene Testdaten generalisieren lässt.

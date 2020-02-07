@@ -172,7 +172,7 @@ In der Praxis ist aber sehr schwer, $\tau$ angemessen zu wählen, da die Singul�
 \end{align}
 Das erste Auswahlkriterium in (\ref{pca_model_selection_normed}) ist weit verbreitet. Man wählt genau so viele Hauptkomponenten aus, dass höchstens ein gewisser Anteil der Varianz verloren geht. Typische Werte für $\tau$ liegen zwischen 10\% und 20\%. 
 
-In manchen Fällen gibt es eine klare Trennung in der Größe der Singulärwerte. Vidal et al. \cite{vidal} definieren ein Kriterium, welches nach einem starkem Einbruch sucht:
+In manchen Fällen gibt es eine klare Trennung in der Größe der Singulärwerte. Vidal et al. \cite{vidal} definieren ein Kriterium, welches nach einer solchen sucht:
 \begin{align}
 \widehat{k} = \argmin_{k} \quad \alpha\sigma_{k+1}^2 + \beta k
 \end{align}
@@ -180,20 +180,9 @@ Mit $\alpha, \beta > 0$ haben wir damit direkten Einfluss auf das Verhältnis zw
 
 Abbildung Scree Plot
 
-In der Literatur existieren weitere Heuristiken auf die wir hier nicht näher eingehen werden. Dazu gehören beispielsweise das \textit{Bayes-Informationskriterium (BIC)} und das \textit{Akaike-Informationskriterium (AIC)} aus der Informationstheorie. Bis vor Kurzem gab es keinerlei theoretische Resultate für die optimale Modellwahl bei der Hauptkomponentenanalyse. Gavish und Donoho \cite{gavish} haben erstmals ein optimales Kriterium im asymptotischem Fall angeben können. Unter der Annahme, dass
-
-We consider recovery of low-rank matrices from
-noisy data by hard thresholding of singular values, in which
-empirical singular values below a threshold λ are set to 0.
-We study the asymptotic mean squared error (AMSE) in a
-framework, where the matrix size is large compared with the
-rank of the matrix to be recovered, and the signal-to-noise ratio
-of the low-rank piece stays constant. The AMSE-optimal choice of
-hard threshold, in the case of n-by-n matrix in white noise
-of level σ,
-
-Essentially, the optimal[7] procedure boils down to estimating the noise in the dataset, , and then throwing away all components whose singular values are below a specified threshold. For a square  matrix, this threshold is: There is a similar threshold for non-square datasets explained in the paper. As with any theoretical study, the result comes with a few assumptions and caveats,[8] but their work appears robust and useful in practice.
-
+In der Literatur existieren weitere Heuristiken auf die wir hier nicht näher eingehen werden. Dazu gehören beispielsweise ein \textit{Bayes-Informationskriterium (BIC)} und ein \textit{Akaike-Informationskriterium (AIC)} aus der Informationstheorie. Bis vor Kurzem gab es keinerlei theoretische Resultate für die optimale Modellwahl bei der Hauptkomponentenanalyse. Gavish und Donoho \cite{gavish} haben erstmals ein optimales Kriterium im asymptotischem Fall angeben können, welcehe der Singulärwerte beibehalten werden sollten. Unter der Annahme, dass das Signal-Rausch-Verhältnis konstant bleibt, zeigen sie, dass der asymptotische mittlere quadratische Fehler 
+$$\operatorname{AMSE} = \lim_{n \rightarrow \infty} \norm{\mat X - \widehat{\mat X}_k}_{F}^{2}$$
+für $n \times n$-Matrizen minimal wird, falls alle Singulärwerte kleiner als $\frac{4}{\sqrt{3}}\sqrt{n}\sigma \approx 2.309\sigma$ auf Null gesetzt werden. Wenn die Stärke des Rauschens $\sigma$ vorher nicht bekannt ist, ändert sich die Schranke zu $2.858\sigma_{med}$, wobei $\sigma_{med}$ der Stichprobenmedian der Singulärwerte ist. Für nicht quadratische $m \times n$-Matrizen ändern sich die Schwellenwerte abhängig von $m,n$. Auch wenn damit nur ein asymptotisches Resultat zur Verfügung steht, scheint diese Schranke in der Praxis hilfreich zu sein.
 
 \section{Grenzen der Anwendbarkeit} \label{theo_results}
 
@@ -201,23 +190,16 @@ Obwohl die Hauptkomponentenanalyse in vielen Situationen helfen kann, Datensätz
 
 \begin{itemize}
 \item Lineare Beziehung zwischen Variablen
-\item Korrelation der Variablen
 \item Vollständigkeit des Datensatzes
 \item Ausreißer in den Daten
 \item Anzahl an Beobachtungen in Relation zu Anzahl an Variablen
 \end{itemize}
 
-Wie in REF beschrieben versuchen wir Daten in einen niedrigdimensionaleren linearen oder affinen Unterraum zu transformieren. Es kann aber durchaus vorkommen, dass es keine lineare Beziehung zwischen den Variablen gibt. Nichtlineare Strukturen können von PCA nicht erfasst werden und gehen somit verloren. \cite{vidal} Vidal et al. zeigen diese Grenze konkret am Beispiel von Porträt-Fotos auf. Seit der Entstehung von PCA gab es aber zahlreiche nicht-lineare Erweiterungen. So nutzt zum Beispiel Kernel PCA den \textit{Kernel Trick} aus, bei welchem man die Daten zuerst durch eine nichtlineare Transformation in ein höherdimensionalen Raum einbettet von dem man sich erhofft, dass die Daten in diesem linear verteilt. Erst anschließend wird dann die eigentliche Reduktion durchgeführt. Hierbei muss man die Daten aber nicht im höherdimensionalen Raum auswerten. CITE. Andere Erweiterungen, die allgemein unter \textit{manifold learning} zusammengefasst werden können, basieren auf der Idee, dass die Dimension des Datensatz nur künstlich hoch ist. Man versucht die lokale Geometrie der Mannigfaltigkeit (Begriff erklären?) zu approximieren und damit direkt eine niedrigdimensionale Einbettung zu erhalten. Hierunter fallen zum Beispiel die multidimensionale Skalierung oder ISOMAP.
+Bei der Hauptkomponentenanalyse können lineare Korrelationen zwischen Variablen sehr gut eingefangen werden. Andere Beziehungen, die durchaus in der Praxis vorkommen, werden dabei nicht berücksichtigt bzw. als linear angenommen. Vidal et al. \cite{vidal} zeigen am Beispiel von Porträt-Fotos auf, dass nichtlineare Strukturen in der Tat verloren gehen. In manchen Fällen können wir mithilfe geeigneter Koordinatentransformationen dieses Hindernis umgehen. Bei der Anwendung des sog. \textit{Kernel Tricks} transformiert man die Daten in einen höherdimensionalen Raum, in welchem sie besser linear separierbar sind. Bei \textit{Kernel PCA} wendet man anschließend die Hauptkomponentenanalyse in diesem Raum an bevor man die Daten wieder zurück transformiert. Andere Erweiterungen, die unter der Kategorie \textit{manifold learning} zusammengefasst werden können, versuchen die lokale Geometrie der Mannigfaltigkeit direkt zu approximieren. So kann man ohne die Nutzung eines höherdimensionalen Raumes unmittelbar die niedrigdimensionale Struktur erhalten. Verfahren, die diesen Ansatz verfolgen, sind zum Beispiel die \textit{multidimensionale Skalierung} oder \textit{ISOMAP}. \cite{lee}
 
-Damit der Datensatz für eine Dimensionsreduktion per PCA geeignet ist, müssen die verschiedenen Variablen einen gewissen Grad an Korrelation aufweisen. Im extremen Fall der Unabhängigkeit der Variablen bewirkt eine Hauptachsentransformation nichts. Reduziert man dann die Anzahl der Hauptkomponenten verliert man mit jeder Variable einen Großteil der Information.
-
-Ein weiterer Gesichtspunkt ist die Vollständigkeit eines Datensatzes. Finden wir fehlende oder korrupte Einträge in unserem Datensatz vor, kann die klassische Hauptkomponentenanalyse ... . Für dieser Art Probleme existieren entsprechende Ergänzungen von PCA wie zum Beispiel in cite und cite. Ausreißer in den Daten können die Resultate drastisch beeinflussen. Genaue Effekte überlegen und CITE. Aus diesem Grund sollten Ausreißer vor der Anwendung von PCA entfernt werden.
-
-Ausreißer in den Daten.
+Falls wir einen unvollständigen Datensatz vorliegen haben, bei welchem manche Werte korrupt oder nicht vorhanden sind, können wir die klassische Hauptkomponentenanalyse nicht anwenden. Nehmen wir an, dass dies nur einen Bruchteil der Daten betrifft, können mit hoher Wahrscheinlichkeit noch immer exakte Ergebnisse erzielt werden \cite{candes}. Des Weiteren ist das Verfahren sehr sensitiv gegenüber Ausreißern. Besonders wenn nur wenige Beobachtungen zur Verfügung stehen, können Ausreißer die Resultate drastisch beeinflussen. Um eine Verfälschung der Ergebnisse zu vermeiden, entfernt man diese meist vor der Anwendung. Allerdings ist es nicht immer einfach Ausreißer zu identifizieren. Daher wird in \cite{kriegel} vorgeschlagen, die Datenpunkte basierend auf deren geschätzten Relevanz vorab unterschiedlich zu gewichten. Die Behandlung dieser Art Probleme wird mit dem Begriff \textit{Robust PCA} verbunden.
 
 Anzahl der Variablen zu hoch.
-
-Darüber hinaus gibt es noch eine Reihe Spezialfälle, bei denen Probleme auftreten können. So kann es zum Beispiel passieren, dass die relevanten Informationen in den Variablen mit niedriger Varianz versteckt sind. Da die Hauptkomponentenanalyse gerade diese Variablen vernachlässigt, wird sich unter Umständen nicht die erwünschte Struktur auf den Daten ergeben. Es bedarf anderer Methoden mit anderen Ansätzen, um eine Dimensionsreduktion zu ermöglichen. Oftmals weiß man aber im Vorhinein nicht, in welchen Variablen diese Unterscheidungsmöglichkeit versteckt ist.
 
 Das wohl wichtigste/größte Hindernis im Zuge dieser Arbeit ist sicherlich die durch die Transformation entstehenden Interpretationsschwierigkeiten. Jede Hauptkomponente entsteht wie oben beschrieben durch eine Linearkombination der Ausgangsvariablen. Während die Ausgangsvariablen Bedeutungen wie Gewicht oder Größe hatten ist in vor allem in hochdimensionalen Fällen eine Interpretation der Hauptkomponenten nur schwer möglich (Rotation Techniques CITE). Dieser Interpretationsverlust ist Ausgangspunkt der Idee der dünnbesetzten Hauptkomponentenanalyse, genannt sparse PCA. Diesem Verfahren ist das folgende Kapitel gewidmet.
 
