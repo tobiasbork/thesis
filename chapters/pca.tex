@@ -42,7 +42,7 @@ Um dieses Prinzip zu veranschaulichen, wenden wir uns einem simplem Beispiel zu.
 
 \textbf{Vorverarbeitung der Daten}
 
-Bevor wir die Hauptkomponentenanalyse auf einen Datensatz anwenden, gibt es einen wichtigen Bearbeitungsschritt zu beachten. Wenn eine Variable weniger variiert als eine Andere aufgrund der verwendeten Einheit oder Skala kann dies zu ungewollten Ergebnissen führen. (REF?) Ohne eine Vorbehandlung der Daten hat so im obigen Beispiel eine Änderung von 1cm die gleiche Bedeutung wie eine Änderung von 1kg.  Daher werden die Daten häufig einem Vorverarbeitungsschritt (Englisch: \textit{preprocessing}) unterzogen. Ein zu diesem Zweck oft verwendetes Verfahren ist die Standardisierung oder auch z-Transformation genannt. Hierbei werden die Variablen $X_i$ zentriert und anschließend auf Einheits-Varianz gebracht. Dies wird erreicht, indem man $X_i$ durch $\frac{X_i - \operatorname{E}[X_i]}{\sqrt{\operatorname{Var}[X_i]}}$ ersetzt. Mathematisch gesehen wendet man das Verfahren somit anstatt der Kovarianzmatrix auf die Korrelationsmatrix an.
+Bevor wir die Hauptkomponentenanalyse auf einen Datensatz anwenden, gibt es einen wichtigen Bearbeitungsschritt zu beachten. Wenn eine Variable weniger variiert als eine Andere aufgrund der verwendeten Einheit oder Skala kann dies zu ungewollten Ergebnissen führen. (REF?) Ohne eine Vorbehandlung der Daten hat so im obigen Beispiel eine Änderung von 1cm die gleiche Bedeutung wie eine Änderung von 1kg.  Daher werden die Daten häufig einem Vorverarbeitungsschritt (Englisch: \textit{preprocessing}) unterzogen. Ein zu diesem Zweck oft verwendetes Verfahren ist die Standardisierung oder auch z-Transformation genannt. Hierbei werden die Variablen $X_i$ zentriert und anschließend auf Einheits-Varianz gebracht. Dies wird erreicht, indem man $X_i$ durch $\frac{X_i - \operatorname{E}[X_i]}{\sqrt{\operatorname{Var}[X_i]}}$ ersetzt. Mathematisch gesehen wendet man das Verfahren somit anstatt der Stichprobenkovarianzmatrix auf die Stichprobenkorrelationsmatrix an.
 
 \subsection{Problemformulierung als Varianzmaximierung}
 
@@ -63,8 +63,10 @@ Man sucht also unter den Richtungen, die orthogonal zu allen bisherigen Hauptach
 
 Aufgrund der schrittweisen Konstruktion gibt es eine natürliche Ordnung der Hauptkomponenten. Da keine Restriktion an die erste Hauptachse gestellt wird, erklärt die erste Hauptkomponente den größten Teil der Varianz des Datensatzes. Weitere Hauptachsen müssen orthogonal zu den Vorherigen sein und können somit nur einen geringeren Anteil erklären. Ab einem gewissen Punkt erhalten wir durch Berechnung einer weiteren Hauptkomponente also nur geringfügig mehr Information über den Datensatz. Es gilt einen Punkt der Balance zwischen erklärter Varianz und Modellkomplexität zu finden. Mit dieser Fragestellung werden wir uns weiter in Abschnitt \ref{selection_principal_components} beschäftigen.
 
-Für die Maximierungsprobleme (\ref{pca_variance_maximization_first}) und (\ref{pca_variance_maximization_rest}) existiert eine erstaunlich einfache Lösung. Leiten wir (\ref{pca_variance_maximization_first}) in der Langrange-Form $v^T\mat{\Sigma}v + \lambda (1-v^Tv)$ nach $v$ ab und setzen diese gleich Null, erhalten wir den stationären Punkt $\mat{\Sigma}v_1 = \lambda_1 v_1$. Das bedeutet, dass die erste Hauptachse genau dem Eigenvektor des größten Eigenwertes $\lambda_1$ der Stichprobenkovarianzmatrix $\mat \Sigma$ entspricht. Durch Linksmultiplikation mit $v_1^T$ sehen wir, dass durch 
-$v_1^T\mat{\Sigma}v_1 = \lambda_1$ die Varianz der ersten Hauptkomponente  gegeben ist. Analog zeigt man, dass auch die folgenden Hauptachsen, die durch (\ref{pca_variance_maximization_rest}) definiert sind, den Eigenvektoren von $\mat \Sigma$ entsprechen \cite{bishop}.
+Für die Maximierungsprobleme (\ref{pca_variance_maximization_first}) und (\ref{pca_variance_maximization_rest}) existiert eine erstaunlich einfache Lösung. Leiten wir (\ref{pca_variance_maximization_first}) in der Langrange-Form $L(v, \lambda) = v^T\mat{\Sigma}v + \lambda (1-v^Tv)$ nach $v$ ab, erhalten wir die notwendige Bedingung 
+$$\frac{\partial L(v,\lambda)}{\partial v} = 2\mat{\Sigma} v -2\lambda v=0$$
+und somit den stationären Punkt $\mat{\Sigma}v_1 = \lambda_1 v_1$. Das bedeutet, dass die erste Hauptachse genau dem Eigenvektor des größten Eigenwertes $\lambda_1$ der Stichprobenkovarianzmatrix $\mat \Sigma$ entspricht. Durch Linksmultiplikation mit $v_1^T$ sehen wir, dass durch 
+$v_1^T\mat{\Sigma}v_1 = \lambda_1$ die Varianz der ersten Hauptkomponente gegeben ist. Analog zeigt man, dass auch die folgenden Hauptachsen, die durch (\ref{pca_variance_maximization_rest}) definiert sind, den Eigenvektoren von $\mat \Sigma$ entsprechen \cite{bishop}.
 
 Daher können wir anstatt sukzessiver Berechnung einzelner Hauptachsen die Matrix $\mat{\Sigma}$ direkt diagonalisieren. Aufgrund der Symmetrie von $\mat \Sigma$ können wir eine Eigenwertzerlegung wie in Abschnitt \ref{matrix_decomposition} angeben:
 $$\mat{\Sigma} = \frac{1}{n-1}\mat V \mat L \mat{V}^T$$
@@ -203,74 +205,69 @@ Bei der Hauptkomponentenanalyse können lineare Korrelationen zwischen Variablen
 
 Falls wir einen unvollständigen Datensatz vorliegen haben, bei welchem manche Werte korrupt oder nicht vorhanden sind, können wir die klassische Hauptkomponentenanalyse nicht anwenden. Nehmen wir an, dass dies nur einen Bruchteil der Daten betrifft, können mit hoher Wahrscheinlichkeit noch immer exakte Ergebnisse erzielt werden \cite{candes} NP hardness Gillis Low-Rank Matrix Approximation with Weights or Missing Data Is NP-Hard. Des Weiteren ist das Verfahren sehr sensitiv gegenüber Ausreißern. Besonders wenn nur wenige Beobachtungen zur Verfügung stehen, können Ausreißer die Resultate drastisch beeinflussen. Um eine Verfälschung der Ergebnisse zu vermeiden, entfernt man diese meist vor der Anwendung. Allerdings ist es nicht immer einfach Ausreißer zu identifizieren. Daher wird in \cite{kriegel} vorgeschlagen, die Datenpunkte basierend auf deren geschätzten Relevanz vorab unterschiedlich zu gewichten. Die Behandlung dieser Art Probleme wird mit dem Begriff \textit{Robust PCA} verbunden.
 
-Viele gegenwärtige Datensätze besitzen eine vergleichsweise hohe Anzahl an Variablen im Vergleich zur Anzahl an Beobachtungen. Typische Anwendungsgebiete sind die Bildbearbeitung, Signal- oder  Genexpressionsanalyse, in welchen viele Variablen in Form von Pixeln, Frequenzen oder Genen vorkommen. Auch wir werden uns in Kapitel \ref{application} mit einem Datensatz dieser Art beschäftigen für welchen $p \approx 50000$ und $n = 33$ ist. In Theorem REF werden wir sehen, dass es in einer solchen Situation zur \textit{Inkonsistenz} der Hauptkomponentenanalyse kommen kann. Deswegen muss in diesen Fällen genau überprüft werden, ob den Ergebnissen getraut werden kann.
+Viele gegenwärtige Datensätze besitzen eine vergleichsweise hohe Anzahl an Variablen im Vergleich zur Anzahl an Beobachtungen. Typische Anwendungsgebiete sind die Bildbearbeitung, Signal- oder  Genexpressionsanalyse, in welchen viele Variablen in Form von Pixeln, Frequenzen oder Genen vorkommen. Auch wir werden uns in Kapitel \ref{application} mit einem Datensatz dieser Art beschäftigen für welchen $p \approx 50000$ und $n = 33$ ist. In Theorem \ref{pca_inconsistency} werden wir sehen, dass es in einer solchen Situation zur \textit{Inkonsistenz} der Hauptkomponentenanalyse kommen kann. Deswegen muss in diesen Fällen genau überprüft werden, ob den Ergebnissen getraut werden kann.
 
 Das wohl wichtigste Hindernis im Zuge dieser Arbeit sind sicherlich die durch die Transformation entstehenden Interpretationsschwierigkeiten. Da jede Hauptkomponente durch eine Linearkombination aller Ausgangsvariablen entsteht, ist es in hochdimensionalen Fällen fast unmöglich diesen eine Bedeutung im Kontext zuzuweisen. Dieser Interpretationsverlust ist Ausgangspunkt der Idee der dünnbesetzten Hauptkomponentenanalyse (kurz: \textit{Sparse PCA}). Diesem Verfahren ist das folgende Kapitel \ref{sparse_pca} gewidmet.
 
 \section{Erweiterungen der Hauptkomponentenanalyse}
 \label{pca_extensions}
 
-Im vorangegangenem Abschnitt haben wir die Grenzen der Hauptkomponentenanalyse aufgezeigt und auf Erweiterungen hingewiesen, welche versuchen diese zu überkommen. An dieser Stelle geben wir eine allgemeine Formulierung der Hauptkomponentenanalyse an, welche viele Erweiterungen beinhaltet. Auch die dünnbesetzte Hauptkomponentenanalyse kann mithilfe dieses Schemas formuliert werden.
-
-Wie wir bereits gesehen haben, gibt es viele verschiedene Erweiterungen von PCA. Die meisten kann man unter folgendem Schema zusammenfassen: (Welche genau?)
-
-$$\min_{\mat{Z},\mat{V}} \underbrace{\norm{\mat{X} - \mat{Z}\mat{V}^T}_F}_{\text{Verlustfunktion}} + \underbrace{\lambda_z f_z(\mat Z) + \lambda_v f_v(\mat V)}_{\text{Regularisierung}}$$
-$$\text{subject to} \quad \underbrace{\mat Z \in \Omega_z, \mat V \in \Omega_v}_{\text{Nebenbedingungen}}$$
-
-quadratische Singulärwerte
-
-$\tau$
-
-$\min (\alpha y + \beta x)$
-
-Knick
-
-$1$
-
-$\widehat{k}$
-
-$p$
-
-Dimension des Unterraumes
-
-$\sigma_k^2$
-
-$\longrightarrow$
+Im vorangegangenem Abschnitt haben wir bereits auf Erweiterungen der Hauptkomponentenanalyse hingewiesen, welche Grenzen der klassischen Variante überkommen. Viele dieser können wir mithilfe eines allgemeinen Schemas formulieren.
+\begin{align}
+\begin{split}
+\argmin_{\mat{Z},\mat{V}} \underbrace{L(\mat{Z}, \mat{V})}_{\text{Verlustfunktion}} + \underbrace{\lambda_z f_z(\mat Z) + \lambda_v f_v(\mat V)}_{\text{Regularisierung}}\\
+\text{unter der Nebenbedingung, dass} \quad \underbrace{\mat Z \in \Omega_z, \mat V \in \Omega_v}_{\text{Nebenbedingung}}
+\end{split}
+\end{align}
+In Tabelle \ref{pca_extensions_overview} sind einige Ideen, die in der Literatur betrachtet werden, festgehalten. Dabei können Verlustfunktion, Regularisierung und Nebenbedingungen beliebig kombiniert werden, um ein für den Anwendungsfall geeignetes Modell zu erstellen. (Möchte man an der Stelle sehen, wie die einzelnen Verlustfunktionen aussehen?)
 
 \begin{table}
 \centering
 \begin{tabular}[c]{lll}
-\thead{Verlustfunktion} & \thead{Regularisierung} & \thead{Nebenbedingung} \\
-\hline
-\makecell{quadratic\\(real data)} & \makecell{L2 norm\\(small factors)} & \makecell{Nonnegative\\(additive factors)}\\
-\makecell{absolute\\(robust to outliers)} & \makecell{L1 norm\\(sparse factors)}\\
-\makecell{logistic\\(binary data)} & \makecell{Derivative penalties\\ (smooth factors)}\\
-\makecell{Poisson\\(integer data)}\\
-\makecell{circular\\(angular data)}\\
+\thead{Verlustfunktion} & \thead{Regularisierung} & \thead{Nebenbedingung}\\
+\hline \rule{0pt}{1.5\normalbaselineskip}
+\makecell{quadratisch\\(reelle Daten)} & \makecell{$\ell_2$-Norm\\(kleine Koeffizienten)} & \makecell{orthogonal\\(orthogonale Hauptachsen)}\vspace{0.25cm}\\
+\makecell{absolut\\(robust gegenüber\\Ausreißern)} & \makecell{$\ell_1$-Norm\\(dünnbesetzte Koeffizienten)} & \makecell{nichtnegativ\\(nichtnegative Koeffizienten)}\vspace{0.25cm}\\
+\makecell{logistisch\\(Binärdaten)} & \makecell{Ableitung Strafterm\\ (glatte Koeffizienten)}\vspace{0.25cm}\\
 \end{tabular}
-\caption{Allgemeines Schema zu PCA Erweiterungen}
+\caption{Zusammenfassung einiger Erweiterungen der Hauptkomponentenanalyse in einem konsistenten Schema.}
+\label{pca_extensions_overview}
 \end{table}
 
 \section{Theoretische Aussagen}
 \label{pca_theorems}
 
-PCA Variablen sind unkorelliert und die Loadings orthogonal. Liegt wahrscheinlich daran, dass wie die Eigenvektoren für symmetrische Matrizen $\mat X^{\top}\mat X$ orthogonal sind und die Kovarianzmatrix der Hauptkomponenten $(\mat X \mat V)^{\top}\mat X \mat V = \mat V^{\top}\mat{\Sigma} \mat V$ eine Diagonalmatrix ist.
+Zu Abschluss dieses Kapitels werden wir einige interessante Eigenschaften sowie Theoreme präsentieren. Der Fokus wird vor allem auf der Inkonsistenz der Hauptkomponentenanalyse in hochdimensionalen Fällen sein.
 
-non convex problem that can be solved efficiently by truncated SVD.
+Dadurch, dass wir die Orthogonalität der Hauptachsen erzwingen, sind die entstehenden Hauptkomponenten unkorreliert. Dies können wir anhand der Stichprobenkovarianzmatrix der Hauptkomponenten $\frac{1}{n-1}\mat Z^T \mat Z = \frac{1}{n-1}(\mat X \mat V)^{\top}\mat X \mat V = \mat V^{\top}\mat{\Sigma}\mat V$ sehen, welche aufgrund von $\mat V^T \mat V = \mat I_{k \times k}$ eine Diagonalmatrix ist. Somit können wir uns auf eine Hauptkomponente und deren erklärte Varianz beziehen ohne andere berücksichtigen zu müssen.
 
-Baldi Hornik 1989
-all local minima are solutions to pca
-all non optimal critical points are saddle points or maxima
+Unter der Annahme, dass wir uniqueness of PCA?
 
-\begin{thm}
-PCA always gives unique solution.
+Für unseren Anwendungsfall in Kapitel \ref{application} verfügen wir nur über wenig Beobachtungen im Vergleich zu der Anzahl an Variablen im Datensatz. Es gibt eine Reihe theoretischer Aussagen, welche eine Inkonsistenz im asymptotischem Fall zeigen. Asymptotische Studien der Hauptkomponentenanalyse fallen in verschiedene Kategorien abhängig von $n$ und $p$.
+\begin{itemize}
+\item In der klassischen Asymptotik untersucht man die Effekte für $n \rightarrow \infty$ mit fixierter Dimension $p$.
+\item In der Theorie der Zufallsmatrizen erhöhen wir sowohl $n$ als auch $p$ mit der Voraussetzung, dass das Verhältnis $\frac{n}{p}\rightarrow c$ konstant ist, wobei $c \in (0,\infty)$ angenommen wird.
+\item In einem \textit{high dimension low sample size setting (HDLSS)} betrachten wir die Asymptotik für $p \rightarrow \infty$ mit fixierter Anzahl an Beobachtungen $n$.
+\end{itemize}
+Zunächst gilt es den Begriff der \textit{Inkonsistenz} in Bezug auf die Hauptkomponentenanalyse genauer zu verstehen. In dieser Arbeit haben wir eine Stichprobenversion der Hauptkomponentenanalyse eingeführt. Indem man die Stichprobenkovarianzmatrix $\mat\Sigma$ durch die Kovarianzmatrix in (\ref{pca_variance_maximization_first}) ersetzt, erhält man eine Populationsversion der Hauptkomponentenanalyse. Unter der Annahme, dass die gegebenen Daten ein endliche, zufällige Stichprobe einer (meist unbekannten) Verteilung sind, stellt sich die Frage in welcher Relation die Ergebnisse beider sind. Genauer gesagt interessiert man sich dafür, wie \textit{ähnlich} die Hauptachsen der Stichproben- und der Populationsversion sind. Mit dem Begriff der Ähnlichkeit beziehen wir uns auf den Winkel zwischen den beiden Hauptachsen.
+
+\begin{defn}[Konsistenz \cite{shen_consistency}]
+Die Stichprobenhauptachse $\bar{v}_i$ ist mit der Populationshauptachse $v_i$
+\begin{itemize}
+\item \textit{konsistent}, falls $\operatorname{angle}(\bar{v}_i, v_i) = \arccos{\left(|\inner{\bar{v}_i}{v_i}|\right)} \longrightarrow 0 \quad \text{für } p \rightarrow \infty$
+\item \textit{marginal inkonsistent}, falls $\operatorname{angle}(\bar{v}_i, v_i) \longrightarrow c \in (0,\frac{\pi}{2}) \quad \text{für } p \rightarrow \infty$
+\item \textit{stark inkonsistent}, falls $\operatorname{angle}(\bar{v}_i, v_i) \longrightarrow \frac{\pi}{2} \quad \text{für } p \rightarrow \infty$
+\end{itemize} 
+\end{defn}
+
+Abhängig von $n$, $p$ und der Stärke des Rauschens im Modell $\sigma$ ergeben sich unterschiedliche Ergebnisse für die Konsistenz der Hauptkomponentenanalyse. Allgemein ergibt sich die Tendenz, dass eine hohe Anzahl an Beobachtungen die Konsistenz der Hauptachsen fördert, während eine erhöhte Dimension die Inkonsistenz unterstützt. Nicht überraschend kann man zeigen, dass die Eigenvektoren der Stichprobenkovarianzmatrix $\bar{v}_i$ konsistente Schätzer für die Eigenvektoren der Kovarianzmatrix $v_i$ sind, falls wir die Dimension fixieren und die Anzahl an Beobachtungen erhöhen $n \rightarrow \infty$ \cite{anderson}. Wir präsentieren nun zwei Inkonsistenz-Theoreme.
+
+\begin{thm}[Inkonsistenz der Hauptkomponentenanalyse mit konstantem asymptotischem Verhältnis \cite{johnstone}]
+\label{pca_inconsistency_ratio}
+
 \end{thm}
 
-\begin{thm}[\cite{vidal}]
-Sei $\mat X \in \mathbb{R}^n$ und $\mat A_{p,k} = [\alpha_1, \ldots \alpha_k] $   
-\end{thm}
-
-\begin{thm}
-PCA inconsistent for n << p.
+\begin{thm}[Inkonsistenz der Hauptkomponentenanalyse im HDLSS-Fall \cite{}]
+\label{pca_inconsistency_hdlss}
 \end{thm}
 
