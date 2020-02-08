@@ -178,7 +178,11 @@ In manchen Fällen gibt es eine klare Trennung in der Größe der Singulärwerte
 \end{align}
 Mit $\alpha, \beta > 0$ haben wir damit direkten Einfluss auf das Verhältnis zwischen Rekonstruktionsfehler und Modellkomplexität. In Abbildung REF haben wir die resultierende Gerade eingezeichnet, welche im wesentlichem nach einem Knick sucht. Allerdings möchten wir betonen, dass es nicht zwangsläufig einen solchen geben muss bzw. es auch mehrere geben kann.
 
-Abbildung Scree Plot
+\begin{figure}
+\includegraphics[width=0.9\textwidth]{figures/scree_plot_explanation.jpg}
+\caption{Die Abbildung zeigt einen sog. \textit{Scree Plot}, welche erklärte Varianz... Basiert auf \cite{vidal}}
+\label{scree_plot}
+\end{figure}
 
 In der Literatur existieren weitere Heuristiken auf die wir hier nicht näher eingehen werden. Dazu gehören beispielsweise ein \textit{Bayes-Informationskriterium (BIC)} und ein \textit{Akaike-Informationskriterium (AIC)} aus der Informationstheorie. Bis vor Kurzem gab es keinerlei theoretische Resultate für die optimale Modellwahl bei der Hauptkomponentenanalyse. Gavish und Donoho \cite{gavish} haben erstmals ein optimales Kriterium im asymptotischem Fall angeben können, welcehe der Singulärwerte beibehalten werden sollten. Unter der Annahme, dass das Signal-Rausch-Verhältnis konstant bleibt, zeigen sie, dass der asymptotische mittlere quadratische Fehler 
 $$\operatorname{AMSE} = \lim_{n \rightarrow \infty} \norm{\mat X - \widehat{\mat X}_k}_{F}^{2}$$
@@ -197,23 +201,46 @@ Obwohl die Hauptkomponentenanalyse in vielen Situationen helfen kann, Datensätz
 
 Bei der Hauptkomponentenanalyse können lineare Korrelationen zwischen Variablen sehr gut eingefangen werden. Andere Beziehungen, die durchaus in der Praxis vorkommen, werden dabei nicht berücksichtigt bzw. als linear angenommen. Vidal et al. \cite{vidal} zeigen am Beispiel von Porträt-Fotos auf, dass nichtlineare Strukturen in der Tat verloren gehen. In manchen Fällen können wir mithilfe geeigneter Koordinatentransformationen dieses Hindernis umgehen. Bei der Anwendung des sog. \textit{Kernel Tricks} transformiert man die Daten in einen höherdimensionalen Raum, in welchem sie besser linear separierbar sind. Bei \textit{Kernel PCA} wendet man anschließend die Hauptkomponentenanalyse in diesem Raum an bevor man die Daten wieder zurück transformiert. Andere Erweiterungen, die unter der Kategorie \textit{manifold learning} zusammengefasst werden können, versuchen die lokale Geometrie der Mannigfaltigkeit direkt zu approximieren. So kann man ohne die Nutzung eines höherdimensionalen Raumes unmittelbar die niedrigdimensionale Struktur erhalten. Verfahren, die diesen Ansatz verfolgen, sind zum Beispiel die \textit{multidimensionale Skalierung} oder \textit{ISOMAP}. \cite{lee}
 
-Falls wir einen unvollständigen Datensatz vorliegen haben, bei welchem manche Werte korrupt oder nicht vorhanden sind, können wir die klassische Hauptkomponentenanalyse nicht anwenden. Nehmen wir an, dass dies nur einen Bruchteil der Daten betrifft, können mit hoher Wahrscheinlichkeit noch immer exakte Ergebnisse erzielt werden \cite{candes}. Des Weiteren ist das Verfahren sehr sensitiv gegenüber Ausreißern. Besonders wenn nur wenige Beobachtungen zur Verfügung stehen, können Ausreißer die Resultate drastisch beeinflussen. Um eine Verfälschung der Ergebnisse zu vermeiden, entfernt man diese meist vor der Anwendung. Allerdings ist es nicht immer einfach Ausreißer zu identifizieren. Daher wird in \cite{kriegel} vorgeschlagen, die Datenpunkte basierend auf deren geschätzten Relevanz vorab unterschiedlich zu gewichten. Die Behandlung dieser Art Probleme wird mit dem Begriff \textit{Robust PCA} verbunden.
+Falls wir einen unvollständigen Datensatz vorliegen haben, bei welchem manche Werte korrupt oder nicht vorhanden sind, können wir die klassische Hauptkomponentenanalyse nicht anwenden. Nehmen wir an, dass dies nur einen Bruchteil der Daten betrifft, können mit hoher Wahrscheinlichkeit noch immer exakte Ergebnisse erzielt werden \cite{candes} NP hardness Gillis Low-Rank Matrix Approximation with Weights or Missing Data Is NP-Hard. Des Weiteren ist das Verfahren sehr sensitiv gegenüber Ausreißern. Besonders wenn nur wenige Beobachtungen zur Verfügung stehen, können Ausreißer die Resultate drastisch beeinflussen. Um eine Verfälschung der Ergebnisse zu vermeiden, entfernt man diese meist vor der Anwendung. Allerdings ist es nicht immer einfach Ausreißer zu identifizieren. Daher wird in \cite{kriegel} vorgeschlagen, die Datenpunkte basierend auf deren geschätzten Relevanz vorab unterschiedlich zu gewichten. Die Behandlung dieser Art Probleme wird mit dem Begriff \textit{Robust PCA} verbunden.
 
-Anzahl der Variablen zu hoch.
+Viele gegenwärtige Datensätze besitzen eine vergleichsweise hohe Anzahl an Variablen im Vergleich zur Anzahl an Beobachtungen. Typische Anwendungsgebiete sind die Bildbearbeitung, Signal- oder  Genexpressionsanalyse, in welchen viele Variablen in Form von Pixeln, Frequenzen oder Genen vorkommen. Auch wir werden uns in Kapitel \ref{application} mit einem Datensatz dieser Art beschäftigen für welchen $p \approx 50000$ und $n = 33$ ist. In Theorem REF werden wir sehen, dass es in einer solchen Situation zur \textit{Inkonsistenz} der Hauptkomponentenanalyse kommen kann. Deswegen muss in diesen Fällen genau überprüft werden, ob den Ergebnissen getraut werden kann.
 
-Das wohl wichtigste/größte Hindernis im Zuge dieser Arbeit ist sicherlich die durch die Transformation entstehenden Interpretationsschwierigkeiten. Jede Hauptkomponente entsteht wie oben beschrieben durch eine Linearkombination der Ausgangsvariablen. Während die Ausgangsvariablen Bedeutungen wie Gewicht oder Größe hatten ist in vor allem in hochdimensionalen Fällen eine Interpretation der Hauptkomponenten nur schwer möglich (Rotation Techniques CITE). Dieser Interpretationsverlust ist Ausgangspunkt der Idee der dünnbesetzten Hauptkomponentenanalyse, genannt sparse PCA. Diesem Verfahren ist das folgende Kapitel gewidmet.
+Das wohl wichtigste Hindernis im Zuge dieser Arbeit sind sicherlich die durch die Transformation entstehenden Interpretationsschwierigkeiten. Da jede Hauptkomponente durch eine Linearkombination aller Ausgangsvariablen entsteht, ist es in hochdimensionalen Fällen fast unmöglich diesen eine Bedeutung im Kontext zuzuweisen. Dieser Interpretationsverlust ist Ausgangspunkt der Idee der dünnbesetzten Hauptkomponentenanalyse (kurz: \textit{Sparse PCA}). Diesem Verfahren ist das folgende Kapitel \ref{sparse_pca} gewidmet.
 
 \section{Erweiterungen der Hauptkomponentenanalyse}
 \label{pca_extensions}
+
+Im vorangegangenem Abschnitt haben wir die Grenzen der Hauptkomponentenanalyse aufgezeigt und auf Erweiterungen hingewiesen, welche versuchen diese zu überkommen. An dieser Stelle geben wir eine allgemeine Formulierung der Hauptkomponentenanalyse an, welche viele Erweiterungen beinhaltet. Auch die dünnbesetzte Hauptkomponentenanalyse kann mithilfe dieses Schemas formuliert werden.
+
 Wie wir bereits gesehen haben, gibt es viele verschiedene Erweiterungen von PCA. Die meisten kann man unter folgendem Schema zusammenfassen: (Welche genau?)
 
-$$\min_{\mat{Z},\mat{V}} \underbrace{\norm{\mat{X} - \mat{Z}\mat{V}^T}_F}_{\text{Loss Function}} + \underbrace{\lambda_z f_z(\mat Z) + \lambda_v f_v(\mat V)}_{\text{Regularisierung}}$$
+$$\min_{\mat{Z},\mat{V}} \underbrace{\norm{\mat{X} - \mat{Z}\mat{V}^T}_F}_{\text{Verlustfunktion}} + \underbrace{\lambda_z f_z(\mat Z) + \lambda_v f_v(\mat V)}_{\text{Regularisierung}}$$
 $$\text{subject to} \quad \underbrace{\mat Z \in \Omega_z, \mat V \in \Omega_v}_{\text{Nebenbedingungen}}$$
+
+quadratische Singulärwerte
+
+$\tau$
+
+$\min (\alpha y + \beta x)$
+
+Knick
+
+$1$
+
+$\widehat{k}$
+
+$p$
+
+Dimension des Unterraumes
+
+$\sigma_k^2$
+
+$\longrightarrow$
 
 \begin{table}
 \centering
 \begin{tabular}[c]{lll}
-\thead{Loss Functions} & \thead{regularizer} & \thead{constraints} \\
+\thead{Verlustfunktion} & \thead{Regularisierung} & \thead{Nebenbedingung} \\
 \hline
 \makecell{quadratic\\(real data)} & \makecell{L2 norm\\(small factors)} & \makecell{Nonnegative\\(additive factors)}\\
 \makecell{absolute\\(robust to outliers)} & \makecell{L1 norm\\(sparse factors)}\\
