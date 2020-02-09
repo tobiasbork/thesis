@@ -119,14 +119,14 @@ für einen Skalar $\lambda \in \mathbb{R}$. Die Zahl $\lambda$ heißt \textit{Ei
 \end{defn}
 
 \begin{defn}[Diagonalisierbar \cite{anton}]
-Eine quadratische Matrix $\mat A \in \rnn$ heißt \textit{diagonalisierbar}, wenn eine invertierbare Matrix $\mat V$ existiert, so dass $\mat{L} = \mat{V}^{-1}\mat{A}\mat{V}$ Diagonalgestalt hat.
+Eine quadratische Matrix $\mat A \in \rnn$ heißt \textit{diagonalisierbar}, wenn eine invertierbare Matrix $\mat V$ existiert, so dass $\mat{\Lambda} = \mat{V}^{-1}\mat{A}\mat{V}$ Diagonalgestalt hat.
 \end{defn}
 
 Es gibt verschiedene Kriterien für die Diagonalisierbarkeit von Matrizen. Für unsere spätere Anwendung interessieren wir uns vor allem für die Frage, ob es zu einer gegebenen Matrix $\mat{A} \in \rnn$ eine orthogonale Matrix $\mat{V}$ gibt, die $\mat{A}$ diagonalisiert. Eine derartige Diagonalisierung wird auch als \textit{Hauptachsentransformation} bezeichnet. Dieser Name stammt ursprünglich aus der Theorie der Kegelschnitte. Hierbei ist eine Hauptachsentransformation eine orthogonale Abbildung, welche die Koordinatenachsen in die Richtungen der beiden \textit{Hauptachsen} überführt. Wir wollen uns aber vorerst nicht mit dieser geometrischen Interpretation beschäftigen, sondern mit einem mathematisch äquivalenten, in den Anwendungen aber wichtigeren Problem.
 
 \begin{thm}[Hauptachsentransformation \cite{jaenich}]
-Sei $\mat{A} \in \rnn$ eine symmetrische Matrix. Dann gibt es eine orthogonale Transformation $\mat{V}$, welche $\mat{A}$ in eine Diagonalmatrix $\mat{L} \defeq \mat{V}^{-1}\mat{A}\mat{V}$ der Gestalt
-$$\mat{L} = \begin{bmatrix}
+Sei $\mat{A} \in \rnn$ eine symmetrische Matrix. Dann gibt es eine orthogonale Transformation $\mat{V}$, welche $\mat{A}$ in eine Diagonalmatrix $\mat{\Lambda} \defeq \mat{V}^{-1}\mat{A}\mat{V}$ der Gestalt
+$$\mat{\Lambda} = \begin{bmatrix}
     \lambda_{1} & & & & & & \\
     & \ddots & & & & & \\
     & & \lambda_1 & & & & \\
@@ -138,7 +138,7 @@ $$\mat{L} = \begin{bmatrix}
 überführt. Hierbei sind $\lambda_1, \ldots, \lambda_r$ die verschiedenen Eigenwerte von $\mat{A}$.
 \end{thm}
 
-Zusammenfassend besitzt eine symmetrische Matrix also eine Zerlegung $\mat A = \mat V \mat L \mat V^{\top}$. Man kann $\mat{V}$ konstruieren, so dass die Spalten genau den Eigenvektoren von $\mat{A}$ entsprechen. Wir werden diese Umformung in späteren Kapiteln unter dem Begriff \textit{Eigenwertzerlegung} (Englisch: \textit{Eigenvalue Decomposition}) verwenden. 
+Zusammenfassend besitzt eine symmetrische Matrix also eine Zerlegung $\mat A = \mat V \mat \Lambda \mat V^{\top}$. Man kann $\mat{V}$ konstruieren, so dass die Spalten genau den Eigenvektoren von $\mat{A}$ entsprechen. Wir werden diese Umformung in späteren Kapiteln unter dem Begriff \textit{Eigenwertzerlegung} (Englisch: \textit{Eigenvalue Decomposition}) verwenden. 
 
 Eine eng verwandte, aber vielseitigere Faktorisierung von Matrizen ist die \textit{Singulärwertzerlegung}. Sie ermöglicht eine allgemeine Zerlegung von nicht quadratischen oder nicht symmetrischen Matrizen.
 

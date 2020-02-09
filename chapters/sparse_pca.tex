@@ -8,10 +8,16 @@ Ein wesentlicher Nachteil der Hauptkomponentenanalyse besteht darin, dass sich d
 
 Zu Anfang dieses Kapitels werden wir eine naheliegende mathematische Formulierung des Problems beschreiben. Leider wird sich diese als NP-vollständig herausstellen, weshalb wir in Abschnitt \ref{relaxation} verschiedene Wege aufzeigen, dass Problem zu relaxieren. In \ref{sparse_pca_construction} möchten wir uns mit einem dieser Ansätze intensiv beschäftigen, welcher den Ausgangspunkt für den weiteren Verlauf dieser Arbeit darstellt. Der Rest dieses Kapitels ist den Details dieses Ansatzes gewidmet.
 
+
+%----------------------------------------------------------------------------------------
+%	Problemformulierung
+%----------------------------------------------------------------------------------------
+
+
 \section{Problemformulierung}
 \label{problem_formulation}
 
-Wir möchten nun Hauptachsen eines gegebenen Datensatzes identifizieren mit der Zusatzbedingung, dass diese dünnbesetzt sind. Die wohl einfachste Möglichkeit dafür ist, zuerst die gewöhnliche Hauptkomponentenanalyse durchzuführen und anschließend ein Schwellwertmethode (Englisch: simple thresholding) auf die Hauptachsen anzuwenden. Hierbei vernachlässigt man alle Koeffizienten, die kleiner als ein bestimmter Schwellenwert sind, indem man sie auf 0 setzt. Eine solche Prozedur kann aber in vielen Fällen irreführend sein, unter welcher die Qualität der Ergebnisse leidet. \cite{cadima} Die Wichtigkeit einer Variable in den Hauptachsen wird nicht allein durch den Koeffizient bestimmt. Zu berücksichtigen sind unter anderem sowohl die Standardabweichung als auch die Korrelationen mit anderen Variablen. Bei einer Schwellwertmethode werden diese Faktoren nicht beachtet, weshalb den Ergebnissen im Allgemeinen nicht vertraut werden darf.
+Wir möchten nun Hauptachsen eines gegebenen Datensatzes identifizieren mit der Zusatzbedingung, dass diese dünnbesetzt sind. Die wohl einfachste Vorgehensweise ist, zuerst die gewöhnliche Hauptkomponentenanalyse durchzuführen und anschließend ein Schwellwertmethode auf die Hauptachsen anzuwenden. Hierbei vernachlässigt man alle Koeffizienten, die kleiner als ein bestimmter Schwellenwert sind, indem man sie auf 0 setzt. Eine solche Prozedur kann aber in vielen Fällen irreführend sein, unter welcher die Qualität der Ergebnisse leidet \cite{cadima}. Die Wichtigkeit einer Variable in den Hauptachsen wird nicht allein durch den Koeffizient bestimmt. Zu berücksichtigen sind unter anderem sowohl die Standardabweichung als auch die Korrelationen mit anderen Variablen. Bei einer Schwellwertmethode werden diese Faktoren nicht beachtet, weshalb den Ergebnissen im Allgemeinen nicht vertraut werden darf.
 
 Hier Regression on ordinary PCA's mit Zou et al?
 
@@ -19,12 +25,18 @@ Anstelle eines zweischrittigen Ansatzes kann die Dünnbesetzung direkt in die Pr
 \begin{gather}
 \label{sparse_pca_np}
 \begin{split}
-v_{k} = \argmax_{\norm{v}_2 = 1} v^{T}\mat{K}_{xx} v\\
-v_{k}^Tv_{l} = 0 \quad \forall 1 \leq l < k\\
-{\text{unter der Nebenbedingung, dass }} \norm{v_{k}}_0 \leq t
+v_{k} = \argmax_{\norm{v}_2 = 1} v^{T}\mat{\Sigma} v\\
+\text{unter der Nebendingung, dass für } k\geq 2 \, v_{k}^Tv_{l} = 0 \quad \forall 1 \leq l < k\\
+\text{und } \norm{v_{k}}_0 \leq t 
 \end{split}
 \end{gather}
-wobei $\mat{K}_{xx} = \frac{\mat X^T \mat X}{n-1}$ die empirische Kovarianzmatrix ist. Der einzige Unterschied zu der gewöhnlichen Hauptkomponentenanalyse, wie wir sie in (\ref{pca_variance_maximization}) beschrieben haben, besteht in der Einführung der $\ell_0$-Norm. Somit beschränken wir uns auf die Suche von Hauptachsen, welche höchstens $t$ von Null verschiedene Einträge haben. Wählen wir $t = p$ reduziert sich das Problem auf die gewöhnliche Hauptkomponentenanalyse. Während (\ref{sparse_pca_np}) eine sehr schöne und einfache mathematische Formulierung ist, wurde gezeigt, dass dieses Problem NP-vollständig ist \cite{foucart}. Zur Berechnung dünnbesetzter Hauptachsen sind wir also angehalten eine geeignete Relaxation zu finden.
+wobei $\mat{\Sigma} = \frac{\mat X^T \mat X}{n-1}$ die Stichprobenkovarianzmatrix ist. Der einzige Unterschied zur klassischen Hauptkomponentenanalyse, wie wir sie in (\ref{pca_variance_maximization_first}) beschrieben haben, besteht in der Einführung der $\ell_0$-Norm. Somit beschränken wir uns auf die Suche von Hauptachsen, welche höchstens $t$ von Null verschiedene Einträge haben. Wählen wir $t = p$ reduziert sich das Problem auf (\ref{pca_variance_maximization_first}). Während (\ref{sparse_pca_np}) eine sehr schöne und einfache mathematische Formulierung ist, wurde gezeigt, dass dieses Problem NP-vollständig ist \cite{foucart}. Zur Berechnung dünnbesetzter Hauptachsen sind wir also angehalten eine geeignete Relaxation zu finden.
+
+
+%----------------------------------------------------------------------------------------
+%	Relaxation
+%----------------------------------------------------------------------------------------
+
 
 \section{Relaxation}
 \label{relaxation}
@@ -33,20 +45,20 @@ Es existiert eine Vielfalt an Ansätzen, um das Problem zu relaxieren. Wir wolle
 
 \textbf{SCoTLASS}
 
-Inspiriert von der LASSO Regression \cite{tibshirani_lasso} schlugen Jolliffe et al. \cite{scotlass} vor, die $\ell_1$-Norm anstelle der $\ell_0$-Norm als Strafterm zu verwenden. Wie wir bereits in Abschnitt \ref{lasso} gesehen haben, kann die $\ell_1$-Norm genutzt werden, um dünnbesetzte Vektoren zu erhalten. Somit liegt es nahe das Problem wie folgt zu formulieren.
+Inspiriert von der Lasso Regression \cite{tibshirani_lasso} schlugen Jolliffe et al. \cite{scotlass} vor, die $\ell_1$-Norm anstelle der $\ell_0$-Norm als Strafterm zu verwenden. Wie wir bereits in Abschnitt \ref{lasso} gesehen haben, kann die $\ell_1$-Norm genutzt werden, um dünnbesetzte Vektoren zu erhalten. Somit liegt es nahe das Problem wie folgt zu formulieren.
 \begin{gather}
 \label{scotlass}
 \begin{split}
-v_{k} = \argmax_{\norm{v}_2 = 1} v^{T}\mat{K}_{xx} v\\
-v_{k}^Tv_{l} = 0 \quad \forall 1 \leq l < k\\
-{\text{unter der Nebenbedingung, dass }} \norm{v_{k}}_1 \leq t
+v_{k} = \argmax_{\norm{v}_2 = 1} v^{T}\mat{\Sigma} v\\
+\text{unter der Nebendingung, dass für } k\geq 2 \, v_{k}^Tv_{l} = 0 \quad \forall 1 \leq l < k\\
+\text{und } \norm{v_{k}}_1 \leq t 
 \end{split}
 \end{gather}
-Wie in (\ref{sparse_pca_np}) hat man mit der Wahl der Parameters $t$ Einfluss auf die Dünnbesetzung der Hauptachsen. Aufgrund der hohen Berechnungskosten ist SCoTLASS allerdings für hochdimensionale Daten ungeeignet. Diese sind vor allem darauf zurückzuführen, dass (\ref{scotlass}) kein konvexes Optimierungsproblem ist. Des Weiteren ergeben sich Schwierigkeiten bei der Wahl des Hyperparameters $t$. Auch wenn eine passende Wahl eine gewünschte Dünnbesetzung hervorruft, gibt es kaum Orientierungshilfen. Dabei hat ScoTLASS dasselbe grundlegende Problem wie das Lasso. Die Anzahl von null verschiedener Einträge ist durch die Anzahl Beobachtungen im Datensatz limitiert, welches die Brauchbarkeit des Modells deutlich einschränkt. Zusammen mit den hohen Berechnungskosten ist dieser Ansatz in der Praxis daher meist impraktikabel.\\
+Wie in (\ref{sparse_pca_np}) hat man mit der Wahl der Parameters $t$ Einfluss auf die Dünnbesetzung der Hauptachsen. Aufgrund der hohen Berechnungskosten ist SCoTLASS allerdings für hochdimensionale Daten ungeeignet. Diese sind vor allem darauf zurückzuführen, dass (\ref{scotlass}) kein konvexes Optimierungsproblem ist. Des Weiteren ergeben sich Schwierigkeiten bei der Wahl des Hyperparameters $t$. Auch wenn eine passende Wahl eine gewünschte Dünnbesetzung hervorruft, gibt es kaum Orientierungshilfen. Zusätzlich hat ScoTLASS dasselbe grundlegende Problem wie das Lasso. Die Anzahl von null verschiedener Einträge ist durch die Anzahl Beobachtungen im Datensatz limitiert, welches die Brauchbarkeit des Modells deutlich einschränkt. Zusammen mit den hohen Berechnungskosten ist dieser Ansatz in der Praxis daher meist impraktikabel.\\
 
 \textbf{Semidefinite Programmierung}
 
-Konvexe Relaxation ist eine Standard-Technik, um mit schwierigen nichtkonvexen Problemen umzugehen. d'Aspremont et al. \cite{daspremont_semidefinite} entwickeln eine Ansatz, welcher sich als semidefinites Programmierungsproblem ausdrücken lässt. Zunächst werden wir (\ref{sparse_pca_np}) dafür mit Matrizen reformulieren.
+Konvexe Relaxation ist eine Standard-Technik, um mit schwierigen nichtkonvexen Problemen umzugehen. d'Aspremont et al. \cite{daspremont_semidefinite} entwickeln einen Ansatz, welcher sich als semidefinites Programmierungsproblem ausdrücken lässt. Zunächst werden wir (\ref{sparse_pca_np}) dafür mit Matrizen reformulieren.
 
 Sei $\mat V = v_kv_k^{\top}$. Dann übersetzen sich die Nebenbedingungen 
 \begin{align}
@@ -78,7 +90,7 @@ ersetzen. Für größere Probleme wird eine Methode von Nesterov benutzt, um ein
 
 \textbf{Iterative Schwellenwert-Methode}
 
-Basierend auf der Formulierung REF von PCA als beste Rang $k$ Approximation an die Datenmatrix $\mat X$ haben Shen und Huang \cite{shen} das folgende Optimierungsproblem formuliert
+Basierend auf der Formulierung (\ref{pca_best_rank_approximation}) der Hauptkomponentenanalyse als beste Rang $k$ Approximation an die Datenmatrix $\mat X$ haben Shen und Huang \cite{shen} das folgende Optimierungsproblem formuliert
 \begin{align}
 \label{iterative_thresholding}
 \begin{split}
@@ -96,44 +108,53 @@ Diese Methode ist sehr ähnlich zu der von Zou et al. \cite{zou_sparsepca} , mit
 
 \textbf{Weitere Relaxationsideen}
 
-Es gibt noch eine Reihe weiterer Ideen, die in der Literatur betrachtet wurden. Dazu gehören
+Es gibt noch eine Reihe weiterer Ideen, die in der Literatur betrachtet wurden. Ein interessierter Lesen sei auf die folgenden Ansätze verwiesen.
 \begin{itemize}
 \item eine verallgemeinerte Potenzmethode \cite{journee}
 \item ein alternierendes Maximierungs-Netzwerk \cite{richtarik}
-\item vorwärts und rückwärts greedy Suche und exakte Methoden mittels Branch-and-Bound-Verfahren \cite{moghaddam}
-\item ein Bayes Formulierung \cite{guan}
+\item Vorwärts und Rückwärts-Greedy-Suche mittels Branch-and-Bound-Verfahren \cite{moghaddam}
+\item eine Bayes-Formulierung \cite{guan}
 \end{itemize}
 
-Ein interessierter Leser 
+
+%----------------------------------------------------------------------------------------
+%	Konstruktion Sparse PCA
+%----------------------------------------------------------------------------------------
 
 
-
-
-\section{Konstruktion Sparse PCA}
+\section{Konstruktion}
 \label{construction}
 
-Wir werden uns nun mit dem von Zou, Hastie und Tibshirani in \cite{zou_sparsepca} eingeführten Ansatz ausführlich beschäftigen. Zou und Hastie führten zuvor in \cite{zou_elasticnet} das sog. \textit{elastic net} ein, welches den Grundstein für die mathematische Formulierung legt.
+Wir werden uns nun mit dem von Zou, Hastie und Tibshirani in \cite{zou_sparsepca} eingeführten Ansatz ausführlich beschäftigen. Zou und Hastie führten zuvor in \cite{zou_elasticnet} das sog. \textit{elastic net} ein, welches den Grundstein für die mathematische Formulierung legen wird.
 
-Zunächst werden wir einen zweischrittigen Ansatz betrachten???
-
-Wie bereits in Kapitel \ref{pca} beschrieben kann die Hauptkomponentenanalyse auch als Regressionsproblem betrachtet werden. Das folgende Theorem erweitert die bisherige Formulierung, indem nun nicht ausschließlich orthogonale Projektionen erlaubt werden. 
+Wie bereits in (\ref{pca_regression_formulation}) beschrieben kann die Hauptkomponentenanalyse als regressionsartiges Problem betrachtet werden. Das folgende Theorem erweitert die bisherige Formulierung, indem nun nicht ausschließlich orthogonale Projektionen erlaubt werden. 
 Im Folgenden bezeichnet $k$ die Anzahl an Hauptkomponenten, die wir extrahieren möchten und $x_i$ die $i$-te Zeile von $\mat X$.
 
 \begin{thm} \label{pca_regression_formulation_ridge}
-Sei $\mat{A}_{p \times k} = [ \alpha_1, \ldots ,\alpha_k ]$ und $\mat{B}_{p \times k} = [ \beta_1, \ldots ,\beta_k ]$. Für ein $\lambda > 0$ sei
-$$(\hat{\mat{A}}, \hat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}^2 + \lambda \sum_{j=1}^{k}\norm{\beta_j}^2$$
-$$\text{wobei } \mat{A}^T\mat{A} = I_{k \times k}$$
-Dann ist $\hat{\beta}_j \propto V_j$ für $j = 1,2,\ldots,k$. 
+Sei $\mat{A}_{p \times k} = [ \alpha_1, \ldots ,\alpha_k ]$ und $\mat{B}_{p \times k} = [ \beta_1, \ldots ,\beta_k ]$. Für ein $\lambda_2 > 0$ sei
+$$(\hat{\mat{A}}, \hat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}^2 + \lambda_2 \sum_{j=1}^{k}\norm{\beta_j}^2$$
+$$\text{wobei } \mat{A}^T\mat{A} = I_{k \times k}.$$
+Dann ist $\hat{\beta}_j \propto v_j$ für $j = 1,2,\ldots,k$. 
 \end{thm}
 
-Fordern wir $\mat A =  \mat B$ so reduziert sich das Problem auf die normale Hauptkomponentenanalyse wie in (WENN A = B, dann können wir ridge penalty weglassen. Also zeigt das Theorem, dass wir immer noch exact PCA haben können, wenn wir die Bedingung B = A relaxieren und eine ridge-penalty hinzufügen.) \ref{pca_regression_formulation} beschrieben.
-Theorem \ref{pca_regression_formulation_ridge} FIX CROSS REFERENCES
+Fordern wir $\mat A =  \mat B$ reduziert sich die Verlustfunktion $\sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}^2$ auf die klassische Hauptkomponentenanalyse (\ref{pca_regression_formulation}). Theorem \ref{pca_regression_formulation_ridge} zeigt, dass wir die Bedingung $\mat A = \mat B$ unter Einführung eines Ridge-Strafterms vernachlässigen können. Mithilfe dieser Verallgemeinerung können wir die Hauptkomponentenanalyse flexibel modifizieren.
 
-Somit ergibt sich das folgende Kriterium, welches wir im Folgenden als das Sparse PCA Kriterium bezeichnen werden.
-$$(\hat{\mat{A}}, \hat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}_2^2 + \lambda \sum_{j=1}^{k}\norm{\beta_j}_2^2 + \sum_{j=1}^k \lambda_{1,j} \norm{\beta_j}_1$$
+Um dünnbesetzte Hauptachsen zu erhalten können wir einen $\ell_1$-Strafterm in die Zielfunktion einbetten. Das ein solcher Strafterm eine gewünschte Dünnbesetzung hervorruft, haben wir in Abschnitt \ref{lasso} beobachten können. Wir definieren daher das \textit{Sparse PCA Kriterium} mit den Hyperparameter $\lambda_{1,j}$ und $\lambda_2$
+\begin{align}
+\label{spca_criterion}
+\begin{split}
+(\hat{\mat{A}}, \hat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}_2^2 + \lambda_2 \sum_{j=1}^{k}\norm{\beta_j}_2^2 + \sum_{j=1}^k \lambda_{1,j} \norm{\beta_j}_1\\
+\text{unter der Nebenbedingung, dass } \mat{A}^T\mat{A} = I_{k \times k}
+\end{split}
+\end{align}
+Um die Dünnbesetzung der Hauptachsen unterschiedlich wählen zu können, erlauben wir unterschiedliche Bestrafungen $\lambda_{1,j}$. Dagegen erlauben wir für die Ridge-Bestrafung $\lambda_2$, die im Wesentlichen für die Reduktion von (\ref{spca_criterion}) auf (\ref{pca_regression_formulation}) benötigt wird falls $\lambda_{1,j} = 0$, keine differenzierte Behandlung. Allerdings hat die $\ell_2$-Bestrafung noch einen weiteren Vorteil, welcher in der Praxis relevant ist. Es bewältigt das Lasso-Defizit, so dass auch mehr als $n$ Variablen im Fall $p>n$ ausgewählt werden können.
 
-subject to $\mat{A}^T\mat{A} = I_{k \times k}$
-oblique projections AB
+
+
+%----------------------------------------------------------------------------------------
+%	Anpassung der Transformation, Residuen und Varianzen
+%----------------------------------------------------------------------------------------
+
 
 \section{Anpassung der Transformation, Residuen und Varianzen}
 
@@ -159,6 +180,11 @@ Der Erfolg der Hauptkomponentenanalyse beruht vor allem darauf, dass die Hauptko
 
 Aufgrund fehlender Restriktionen an 
 In einem erst vor Kurzem erschienen wissenschaftlichen Artikel zeigen Camacho et al. \cite{camacho}, dass viele der Varianten von Sparse PCA erhebliche Probleme aufweisen. 
+
+
+%----------------------------------------------------------------------------------------
+%	Theoretische Aussagen
+%----------------------------------------------------------------------------------------
 
 
 \section{Theoretische Aussagen} 
