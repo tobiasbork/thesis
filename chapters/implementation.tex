@@ -4,7 +4,7 @@
 % Chapter label
 \label{implementation}
 
-In diesem Kapitel werden wir einen Algorithmus beschreiben, der das Sparse PCA Kriterium minimiert. Dazu werden wir uns zunächst mit dem allgemeinen Fall beschäftigen bevor wir den Fall $n \ll p$ genauer betrachten, um eine effiziente Berechnung zu garantieren. Zu Schluss dieses Kapitels werden wir uns genauer mit der Laufzeit des Algorithmus auseinandersetzen. 
+In diesem Kapitel werden wir einen Algorithmus beschreiben, der das Sparse PCA Kriterium (\ref{spca_criterion}) minimiert. Dazu werden wir uns zunächst mit dem allgemeinen Fall beschäftigen bevor wir den Fall $n \ll p$ genauer betrachten, um eine effiziente Berechnung zu garantieren. Zu Schluss dieses Kapitels werden wir uns genauer mit der Laufzeit des Algorithmus auseinandersetzen. 
 
 \section{Numerische Lösung}
 \label{spca_numerical_solution}
@@ -66,12 +66,14 @@ Durch die Vorarbeit im vorangegangenem Abschnitt können wir einen effizienten A
     \end{algorithmic}
 \end{algorithm} 
 
-Es stellt sich nun die Frage nach einem passendem Abbruchkriterium. Da für uns am Schluss des Algorithmus nur die Matrix $\mat B$ relevant ist, kann $\mat A$ bei der Wahl eines Konvergenzkriterium vernachlässigt werden. Zou, Hastie, und Tibshirani wählen in ihrer Implementierung das folgende Kriterium
+Es stellt sich nun die Frage nach einem passendem Abbruchkriterium. Da für uns am Schluss des Algorithmus nur die Matrix $\mat B$ relevant ist, kann $\mat A$ bei der Wahl eines Konvergenzkriterium vernachlässigt werden. Zou, Hastie, und Tibshirani wählen in ihrer Implementierung das folgende Kriterium (B's werden normalisiert verglichen!)
 $$\max_{\substack{1 \leq i \leq p \\ 1 \leq j \leq k}} \left| \mat{B}_{ij}^{(l+1)} - \mat{B}_{ij}^{(l)} \right| < \epsilon$$
 wobei $\mat B_{ij}^{(l)}$ der $ij$-te Eintrag der Matrix in der $l$-ten Iteration ist. Sobald also die Änderung in $\mat B^{(l)}$ klein genug ist, kann die while-Schleife abgebrochen werden. Um die Laufzeit des Algorithmus zu beschränken, ist es meist sinnvoll ein zusätzliches Abbruchkriterium zu definieren. So werden wir bei Anwendung des Algorithmus eine maximale Anzahl an Iterationen $l_{max}$ festlegen, die nicht überschritten werden darf. (In Kapitel \ref{application} werden wir sehen, dass sich die Anzahl an Iterationen stark unterscheiden kann.)
 
 \section{Numerische Lösung im Fall p >> n}
 
 \section{Implementierung in scikit-learn in python}
+
+Es wurde anhand mehrerer Datensätze geprüft, ob der von uns implementierte Code mit den Ergebnissen von Zou und Hastie übereinstimmen.
 
 \section{Laufzeitvergleich}

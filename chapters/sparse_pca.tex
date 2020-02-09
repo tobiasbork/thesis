@@ -147,7 +147,9 @@ Um dünnbesetzte Hauptachsen zu erhalten können wir einen $\ell_1$-Strafterm in
 \text{unter der Nebenbedingung, dass } \mat{A}^T\mat{A} = I_{k \times k}
 \end{split}
 \end{align}
-Um die Dünnbesetzung der Hauptachsen unterschiedlich wählen zu können, erlauben wir unterschiedliche Bestrafungen $\lambda_{1,j}$. Dagegen erlauben wir für die Ridge-Bestrafung $\lambda_2$, die im Wesentlichen für die Reduktion von (\ref{spca_criterion}) auf (\ref{pca_regression_formulation}) benötigt wird falls $\lambda_{1,j} = 0$, keine differenzierte Behandlung. Allerdings hat die $\ell_2$-Bestrafung noch einen weiteren Vorteil, welcher in der Praxis relevant ist. Es bewältigt das Lasso-Defizit, so dass auch mehr als $n$ Variablen im Fall $p>n$ ausgewählt werden können.
+Die normierten Spalten von $\mat B$ nennen wir dann die \textit{dünnbesetzten Hauptachsen}. Um die Dünnbesetzung für jede Hauptachse unterschiedlich wählen zu können, erlauben wir unterschiedliche Bestrafungen $\lambda_{1,j}$. Dagegen erlauben wir für die Ridge-Bestrafung $\lambda_2$, die im Wesentlichen für die Reduktion von (\ref{spca_criterion}) auf (\ref{pca_regression_formulation}) benötigt wird falls $\lambda_{1,j} = 0$, keine differenzierte Behandlung. Allerdings hat die $\ell_2$-Bestrafung noch einen weiteren Vorteil, welcher in der Praxis relevant ist. Es bewältigt das Lasso-Defizit, so dass auch mehr als $n$ Variablen im Fall $p>n$ ausgewählt werden können.
+
+Wir möchten darauf hinweisen, dass im Gegensatz zu manch anderen Varianten der dünnbesetzten Hauptkomponentenanalyse (\ref{spca_criterion}) eine zeitgleiche anstatt einer sequentiellen Berechnung der Hauptachsen ermöglicht. Dies wird im folgendem Abschnitt von entscheidender Bedeutung sein.
 
 
 
@@ -158,28 +160,25 @@ Um die Dünnbesetzung der Hauptachsen unterschiedlich wählen zu können, erlaub
 
 \section{Anpassung der Transformation, Residuen und Varianzen}
 
-Bei der Verwendung der dünnbesetzten Hauptkomponentenanalyse übertragen sich viele der Eigenschaften der gewöhnlichen Variante nicht. Gerade im Kontext einer besseren Interpretation der Daten gilt es folgende Punkte zu berücksichtigen.
+Bei der Verwendung der dünnbesetzten Hauptkomponentenanalyse übertragen sich viele der Eigenschaften der klassischen Variante nicht. \cite{camacho}. Daher gilt es folgende Punkte zu berücksichtigen.\\
 
-\textbf{Korrelation der transformierten Variablen}
+\textbf{Korrelation der Hauptkomponenten}
 
-In einer klassischen Hauptkomponentenanalyse sind die Variablen nach Transformation unkorreliert. Dagegen kommt es bei der dünnbesetzten Variante häufig vor, dass die entstehenden Variablen korreliert sind. (WARUM?) Diese Korrelation ermöglicht zwar eine flexiblere Modellierung, allerdings erschwert dies auch eine geeignete Visualisierung. Besonders bei der Berechnung der erfassten Varianz des Datensatzes, welches oft als Bewertungsmittel dient, gilt besondere Vorsicht.
-
-\textbf{Orthogonalität der Hauptachsen}
-
-Für die Auswertung von PCA Ergebnissen
-Correlation of loadings is a relevant problem, in particular when
-scatter plots of scores are used for interpretation. The visualization in
-scatter plots assumes orthogonal axes in the original variable space. This
-holds for the standard PCA components, but it does not necessarily hold
-for sparse components. Again, care should be taken when computing the
-captured variance with correlated loadings.
+Bei einer klassischen Hauptkomponentenanalyse sind die Hauptkomponenten aufgrund der orthogonalen Hauptachsen unkorreliert. Letztere Eigenschaft fordern wir bei der dünnbesetzten Variante in (\ref{spca_criterion}) nicht, so dass durchaus starke Korrelationen zwischen den Hauptkomponenten auftreten können. Während dies eine flexiblere Modellierung ermöglicht, wird es dadurch schwieriger die Ergebnisse geeignet zu visualisieren. Besonders bei der Verwendung von Streudiagrammen, welche genutzt werden, um den Beitrag der Ausgangsvariablen zu den Hauptachsen zu visualisieren, kann dies zu Problemen führen. Hierbei unterstellt man die Orthogonalität der Hauptachsen, was zu Verzerrungen der Distanzen im Bild führen kann \cite{geladi}. Des Weiteren kann die Berechnung der erfassten Varianz des Datensatzes, welches häufig als Maß für die Qualität eines Modells genutzt wird, nicht analog zur klassischen Variante durchgeführt werden.\\
 
 \textbf{Varianzverlust der Hauptkomponenten}
 
-Der Erfolg der Hauptkomponentenanalyse beruht vor allem darauf, dass die Hauptkomponenten optimal bezüglich erklärter Varianz sind. Oft kann ein Großteil an Information eines Datensatzes durch eine geringe Anzahl an Hauptkomponenten beschrieben werden, welches eine Visualisierung und Interpretation hochdimensionaler Daten ermöglicht. Bei der dünnbesetzten Hauptkomponentenanalyse opfern wir einen Teil der erklärten Varianz für simplere Hauptachsen. Um einen genauso großen Teil an Information des Datensatzes zu erklären, benötigen wir daher mehr Hauptkomponenten.
+Der Erfolg der Hauptkomponentenanalyse beruht vor allem darauf, dass die Hauptkomponenten optimal bezüglich erklärter Varianz sind. Oft kann ein Großteil an Information eines Datensatzes durch eine geringe Anzahl an Hauptkomponenten beschrieben werden, welches eine Visualisierung und Interpretation hochdimensionaler Daten ermöglicht. Bei der dünnbesetzten Hauptkomponentenanalyse opfern wir einen Teil der erklärten Varianz für simplere, einfacher zu interpretierende Hauptachsen. Um einen genauso großen Teil an Information des Datensatzes zu erklären, benötigen wir daher eine größere Anzahl an Hauptkomponenten in unserem Modell. Somit können wir die Dimension des Datensatzes unter Umständen nicht all zu stark reduzieren.
 
-Aufgrund fehlender Restriktionen an 
-In einem erst vor Kurzem erschienen wissenschaftlichen Artikel zeigen Camacho et al. \cite{camacho}, dass viele der Varianten von Sparse PCA erhebliche Probleme aufweisen. 
+In einem erst vor Kurzem erschienen wissenschaftlichen Artikel zeigen Camacho et al. \cite{camacho}, dass viele der Varianten der dünnbesetzten Hauptkomponentenanalyse bezüglich der genannten Punkte Probleme aufweisen. Insbesondere wurde die Berechnung der Hauptkomponenten, Residuen und der erklärten Varianz bislang falsch durchgeführt. Wir möchten an dieser Stelle die Unterschiede detailliert erklären.
+
+Zunächst
+
+\section{Kritik}
+
+results in very large residuals
+highly correlated scores
+q is no updated due to the normalization step
 
 
 %----------------------------------------------------------------------------------------
@@ -190,6 +189,8 @@ In einem erst vor Kurzem erschienen wissenschaftlichen Artikel zeigen Camacho et
 \section{Theoretische Aussagen} 
 \label{spca_theorems}
 
+
+recomputation necessary of principal components when changing number of pc's.
 
 Alexandre d’Aspremont, Optimal Solutions for Sparse Principal Component Analysis
 We then use the same relaxation to derive sufficient conditions for global optimality of a

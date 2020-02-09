@@ -282,12 +282,12 @@ $$\operatorname {Bias} _{\vartheta }[d] \defeq \operatorname {E} _{\vartheta }[d
 
 Um verschiedene Schätzer miteinander zu vergleichen bedienen wir uns häufig des \textit{mittleren quadratischen Fehlers}. Dieser gibt an, welche Abweichung zwischen dem Schätzer und dem wahrem Parameter zu erwarten ist. Damit bietet sich uns eine Möglichkeit den erwarteten Fehler eines Lernalgorithmus analysieren.
 
-\begin{defn}[Mittlerer quadratischer Fehler \cite{kohn} (Def 15.7)]
+\begin{defn}[Mittlerer quadratischer Fehler \cite{kohn}]
 Der \textit{mittlere quadratische Fehler} (Englisch: \textit{Mean Squared Error (MSE))} ist definiert durch
 $$\operatorname {MSE} (d,\vartheta ) \defeq \operatorname{E} _{\vartheta}\left[\left(d-g(\vartheta )\right)^{2}\right].$$
 \end{defn}
 
-\begin{thm}[Verschiebungssatz \cite{kohn} ()]
+\begin{thm}[Verschiebungssatz \cite{kohn}]
 Der mittlere quadratische Fehler zerfällt in Varianz und Bias, d.h.
 $$\operatorname{MSE} (d,\vartheta) = \operatorname{Var}_{\vartheta}[d]+\left(\operatorname{Bias}_{\vartheta}[d]\right)^{2}$$
 \end{thm}
@@ -305,7 +305,7 @@ Die Frage nach einem günstigen Modell liegt also in der Modellkomplexität und 
 \label{bias_variance_tradeoff}
 \end{figure}
 
-\subsection{Lineare Regression} \cite{hastie_elements}
+\subsection{Lineare Regression}
 
 Bei der Regressionsanalyse werden Zusammenhänge zwischen
 mehreren Merkmalen untersucht. Man versucht eine unabhängige Variable $Y$ durch eine oder mehrere abhängige Variablen $X_1, \ldots, X_p$ zu erklären. Ein lineares Regressionsmodell hat also die Form
@@ -313,84 +313,80 @@ mehreren Merkmalen untersucht. Man versucht eine unabhängige Variable $Y$ durch
 \label{linear_model}
 f(X) = \beta_0 + \sum_{j=1}^p X_j\beta_j
 \end{align}
-wobei $\beta_j$ die Regressionskoeffizienten sind.
-Bei der Verwendung dieses Modells nehmen wir an, dass die Regressionsfunktion $\text{E}(Y|X)$ linear ist bzw. ein lineares Modell eine geeignete Approximation ist.
+wobei $\beta_j$ die Regressionskoeffizienten sind. Bei der Verwendung dieses Modells nehmen wir an, dass die Regressionsfunktion $\text{E}(Y|X)$ linear ist bzw. ein lineares Modell eine geeignete Approximation ist \cite{hastie_elements}.
 
-Typischerweise verfügen wir über eine Menge von Trainingsdaten $(x_1, y_1), \ldots, (x_n, y_n)$. Jedes $x_i = (x_{i1}, \ldots, x_{ip})^{\top}$ stellt eine Beobachtung dar, die wir für die Schätzung der Parameter $\beta_j$ benutzen. Die bekannteste Methode für diesen Zweck ist sicherlich die \textit{Methode der kleinsten Quadraten} (Englisch: \textit{(Ordinary) Least Squares}), in welcher wir $\beta = (\beta_0, \ldots, \beta_p)^{\top}$ wählen, so dass die Summe der Residuenquadrate (Englisch: \textit{Residual Sum of Squares}, kurz RSS) minimiert wird. Wir definieren
+Typischerweise verfügen wir über eine Menge von Trainingsdaten $(x_1, y_1), \ldots, (x_n, y_n)$. Jedes $x_i = (x_{i1}, \ldots, x_{ip})^{\top}$ stellt eine Beobachtung dar, die wir für die Schätzung der Parameter $\beta_j$ benutzen. Die bekannteste Methode für diesen Zweck ist sicherlich die \textit{Methode der kleinsten Quadraten} (Englisch: \textit{(Ordinary) Least Squares}), in welcher wir $\beta = (\beta_0, \ldots, \beta_p)^{\top}$ so wählen, dass die Summe der Residuenquadrate (Englisch: \textit{Residual Sum of Squares (RSS)} minimiert wird. Wir definieren
 \begin{align}
 \label{RSS}
 \text{RSS}(\beta) & = \sum_{i=1}^{n}(y_i - f(x_i))^2\\
-& = \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2\\
-& = (y - \mat X \beta)^{\top}(y-\mat X \beta)\\
-& = \norm{y - \mat X \beta}_{2}^{2}
+& = \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2\nonumber\\
+& = (y - \mat X \beta)^{\top}(y-\mat X \beta)\nonumber\\
+& = \norm{y - \mat X \beta}_{2}^{2}\nonumber
 \end{align}
 und das dazugehörige Minimierungsproblem
 \begin{align}
 \label{least_squares}
 \hat{\beta}^{\text{OLS}} = \argmin_{\beta} \text{RSS}(\beta)
 \end{align}
-wobei $\mat X \in \mathbb{R}^{n \times (p+1)}$ die Matrix der $x_i$ mit einer 1 an erster Stelle ist und $y = (y_1, \ldots, y_n)^{\top}$. Eine Visualisierung der Methode befindet sich in Abbildung REF. Vielleicht Bild zur Regression in 2 bzw. 3D?
+wobei $\mat X \in \mathbb{R}^{n \times (p+1)}$ die Matrix der $x_i$ mit einer 1 an erster Stelle ist und $y = (y_1, \ldots, y_n)^{\top}$. An dieser Stelle möchten wir erwähnen, dass bei Verwendung dieser Methode keine Aussage über die Gültigkeit des Modells getroffen, sondern lediglich die beste lineare Approximation gefunden wird.
 
-An dieser Stelle möchten wir erwähnen, dass bei Verwendung dieser Methode keine Aussage über die Gültigkeit des Modells getroffen, sondern lediglich die beste lineare Approximation gefunden wird.
-
-Falls $\mat X$ vollen Rang hat, ist es ist leicht zu zeigen, dass (\ref{least_squares}) die eindeutige Lösung
+Falls $\mat X$ vollen Rang hat zeigt man leicht, dass (\ref{least_squares}) die eindeutige Lösung
 \begin{align}
 \hat{\beta}^{\text{OLS}} = (\mat X^{\top}\mat X)^{-1}\mat X^{\top} y
 \end{align}
-besitzt. Die Zielgröße ergibt sich dann durch
+besitzt. Die Zielgröße $y$ ergibt sich dann durch
 \begin{align}
 \hat{y} = \mat X \hat{\beta}^{\text{OLS}} = \mat X (\mat X^{\top}\mat X)^{-1}\mat X^{\top} y
 \end{align}
-Die Matrix $\mat P = \mat X (\mat X^{\top}\mat X)^{-1}\mat X^{\top}$ haben wir bereits in REF kennengelernt. Sie projiziert $y$ orthogonal auf den durch  die Spalten von $\mat X$ aufgespannten Unterraum. Dies ermöglicht eine geometrische Interpretation der linearen Regression.
+Die Matrix $\mat P = \mat X (\mat X^{\top}\mat X)^{-1}\mat X^{\top}$ haben wir bereits in Abschnitt \ref{orthogonality} kennengelernt. Sie projiziert $y$ orthogonal auf den durch die Spalten von $\mat X$ aufgespannten Unterraum. Dies ermöglicht eine geometrische Interpretation der linearen Regression.
 
-Wenn $\mat X$ keinen vollen Rang hat, ist die Lösung von (\ref{least_squares}) nicht mehr eindeutig. Dieser Art Probleme ereignen sich häufig in der Bild- und Signalanalyse, da es mehr Variablen als Beobachtungen gibt ($p > n$). Um ein gewünschtes Verhalten der Regression zu gewährleisten, bestehen verschiedene Möglichkeiten der Filterung oder Regularisierung. In letzterem Fall versehen wir den Regressionsterm mit sog. \textit{Straftermen}, welche eine bedeutende Rolle in den folgenden Kapitel spielen werden. Wir werden uns auf die Einführung dieser in linearer Regression beschränken. Das Konzept kann aber allgemeiner auch in logistischer Regression oder anderen verallgemeinerten linearen Modellen verwendet werden. Mit leicht abgewandelten Argumentationen erhalten wir dann bei Einbettung der Strafterme in die jeweilige Zielfunktion dieselben Effekte. Mehr dazu in CITE.
+Wenn $\mat X$ keinen vollen Rang hat, ist die Lösung von (\ref{least_squares}) nicht mehr eindeutig. Dieser Art Probleme ereignen sich häufig in der Bild- und Signalanalyse, bei welcher wir häufig über mehr Variablen als Beobachtungen verfügen. Um ein gewünschtes Verhalten der Regression zu gewährleisten, bestehen verschiedene Möglichkeiten der Filterung oder Regularisierung. In letzterem Fall versehen wir den Regressionsterm mit sog. \textit{Straftermen}, welche eine bedeutende Rolle in den folgenden Kapitel spielen werden. Wir möchten diese mithilfe der linearen Regression einführen. Die Effekte der Strafterme können aber auf andere verallgemeinerte lineare Modelle übertragen werden. 
 
-Gelegentlich sind wir mit den Ergebnissen der Methode der kleinsten Quadrate nicht zufrieden. Dies kann zum Beispiel an der Multikollinearität des Datensatzes liegen. Mit zunehmender Multikollinearität ist die Methode instabil und bei der Schätzung der Regressionskoeffizienten ungenau. Es ergeben sich die folgenden zwei Probleme:
+Die von uns eingeführten Strafterme werden vor allem eine Schrumpfung der Regressionskoeffizienten verursachen. Daher möchten wir zunächst motivieren, in welchen Situationen eine derartige Regularisierung hilfreich sein kann.
 \begin{itemize}
-\item Vorhersagegenauigkeit: Meist hat das erzeugte Modell einen niedrigen Bias, aber eine hohe Varianz. Somit sind neue Vorhersagen, die wir auf zuvor ungesehenen Daten treffen, oft sehr ungenau. In manchen Fällen können wir die Ergebnisse durch eine Erhöhung des Bias verbessern, indem wir die Regressionskoeffizienten verkleinern oder sogar auf 0 setzen.
-\item Interpretation: Eine hohe Anzahl an Variablen, die in das Modell einfließen erschwert unzweifelhaft eine Interpretation. Daher kann es von Vorteil sein nur den Teil der Variablen für das Modell auszuwählen, die den größten Effekt für die Vorhersage erzielen.
+\item Vorhersagegenauigkeit: Besonders in $p > n$-Fällen neigt ein lineares Regressionsmodell häufig zu einer Überanpassung an die Trainingsdaten. Um die Vorhersagegenauigkeit für ungesehene Testdaten zu verbessern, kann eine Erhöhung des Bias im Sinne des Verzerrung-Varianz-Dilemmas sinnvoll sein. Dies können wir beispielsweise dadurch erreichen, dass wir die Regressionskoeffizienten verkleinern oder sogar auf 0 setzen.
+\item Interpretation: Eine hohe Anzahl an Variablen, die in das Modell einfließen erschwert unzweifelhaft eine Interpretation. Daher kann es von Vorteil sein nur einen Teil der Variablen für das Modell auszuwählen. Optimalerweise selektiert man solche, die eine möglichst genaue Vorhersage ermöglichen.
 \end{itemize}
 
-Ein naheliegender Ansatz zur Lösung dieser Probleme wäre es zu versuchen, die beste Teilmenge an Variablen zu finden, die eine minimale Summe der Residuenquadrate aufweist. In \cite{hastie_elements} werden verschiedene Methoden zur exakten und approximativen Berechnung dieser Teilmenge beschrieben. (Darunter fallen die leaps and bounds Methode (Furnival and Wilson, 1974), Forward Stepwise und Backward Stepwise.) Nicht immer wird die Genauigkeit der Vorhersagen durch Verwendung dieses Ansatzes besser. Dies liegt daran, dass es sich um einen diskreten Prozess handelt und somit Variablen für das Modell entweder ausgewählt oder verworfen werden. Daher beschäftigen wir uns nun mit Methoden, die eine kontinuierliche Schrumpfung der Regressionskoeffizieten erlauben.\\
+Ein naheliegender Ansatz zur Lösung dieser Probleme wäre es zu versuchen, eine $k$-Teilmenge der Variablen zu finden, die eine minimale Summe der Residuenquadrate aufweist. In \cite{hastie_elements} werden verschiedene Methoden zur exakten und approximativen Berechnung dieser Teilmenge beschrieben. Nicht immer wird die Genauigkeit der Vorhersagen durch Verwendung dieses Ansatzes besser. Dies liegt vor allem daran, dass Variablen für das Modell entweder ausgewählt oder verworfen werden. Daher beschäftigen wir uns nun mit Methoden, die eine kontinuierliche Schrumpfung der Regressionskoeffizienten erlauben.\\
 
 \subsection{Ridge Regression}
 
-Die \textit{Tikhonov Regularisierung}, die auch unter dem Namen \textit{Ridge Regression} bekannt ist, kann genutzt werden, um das Problem der Multikollinearität zu lösen und im Fall $p > n$ eine eindeutige Lösung zu erhalten.
-Wie wir bereits in REF gesehen haben, kann es sinnvoll sein den Bias zu erhöhen, um genauere Vorhersagen treffen zu können. Daher führen wir nun eine \textit{ridge penalty}, einen Strafterm, ein und formulieren das Ridge Regression Problem in der Lagrange Form.
+Zu diesem Zweck kann die \textit{Tikhonov Regularisierung}, die auch unter dem Namen \textit{Ridge Regression} bekannt ist, genutzt werden. Mithilfe eines \textit{Ridge Strafterms} opfern wir einen Teil des Bias für verbesserte Vorhersagen im Sinne des Verzerrung-Varianz-Dilemmas. Wir formulieren das Ridge Regression Problem in der Lagrange Form
 \begin{align}
 \label{ridge_regression}
 \hat{\beta}^{\text{ridge}} = \argmin_{\beta} \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda\sum_{j=1}^p \beta_j^2
 \end{align}
-wobei $\lambda \geq 0$ ein Parameter ist, der die Stärke der Schrumpfung der Regressionskoeffizienten kontrolliert. Je größer $\lambda$, desto stärker ist die Schrumpfung der $\beta_j$. Man kann zeigen, dass die Lösung von (\ref{ridge_regression}) in zwei Teile aufgeteilt werden kann. Da $\beta_0$ nicht im Strafterm vorkommt, schätzen wir $\beta_0 = \bar{y} = \frac{1}{n}\sum_{i=1}^{n} y_i$ und zentrieren die Eingaben $x_{ij} = x_{ij} - \bar{x}_j$. Die eindeutige Lösung der zentrierten Version von (\ref{ridge_regression}) ist dann gegeben durch
+wobei $\lambda \geq 0$ ein Parameter ist, der die Stärke der Schrumpfung der Regressionskoeffizienten kontrolliert. Je größer $\lambda$, desto stärker ist die Schrumpfung der $\beta_j$. Durch die Einführung des $ell_2$-Strafterms garantiert (\ref{ridge_regression}) auch für $p > n$ eine eindeutige Lösung. Da $\beta_0$ nicht im Strafterm vorkommt, schätzen wir zunächst $\beta_0 = \bar{y} = \frac{1}{n}\sum_{i=1}^{n} y_i$ und zentrieren die Eingaben $x_{ij} = x_{ij} - \bar{x}_j$. Die eindeutige Lösung der zentrierten Version von (\ref{ridge_regression}) ist dann durch
 \begin{align}
 \hat{\beta}^{\text{ridge}}  = (\mat X^{\top} \mat X + \lambda\mat{I})^{-1}\mat{X}^{\top}y
 \end{align}
-wobei $\beta = (\beta_1, \ldots, \beta_p)$ und $\mat{X} \in \mathbb{R}^{n \times p}$ die Matrix der $x_i$. (Vor der Anwendung von Ridge Regression werden die Daten meist standardisiert, da $\hat{\beta}^{\text{ridge}}$ nicht äquivariant unter Skalierung ist.) \\
+gegeben, wobei $\beta = (\beta_1, \ldots, \beta_p)$ und $\mat{X} \in \mathbb{R}^{n \times p}$ die Matrix der $x_i$. Die durch die Ridge Regression erzeugten Koeffizienten sind also um den Faktor $\frac{1}{1+\lambda}$ gegenüber denen der klassischen linearen Regression skaliert. Eine Dünnbesetzung der Koeffizienten wird also erst für $\lambda \to \infty$ erreicht.\\
 
 
 \subsection{LASSO}
 \label{lasso}
 
-Die durch die Ridge Regression erzeugten Koeffizienten sind also um den Faktor $\frac{1}{1+\lambda}$ gegenüber denen von Least Squares skaliert. Die Regressionskoeffizieten werden also erst für $\lambda \rightarrow 0$ auf Null geschrumpft. Um eine bessere Interpretation des Modells zu ermöglichen kreiert das \textit{Lasso} eine dünnbesetzte Lösung, bei welcher viele Koeffizienten gleich Null sind. Das Lasso wurde erstmals von Tibshirani in \cite{tibshirani_lasso} eingeführt und ist in der Signalanalyse unter dem Namen \textit{Basis Pursuit} \cite{chen} bekannt. Mathematisch erreichen wir eine Dünnbesetzung durch Einbettung eines $\ell_1$-Strafterms.
+Um eine bessere Interpretation des Modells zu ermöglichen, versucht man bei der \textit{Lasso} Regression eine Lösung zu finden, bei welcher viele Koeffizienten gleich Null sind. Das Lasso wurde erstmals von Tibshirani in \cite{tibshirani_lasso} eingeführt und ist in der Signalanalyse unter dem Namen \textit{Basis Pursuit} \cite{chen} bekannt. Mathematisch gesehen erreichen wir eine Dünnbesetzung durch Einbettung eines $\ell_1$-Strafterms.
 \begin{align}
 \label{lasso_formulation}
 \hat{\beta}^{\text{lasso}} = \argmin_{\beta} \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda\sum_{j=1}^p \left|\beta_j\right|
 \end{align}
-Es wird also im Vergleich zu (\ref{ridge_regression}) lediglich die $\ell_2$-Norm durch eine $\ell_1$-Norm ausgetauscht. Bevor wir uns mit der Lösung dieses Problems beschäftigen, möchten wir erklären, warum die $\ell_1$-Norm eine Dünnbesetzung hervorruft. Die lässt sich auf zwei Arten erklären. Zunächst geben wir eine geometrische Erklärung, welche in Abbildung \ref{lasso_ridge_regression_figure} zu sehen ist. Dort sind die $\ell_1$- und $\ell_2$-Beschränkungen sowie die Höhenlinien der RSS Funktion in zwei Dimensionen aufgezeichnet. Die optimalen Koeffizienten von Ridge Regression und Lasso ergeben sich nun aus dem Schnittpunkt der Höhenlinie und der Norm-Begrenzung. Im Falle der $\ell_1$-Norm ist dieser Schnittpunkt mit einer hohen Wahrscheinlichkeit an eine der Ecken und einer der beiden Koeffizienten wird auf Null gesetzt. Im Gegensatz gibt es bei der Wahl einer $\ell_2$-Begrenzung keine Ecken. Somit kommt jeder Randpunkt der Begrenzung als Schnittpunkt in Frage und es wird keine Dünnbesetzung, sondern lediglich eine kontinuierliche Schrumpfung der Koeffizienten hervorgerufen. Dieser Effekt verstärkt sich in höheren Dimensionen.
+Es wird also im Vergleich zu (\ref{ridge_regression}) lediglich die $\ell_2$-Norm durch eine $\ell_1$-Norm ausgetauscht. Bevor wir uns mit der Lösung dieses Problems beschäftigen, möchten wir erklären, warum die $\ell_1$-Norm eine Dünnbesetzung hervorruft. Zunächst geben wir eine geometrische Erklärung, welche in Abbildung \ref{lasso_ridge_regression_figure} zu sehen ist. Dort sind die $\ell_1$- und $\ell_2$-Beschränkungen, sowie die Höhenlinien der RSS-Funktion in zwei Dimensionen aufgezeichnet. Die optimalen Koeffizienten von Ridge und Lasso Regression ergeben sich nun aus dem Schnittpunkt der Höhenlinien mit der Begrenzung der jeweiligen Norm. Im Falle der $\ell_1$-Norm ist dieser Schnittpunkt mit einer hohen Wahrscheinlichkeit an eine der Ecken, so dass einer der beiden Koeffizienten auf Null gesetzt wird. Im Gegensatz dazu ist die Wahrscheinlichkeit, dass ein Koeffizient bei einer $\ell_2$-Begrenzung auf Null gesetzt wird, sehr gering, da keine Ecken vorhanden sind. Somit kommt jeder Randpunkt der Begrenzung als Schnittpunkt in Frage und es wird keine Dünnbesetzung, sondern lediglich eine kontinuierliche Schrumpfung der Koeffizienten hervorgerufen. Dieser Effekt verstärkt sich in höheren Dimensionen.
 
 \begin{figure}
 \centering
 \includegraphics[width = 0.9\textwidth]{figures/lasso_ridge_regression.jpg}
-\caption{Die Abbildung zeigt die Beschränkungen der $\ell_1$-Norm (links) und der $\ell_2$-Norm (rechts) zusammen mit den Höhenlinien der RSS-Funktion, welche $\hat{\beta}^{\text{OLS}}$ als Minimierer besitzt. Verdeutlicht wird hier die geometrische Findung von $\hat{\beta}^{\text{lasso}}$ (links) und $\hat{\beta}^{\text{ridge}}$ (rechts)\\Basiert auf \cite{hastie_elements}}
+\caption{Die Abbildung zeigt die Beschränkungen der $\ell_1$-Norm (links) und der $\ell_2$-Norm (rechts) zusammen mit den Höhenlinien der RSS-Funktion im $\mathbb{R}^2$. Verdeutlicht wird hier die geometrische Findung von $\hat{\beta}^{\text{lasso}}$ (links) und $\hat{\beta}^{\text{ridge}}$ (rechts). (Abbildung basiert auf \cite{hastie_elements})}
 \label{lasso_ridge_regression_figure}
 \end{figure}
 
-An dieser Stelle kann man auf den Gedanken kommen, andere Strafterme zu verwenden, welche bei geometrischer Betrachtung die Wahrscheinlichkeit erhöhen eine Dünnbesetzung der Koeffizienten hervorzurufen. So kann man zum Beispiel die $\ell_q$-Normen als Strafterm für Werte $q < 1$ in Betracht ziehen.
+An dieser Stelle kann man auf den Gedanken kommen, andere Strafterme zu verwenden, welche bei geometrischer Betrachtung die Wahrscheinlichkeit erhöhen eine Dünnbesetzung der Koeffizienten hervorzurufen. So kann man zum Beispiel die $\ell_q$-Normen als Strafterm für Werte $q < 1$ in Betracht ziehen. In Abbildung \ref{norm_figure} sind die Begrenzungen der $\ell_q$-Normen für verschiedene Werte von $q$ eingezeichnet. Für $q \rightarrow 0$ entstehen sternförmige Höhenlinien, welche immer weiter zum Ursprung gedrückt werden. Somit wird es immer wahrscheinlicher, dass die Höhenlinien der RSS-Funktion eine Ecke treffen und wir dünnbesetzte Koeffizienten erhalten. Daher kann man folgendes Berechnungsproblem definieren
 \begin{align}
 \label{sparse_regression}
 \hat{\beta}^{\text{sparse}} = \argmin_{\beta} \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda\sum_{j=1}^p \left|\beta_j\right|^q
 \end{align}
-In Abbildung \ref{norm_figure} sind die Begrenzungen der $\ell_q$-Normen für verschiedene Werte eingezeichnet. NOTATION (p Anzahl Variablen) Für $q \rightarrow 0$ entstehen sternförmige Höhenlinien, welche immer weiter zum Ursprung gedrückt werden. Somit wird es immer wahrscheinlicher, dass die Höhenlinien der RSS-Funktion eine Ecke treffen. Das Problem liegt allerdings nicht im Effekt der verschiedenen Strafterme, sondern in der Berechnung. Für $q < 1$ ist (\ref{sparse_regression}) ein nicht-konvexes Optimierungsproblem, da $\norm{\cdot}_q$ dann keine Norm gemäß Definition \ref{norm} ist. Im Extremfall der $\ell_0$-\q{Norm} wird (\ref{sparse_regression}) sogar NP-schwer. CITE. Somit besteht in beiden Fällen keine effiziente Methode zur Berechnung von $\hat{\beta}^{\text{sparse}}$ zur Verfügung. Der Wert $q = 1$ ist eine Art Kompromisslösung, die einerseits effizient zu berechnen ist und andererseits noch immer eine dünnbesetzte Lösung liefert.
+Leider ist dies nur in der Theorie ein guter Ansatz. Das Problem liegt nicht im Effekt der verschiedenen Strafterme, sondern in der Berechnung. Für $q < 1$ ist (\ref{sparse_regression}) ein nicht-konvexes Optimierungsproblem, da $\norm{\cdot}_q$ keine Norm gemäß Definition \ref{norm} ist. Im Extremfall der $\ell_0$-\q{Norm} wird (\ref{sparse_regression}) sogar NP-schwer \cite{foucart}. Somit besteht keine effiziente Methode zur Berechnung von $\hat{\beta}^{\text{sparse}}$ zur Verfügung. Der Wert $q = 1$ ist eine Art Kompromisslösung, die einerseits effizient zu berechnen ist und andererseits noch immer eine dünnbesetzte Lösung liefert.
 
 \begin{figure}
 \centering
@@ -422,7 +418,7 @@ In Abbildung \ref{norm_figure} sind die Begrenzungen der $\ell_q$-Normen für ve
 	\caption*{$q = 4$}
 	\end{subfigure}
 
-\caption{Die Abbildung zeigt die Begrenzungen der $\ell_q$-Norm im $\mathbb{R}^2$ für verschiedene Werte von $q$, also die Mengen $\{x \in \mathbb{R}^2 \colon \norm{x}_{q} \leq c \}$.}
+\caption{Die Abbildung zeigt die Begrenzungen der $\ell_q$-Norm im $\mathbb{R}^2$ für verschiedene Werte von $q$, also die Mengen $\{x \in \mathbb{R}^2 \colon \norm{x}_{q} \leq c \}$. (Abbildung basiert auf \cite{hastie_elements})}
 \label{norm_figure}
 \end{figure}
 
@@ -458,7 +454,7 @@ Der Operator ist in Abbildung \ref{thresholding_figure} noch einmal graphisch da
 Wir wenden uns nun einer mathematischen Lösung des Lasso zu. Im Gegensatz zu Ridge Regression kann man im Allgemeinen keine explizite Lösung angeben. Nur für den Fall, dass.
 Da $\norm{\beta}_1$ nicht differenzierbar ist wenn $\beta_j = 0$ ist, sind wir bei (\ref{lasso_formulation}) mit einem nicht glattem Optimierungsproblem konfrontiert. Seit der Problemformulierung in 1996 wurde eine Vielzahl an Algorithmen entwickelt bzw. adaptiert, die eine numerische Lösung liefern. Dazu gehören Least-angle Regression (LARS) \cite{efron_lars}, Koordinaten-Abstiegsverfahren \cite{friedman}, Subdifferential Methoden und  Näherungs-Gradientenverfahren \cite{yang, vandenberghe}. Letztere sind eine natürliche Erweiterung von Gradientenverfahren wenn die Zielfunktion nicht differenzierbar ist. Wir werden später auf das Koordinaten-Abstiegsverfahren näher eingehen, welches wir bei der Implementierung der dünnbesetzten Hauptkomponentenanalyse nutzen.
 
-Es stellt sich heraus, dass das Lasso zwei wesentliche Nachteile besitzt. Falls es im Datensatz Gruppen stark korrelierter Variablen gibt, so tendiert die Methode dazu nur eine Variable aus einer Gruppe statt die Gruppe als Ganzes auszuwählen. In vielen Anwendungen ist man aber gerade daran interessiert. Zum Beispiel bei der Suche nach Genen, welche mit einer bestimmten Krankheit verbunden sind, möchte man alle assoziierten Koeffizienten finden anstatt nur einem Gen aus einer Gruppe. Darüber hinaus führt dies oft dazu, dass der Vorhersagefehler vergrößert wird und somit die Methode nicht ganz so robust ist. Um diesem Problem zu entgegnen kann man das sog. \textit{Group Lasso} verwenden \cite{yuan}, bei welcher man zuvor Gruppen im Datensatz festlegen kann. Der im Zuge dieser Arbeit aber wichtigere Aspekt ist, dass das Lasso im Fall $p > n$ maximal $n$ Variablen selektieren kann. Dies ist für moderne Datensätze, für welche $p \gg n$ gilt oft nicht ausreichend. Der Grund dafür wird in ... klar.\\
+Es stellt sich heraus, dass das Lasso zwei wesentliche Nachteile besitzt. Falls es im Datensatz Gruppen stark korrelierter Variablen gibt, so tendiert die Methode dazu nur eine Variable aus einer Gruppe statt die Gruppe als Ganzes auszuwählen. In vielen Anwendungen ist man aber gerade daran interessiert. Zum Beispiel bei der Suche nach Genen, welche mit einer bestimmten Krankheit verbunden sind, möchte man alle assoziierten Koeffizienten finden anstatt nur einem Gen aus einer Gruppe. Darüber hinaus führt dies oft dazu, dass der Vorhersagefehler vergrößert wird und somit die Methode nicht ganz so robust ist. Um diesem Problem zu entgegnen kann man das sog. \textit{Group Lasso} verwenden \cite{yuan}, bei welcher man zuvor Gruppen im Datensatz festlegen kann. Der im Zuge dieser Arbeit aber wichtigere Aspekt ist, dass das Lasso im Fall $p > n$ maximal $n$ Variablen selektieren kann. Dies ist für moderne Datensätze, für welche $p \gg n$ gilt oft nicht ausreichend. Der Grund dafür wird in ... klar. Why LASSO can select at most n predictors https://stats.stackexchange.com/questions/386116/why-does-lasso-select-at-most-n-predictors\\
 
 \subsection{Elastic Net}
 

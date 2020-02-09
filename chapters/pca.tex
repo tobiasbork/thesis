@@ -274,6 +274,8 @@ Eine wichtige Eigenschaft ist die Unkorreliertheit der Hauptkomponenten. Dies l�
 
 Unter der Annahme, dass wir uniqueness of PCA?
 
+Falls mehr Variablen ausgewählt werden sollen, no recomputation necessary.
+
 Für unseren Anwendungsfall in Kapitel \ref{application} verfügen wir nur über wenig Beobachtungen im Vergleich zu der Anzahl an Variablen im Datensatz. Es gibt eine Reihe theoretischer Aussagen, welche eine Inkonsistenz im asymptotischem Fall zeigen. Asymptotische Studien der Hauptkomponentenanalyse fallen in verschiedene Kategorien abhängig vom Verhältnis zwischen $n$ und $p$.
 \begin{itemize}
 \item In der klassischen Asymptotik untersucht man die Effekte für $n \rightarrow \infty$ mit fixierter Dimension $p$.
@@ -310,11 +312,7 @@ $$\mathbb{P}\left[\lim_{n \rightarrow \infty} R^2(\bar{v}_1, v_1) = R_{\infty}^2
 wobei $R_{\infty}^2(\omega, c) = \frac{(\omega^2 - c)_+}{\omega^2 + c\omega}$.
 \end{thm}
 
-Wir sehen, dass $R_{\infty}^2(\omega, c) < 1$ genau dann, wenn $c > 0$ und somit ist $\bar{v}_1$ ein konsistenter Schätzer für $v_1$ genau dann, wenn $c = 0$. Für $c > 0$ ist die Hauptkomponentenanalyse daher inkonsistent. Ein sehr ähnliches Resultat hält auch für ein sog. \textit{spiked covariance model}, in welcher mehrere Komponenten betrachtet werden \cite{paul}.
+Wir sehen, dass $R_{\infty}^2(\omega, c) < 1$ genau dann, wenn $c > 0$ und somit ist $\bar{v}_1$ ein konsistenter Schätzer für $v_1$ genau dann, wenn $c = 0$. Für $c > 0$ ist die Hauptkomponentenanalyse daher inkonsistent. 
 
-In einer HDLSS-Situation zeigen Jung und Marron \cite{jung} eine starke Inkonsistenz der Stichprobenhauptachsen unter geeigneten Modellannahmen.
-
-\begin{thm}[Inkonsistenz der Hauptkomponentenanalyse im HDLSS-Fall \cite{}]
-\label{pca_inconsistency_hdlss}
-\end{thm}
+Ein sehr ähnliches Resultat hält auch für ein sog. \textit{spiked covariance model}, in welcher mehrere Komponenten betrachtet werden \cite{paul}. Des Weiteren zeigen Jung und Marron eine starke Inkonsistenz der Stichprobenhauptachsen in einer HDLSS-Situation unter geeigneten Modellannahmen. Dabei kann Konsistenz nur dann gewährleistet werden, wenn die führenden Eigenwerte klar größer sind als die Restlichen und weitere Eigenschaften gewährleistet sind. Für Details verweisen wir auf \cite{jung}.
 
