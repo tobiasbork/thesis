@@ -6,7 +6,9 @@
 
 Ein wesentlicher Nachteil der Hauptkomponentenanalyse besteht darin, dass sich die neuen Variablen aus einer Linearkombination \textit{aller} bestehenden Variablen zusammensetzt. Dies erschwert besonders für hochdimensionale Daten eine Interpretation der Hauptachsen. Während zuvor jede Variable eine Bedeutung hatte, sind wir nach der Transformation meist nicht in der Lage den Hauptachsen eine Bedeutung im Kontext zuzuweisen. Um zu verstehen, was die Hauptachsen im Modell repräsentieren kann es besonders hilfreich sein, wenn diese \textit{dünnbesetzt} sind, sich also nur aus wenigen Variablen zusammensetzen. Treffen wir irgendwelche Annahmen? Des Weiteren ist nicht jede Variable relevant zur Strukturerkennung. impose extra constraints, which sacrifices some variance in order to improve interpretability. Interpretation ist oberstes Ziel!!!
 
-Zu Anfang dieses Kapitels werden wir eine naheliegende mathematische Formulierung des Problems beschreiben. Leider wird sich diese als NP-vollständig herausstellen, weshalb wir in Abschnitt \ref{relaxation} verschiedene Wege aufzeigen, dass Problem zu relaxieren. In \ref{sparse_pca_construction} möchten wir uns mit einem dieser Ansätze intensiv beschäftigen, welcher den Ausgangspunkt für den weiteren Verlauf dieser Arbeit darstellt. Der Rest dieses Kapitels ist den Details dieses Ansatzes gewidmet.
+shape/image analysis, ecological studys und neuroscience data application.
+
+Zu Anfang dieses Kapitels werden wir eine naheliegende mathematische Formulierung des Problems beschreiben. Leider wird sich diese als NP-vollständig herausstellen, weshalb wir in Abschnitt \ref{relaxation} verschiedene Wege aufzeigen, dass Problem zu relaxieren. In \ref{sparse_pca_construction} möchten wir uns mit einem dieser Ansätze intensiv beschäftigen, welcher den Ausgangspunkt für den weiteren Verlauf dieser Arbeit darstellt. Wir haben uns dazu entschieden, den von Zou, Hastie und Tibshirani in \cite{zou_sparsepca} eingeführten Ansatz für diesen Zweck zu verfolgen. Dieser gilt sicherlich zu der am meisten verbreiteten Variante der dünnbesetzten Hauptkomponentenanalyse. Kürzlich erschienenes Paper, Neuerungen. Der Rest dieses Kapitels ist den Details dieses Ansatzes gewidmet.
 
 
 %----------------------------------------------------------------------------------------
@@ -128,7 +130,7 @@ Es gibt noch eine Reihe weiterer Ideen, die in der Literatur betrachtet wurden. 
 Wir werden uns nun mit dem von Zou, Hastie und Tibshirani in \cite{zou_sparsepca} eingeführten Ansatz ausführlich beschäftigen. Zou und Hastie führten zuvor in \cite{zou_elasticnet} das sog. \textit{elastic net} ein, welches den Grundstein für die mathematische Formulierung legen wird.
 
 Wie bereits in (\ref{pca_regression_formulation}) beschrieben kann die Hauptkomponentenanalyse als regressionsartiges Problem betrachtet werden. Das folgende Theorem erweitert die bisherige Formulierung, indem nun nicht ausschließlich orthogonale Projektionen erlaubt werden. 
-Im Folgenden bezeichnet $k$ die Anzahl an Hauptkomponenten, die wir extrahieren möchten und $x_i$ die $i$-te Zeile von $\mat X$.
+Im Folgenden bezeichnet $k$ die Anzahl an Hauptkomponenten, die wir extrahieren möchten und $x_i$ die $i$-te Zeile von $\mat X$. Wir bezeichnen mit $\mat B$ im Folgenden die dünnbesetzten Hauptachsen, um sie von den klassischen Hauptachsen $\mat V$ zu unterscheiden.
 
 \begin{thm} \label{pca_regression_formulation_ridge}
 Sei $\mat{A}_{p \times k} = [ \alpha_1, \ldots ,\alpha_k ]$ und $\mat{B}_{p \times k} = [ \beta_1, \ldots ,\beta_k ]$. Für ein $\lambda_2 > 0$ sei
@@ -172,13 +174,52 @@ Der Erfolg der Hauptkomponentenanalyse beruht vor allem darauf, dass die Hauptko
 
 In einem erst vor Kurzem erschienen wissenschaftlichen Artikel zeigen Camacho et al. \cite{camacho}, dass viele der Varianten der dünnbesetzten Hauptkomponentenanalyse bezüglich der genannten Punkte Probleme aufweisen. Insbesondere wurde die Berechnung der Hauptkomponenten, Residuen und der erklärten Varianz bislang falsch durchgeführt. Wir möchten an dieser Stelle die Unterschiede detailliert erklären.
 
-Zunächst
+Typischerweise wurden bislang die Hauptkomponenten $\mat Z$ wie bei der klassischen Hauptkomponentenanalyse berechnet, indem man $\mat Z = \mat X \mat B$ setzt, wobei $\mat B$ die Matrix der dünnbesetzten Hauptachsen ist \cite{zou_sparsepca}. Allerdings vernachlässigt man in diesem Fall, dass die Hauptachsen nicht orthogonal zueinander sind. Dies wird deutlich, wenn wir die Hauptkomponentenanalyse wie in (\ref{pca_minimize_reconstruction_error}) als eine bestmögliche Rekonstruktion der Datenmatrix $\mat X$ auffassen.
+\begin{align}
+\label{pca_scores_loadings_model}
+\mat X = \mat Z \mat B^T + \mat E,
+\end{align}
+wobei $\mat E$ die Matrix der Residuen ist, welche uns erst nach der Berechnung von $\mat Z$ und $\mat B$ zur Verfügung stehen. Im Folgenden sei durch $\mat X = \mat Z \mat B^T$ eine volle Rang Approximation gegeben. Bei der klassischen Hauptkomponentenanalyse multipliziert man beide Seiten mit $\mat B$, um die Hauptkomponenten $\mat X \mat B = \mat Z \mat B^T \mat B = \mat Z$ zu erhalten. Falls die Hauptachsen nicht orthogonal zueinander sind, ist der letzte Schritt nicht mehr gültig. Daher korrigiert man bei der dünnbesetzten Variante mit der Moore-Penrose-Inversen $(\mat B^T \mat B)^+$ ähnlich zu der Methode der kleinsten Quadrate. Demnach sollten die Hauptkomponenten durch
+\begin{align}
+\label{corrected_scores_sparse_pca}
+\mat Z = \mat X \mat B^T (\mat B^T \mat B)^+
+\end{align}
+berechnet werden. Falls $\mat B$ orthogonal ist, reduziert sich (\ref{corrected_scores_sparse_pca}) wie gehabt auf $\mat Z = \mat X \mat B$. Ein weiterer Unterschied ist, dass nun keine sequentielle Berechnung der Hauptkomponenten mehr möglich ist. Jede Hauptkomponente hängt durch (\ref{corrected_scores_sparse_pca}) von allen Hauptachsen ab, weshalb sich die Werte bei Hinzunahme weiterer Hauptachsen zum Modell jedes mal ändern können. Camacho et al. zeigen empirisch, dass die Korrelation zwischen den Hauptkomponenten für der von uns betrachteten Variante der dünnbesetzten Hauptkomponentenanalyse deutlich sinkt, was eine Interpretation weiter verbessert.
 
-\section{Kritik}
+Für die Modellbewertung wird oft die erklärte Varianz des Datensatzes herangezogen, wie in Abschnitt \ref{selection_principal_components} beschrieben. Zou et al. erkennen, dass aufgrund der Korrelation der Hauptkomponenten die Varianzen nicht wie gewohnt errechnet werden können und schlagen in \cite{zou_sparsepca} folgende Methode vor. Die erklärte Varianz für die ersten $j+1$ Hauptkomponenten sollte sich aus der Summe der ersten $j$ zusammen mit der erklärten Varianz der $k+1$-ten Hauptkomponente $Z_{j+1}$ ergeben. Aufgrund der Korrelation der Hauptkomponenten erhält die Varianz von $Z_{j+1}$ aber Beiträge anderer Hauptkomponenten. Um nur die zusätzlich durch $Z_{j+1}$ erhaltene Varianz zu erhalten und lineare Abhängigkeiten zu entfernen, nutzen Zou et al. eine Projektion
+\begin{align}
+\label{zou_orthogonal_projection}
+Z_{j\cdot 1, \ldots, j-1} = Z_j - \mat P_{1, \ldots, j-1}Z_j
+\end{align}
+wobei $\mat P_{1, \ldots, j-1}$ die orthogonale Projektionsmatrix auf $\{Z_i\}_1^{j-1}$ sei. Mit $Z_{j\cdot 1, \ldots, j-1}$ bezeichnen wir also die Residuen nach Anpassung von $Z_j$ durch $Z_1, \ldots, Z_{j-1}$. Man beachte, dass (\ref{zou_orthogonal_projection}) von der Reihenfolge der $Z_i$ abhängt. Aufgrund der natürlichen Ordnung bei der Hauptkomponentenanalyse stellt dies aber kein Problem dar.
+Somit ergibt sich die Gesamtvarianz der ersten $k$ Hauptkomponenten durch 
+\begin{align}
+\label{zou_explained_variance}
+\sum_{j=1}^k \norm{Z_{j\cdot 1, \ldots, j-1}}^2.
+\end{align}
+Mithilfe einer QR-Zerlegung von $\mat Z = \mat Q \mat R$, wobei $\mat Q$ orthonormal und $\mat R$ eine recht obere Dreiecksmatrix ist, können wir (\ref{zou_explained_variance}) schnell berechnen, denn $\norm{Z_{j\cdot 1, \ldots, j-1}}^2 = R_{jj}^2$. Auch wenn dieser Ansatz zunächst sinnvoll scheinen mag, werden wir in Kapitel \ref{application} anhand unseres Datensatzes zeigen, dass durch (\ref{zou_explained_variance}) keine korrekte Berechnung der erklärten Varianz erfolgt. Das Problem des Ansatzes liegt daran, dass der Zusammenhang zum Rekonstruktionsfehler nicht klar ist. Bei der klassischen Hauptkomponentenanalyse haben wir die erklärte Varianz mithilfe des Rekonstruktionsfehlers angeben können, was hier nicht mehr der Fall sein muss. 
 
-results in very large residuals
-highly correlated scores
-q is no updated due to the normalization step
+Eine korrekte Methode wird von Camacho et al. eingeführt. Hierbei zerlegen wir die Varianz des Modells $\mat X = \mat Z \mat B^T + \mat E$ in zwei Teile.
+\begin{align*}
+\norm{\mat X}_F^2 & = \norm{\mat Z \mat B^T + \mat E}_{F}^{2}\\
+& = \spur{\mat B \mat Z^T \mat Z \mat B^T} + \spur{\mat B \mat Z^T \mat E} + \spur{\mat E^T\mat Z \mat B^T} + \spur{\mat E^T \mat E}\\
+& = \spur{\mat B \mat Z^T \mat Z \mat B^T} + \spur{\mat E^T \mat E}\\
+& = \norm{\mat Z \mat B^T}_{F}^{2} + \norm{\mat E}_{F}^{2} \tag \label{camacho_explained_variance}
+\end{align*}
+If deflation is performed in the score space $EP = P^TE^T = 0$.
+Damit kann die Varianz eines Datensatzes in die Varianz der Rekonstruktion und der Residuen aufgeteilt werden. Ersterer Teil entspricht der erklärten Varianz unseres Modells und wird daher mit $\norm{\mat Z \mat B^T}_{F}^{2}$ berechnet.
+
+
+%----------------------------------------------------------------------------------------
+%	Wahl der Hyperparameter
+%----------------------------------------------------------------------------------------
+
+\section{Wahl der Hyperparameter}
+\label{choice_of_tuning_parameters}
+
+
+
+
 
 
 %----------------------------------------------------------------------------------------
@@ -188,6 +229,12 @@ q is no updated due to the normalization step
 
 \section{Theoretische Aussagen} 
 \label{spca_theorems}
+
+
+Zu Abschluss dieses Kapitels möchten wir uns mit theoretischen Aussagen zur dünnbesetzten Hauptkomponentenanalyse auseinandersetzen.  Von wesentlicher Bedeutung ist die Konsistenz der Methode im Vergleich zur klassischen Variante.
+
+
+
 
 
 recomputation necessary of principal components when changing number of pc's.
