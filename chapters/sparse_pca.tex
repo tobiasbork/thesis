@@ -200,13 +200,14 @@ Somit ergibt sich die Gesamtvarianz der ersten $k$ Hauptkomponenten durch
 Mithilfe einer QR-Zerlegung von $\mat Z = \mat Q \mat R$, wobei $\mat Q$ orthonormal und $\mat R$ eine recht obere Dreiecksmatrix ist, können wir (\ref{zou_explained_variance}) schnell berechnen, denn $\norm{Z_{j\cdot 1, \ldots, j-1}}^2 = R_{jj}^2$. Auch wenn dieser Ansatz zunächst sinnvoll scheinen mag, werden wir in Kapitel \ref{application} anhand unseres Datensatzes zeigen, dass durch (\ref{zou_explained_variance}) keine korrekte Berechnung der erklärten Varianz erfolgt. Das Problem des Ansatzes liegt daran, dass der Zusammenhang zum Rekonstruktionsfehler nicht klar ist. Bei der klassischen Hauptkomponentenanalyse haben wir die erklärte Varianz mithilfe des Rekonstruktionsfehlers angeben können, was hier nicht mehr der Fall sein muss. 
 
 Eine korrekte Methode wird von Camacho et al. eingeführt. Hierbei zerlegen wir die Varianz des Modells $\mat X = \mat Z \mat B^T + \mat E$ in zwei Teile.
-\begin{align*}
-\norm{\mat X}_F^2 & = \norm{\mat Z \mat B^T + \mat E}_{F}^{2}\\
-& = \spur{\mat B \mat Z^T \mat Z \mat B^T} + \spur{\mat B \mat Z^T \mat E} + \spur{\mat E^T\mat Z \mat B^T} + \spur{\mat E^T \mat E}\\
-& = \spur{\mat B \mat Z^T \mat Z \mat B^T} + \spur{\mat E^T \mat E}\\
-& = \norm{\mat Z \mat B^T}_{F}^{2} + \norm{\mat E}_{F}^{2} \tag \label{camacho_explained_variance}
-\end{align*}
-If deflation is performed in the score space $EP = P^TE^T = 0$.
+\begin{align}
+\label{camacho_explained_variance}
+\norm{\mat X}_F^2 & = \norm{\mat Z \mat B^T + \mat E}_{F}^{2} \nonumber\\
+& = \spur{\mat B \mat Z^T \mat Z \mat B^T} + \spur{\mat B \mat Z^T \mat E} + \spur{\mat E^T\mat Z \mat B^T} + \spur{\mat E^T \mat E} \nonumber\\
+& = \spur{\mat B \mat Z^T \mat Z \mat B^T} + \spur{\mat E^T \mat E} \nonumber\\
+& = \norm{\mat Z \mat B^T}_{F}^{2} + \norm{\mat E}_{F}^{2}
+\end{align}
+If deflation is performed in the score space $EP = P^T E^T = 0$.
 Damit kann die Varianz eines Datensatzes in die Varianz der Rekonstruktion und der Residuen aufgeteilt werden. Ersterer Teil entspricht der erklärten Varianz unseres Modells und wird daher mit $\norm{\mat Z \mat B^T}_{F}^{2}$ berechnet.
 
 
@@ -217,8 +218,30 @@ Damit kann die Varianz eines Datensatzes in die Varianz der Rekonstruktion und d
 \section{Wahl der Hyperparameter}
 \label{choice_of_tuning_parameters}
 
+Bei der dünnbesetzten Hauptkomponentenanalyse sind mehrere Hyperparameter zu wählen. Dazu gehören die Anzahl an Hauptkomponenten $k$ und die Regularisierungsparameter $\lambda_{1,k}$ und $\lambda_2$. Im Folgenden möchte wir mögliche Vorgehensweise näher erläutern und eine Übersicht über mögliche Verfahren geben. 
 
+Bevor man die Regularisierungsparameter festlegt ist es sinnvoll zunächst die Anzahl an Hauptkomponenten für das Modell zu bestimmen, da sich bei einer Änderung von $k$ auch alle Hauptkomponenten verändern können. Hierbei kann man analog zur klassischen Variante wie in Abschnitt \ref{selection_principal_components} beschrieben vorgehen. Man nutzt also zunächst die klassische Variante, um $k$ zu bestimmen.
 
+Empirische Ergebnisse zeigen, dass die Ergebnisse sich mit Veränderung von $\lambda_2$ kaum ändern. Für einen $n > p$ Datensatz kann der Parameter auf Null gesetzt werden, da das Lasso-Defizit in diesem Fall nicht auftritt. In der Praxis wird $\lambda_2$ auf eine kleine positive Zahl in der Größenordnung $10^{-6}$ gesetzt, um mögliche Kollinearitätsprobleme zu vermeiden \cite{zou_sparsepca}. Falls $p \gg n$ werden wir eine Standardwahl von $\lambda_2$ in Kapitel \ref{implementation} treffen.
+
+Komplizierter gestaltet sich eine Wahl von $\lambda_{1,j}$, welche die Balance zwischen Dünnbesetzung und Rekonstruktionsfehler regelt. Es wird keine Sturres Ausprobieren in Zou et al. Alternativ wird vorgeschlagen, den zweischrittigen Prozess aus REF zu verwenden, bei welcher man einen gesamten Lösungspfad für die $\lambda_{i,j}$ erhält. Bei der Verwendung dieses Ansatzes kommen allerdings unterschiedliche Lösungne nrua.s
+
+Im Prinzip könnte man die $\lambda_{1,j}$ durch ein Kreuzvalidierungsverfahren bestimmen. Je nach Größe des Datensatzes kann dies aber sehr rechenintensiv sein, weshalb wir hier einen alternativen Ansatz beschreiben möchten. In der Literatur wird meist ein Bayes-Informationskriterium (BIC) angegeben, welches aber je nach Anwendung und Generalisierung verschieden formuliert wird.
+\begin{align}
+\operatorname{BIC}(\lambda_1) = \frac{\norm{\mat X - \mat X \mat B \mat A^T}_{F}^{2}}{\norm{\mat X - \mat X \mat V \mat V^T}_{F}^{2}} + \operatorname{df}(\lambda_1) \frac{\log(n)}{n}
+\end{align}
+\cite{croux, guo}
+
+\begin{align}
+\operatorname{BIC}(\lambda_{1,j}) = \log\left(\frac{\norm{X - Z_j\beta_j^T}_{F}^{2}}{np}\right) + \operatorname{df}(\lambda_{1,j}) \frac{\log(np)}{np}
+\end{align}
+\cite{hubert, allen}
+
+wobei $\operatorname{df}(\lambda_{1,j}) = \norm{\beta_j}_0$ die Anzahl von null verschiedenen Einträge sind. df steht für \textit{degrees of freedom}, welches die Anzahl freier Parameter bzw. den Freiheitsgrad darstellt.
+
+Vorstellbar sind auch BIC-Kriterien, welche über $\lambda_1$ und $\lambda_2$
+
+Man formuliert ein Bayes Inf
 
 
 
