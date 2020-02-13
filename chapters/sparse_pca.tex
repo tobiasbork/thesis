@@ -218,31 +218,34 @@ Damit kann die Varianz eines Datensatzes in die Varianz der Rekonstruktion und d
 \section{Wahl der Hyperparameter}
 \label{choice_of_tuning_parameters}
 
-Bei der dünnbesetzten Hauptkomponentenanalyse sind mehrere Hyperparameter zu wählen. Dazu gehören die Anzahl an Hauptkomponenten $k$ und die Regularisierungsparameter $\lambda_{1,k}$ und $\lambda_2$. Im Folgenden möchte wir mögliche Vorgehensweise näher erläutern und eine Übersicht über mögliche Verfahren geben. 
+Bei der dünnbesetzten Hauptkomponentenanalyse sind mehrere Hyperparameter zu wählen. Dazu gehören die Anzahl an Hauptkomponenten $k$ und die Regularisierungsparameter $\lambda_{1,j}$ und $\lambda_2$. Im Folgenden möchte wir mögliche Vorgehensweise näher erläutern und eine Übersicht über mögliche Verfahren geben. 
 
-Bevor man die Regularisierungsparameter festlegt ist es sinnvoll zunächst die Anzahl an Hauptkomponenten für das Modell zu bestimmen, da sich bei einer Änderung von $k$ auch alle Hauptkomponenten verändern können. Hierbei kann man analog zur klassischen Variante wie in Abschnitt \ref{selection_principal_components} beschrieben vorgehen. Man nutzt also zunächst die klassische Variante, um $k$ zu bestimmen.
+Bevor man die Regularisierungsparameter festlegt ist es sinnvoll zunächst die Anzahl an Hauptkomponenten für das Modell zu bestimmen, da sich bei einer Änderung von $k$ alle Hauptkomponenten verändern können. Hierbei kann man analog zur klassischen Variante wie in Abschnitt \ref{selection_principal_components} beschrieben vorgehen. Man nutzt also zunächst die klassische Variante, um $k$ zu bestimmen.
 
 Empirische Ergebnisse zeigen, dass die Ergebnisse sich mit Veränderung von $\lambda_2$ kaum ändern. Für einen $n > p$ Datensatz kann der Parameter auf Null gesetzt werden, da das Lasso-Defizit in diesem Fall nicht auftritt. In der Praxis wird $\lambda_2$ auf eine kleine positive Zahl in der Größenordnung $10^{-6}$ gesetzt, um mögliche Kollinearitätsprobleme zu vermeiden \cite{zou_sparsepca}. Falls $p \gg n$ werden wir eine Standardwahl von $\lambda_2$ in Kapitel \ref{implementation} treffen.
 
 Komplizierter gestaltet sich eine Wahl von $\lambda_{1,j}$, welche die Balance zwischen Dünnbesetzung und Rekonstruktionsfehler regelt. Es wird keine Sturres Ausprobieren in Zou et al. Alternativ wird vorgeschlagen, den zweischrittigen Prozess aus REF zu verwenden, bei welcher man einen gesamten Lösungspfad für die $\lambda_{i,j}$ erhält. Bei der Verwendung dieses Ansatzes kommen allerdings unterschiedliche Lösungne nrua.s
 
-Im Prinzip könnte man die $\lambda_{1,j}$ durch ein Kreuzvalidierungsverfahren bestimmen. Je nach Größe des Datensatzes kann dies aber sehr rechenintensiv sein, weshalb wir hier einen alternativen Ansatz beschreiben möchten. In der Literatur wird meist ein Bayes-Informationskriterium (BIC) angegeben, welches aber je nach Anwendung und Generalisierung verschieden formuliert wird.
+Im Prinzip könnte man die $\lambda_{1,j}$ durch ein Kreuzvalidierungsverfahren bestimmen. Je nach Größe des Datensatzes kann dies aber sehr rechenintensiv sein, weshalb wir hier einen alternativen Ansatz beschreiben möchten. In der Literatur wird meist ein Bayes-Informationskriterium (BIC) angegeben, welches aber je nach Anwendung und Generalisierung verschieden formuliert wird. Zwei Varianten, welche auf \cite{hubert, allen} (\ref{bic_reconstruction}) und \cite{croux, guo} (\ref{bic_ratio}) zurückgehen, werden wir hier betrachten.
 \begin{align}
-\operatorname{BIC}(\lambda_1) = \frac{\norm{\mat X - \mat X \mat B \mat A^T}_{F}^{2}}{\norm{\mat X - \mat X \mat V \mat V^T}_{F}^{2}} + \operatorname{df}(\lambda_1) \frac{\log(n)}{n}
-\end{align}
-\cite{croux, guo}
-
-\begin{align}
+\label{bic_reconstruction}
 \operatorname{BIC}(\lambda_{1,j}) = \log\left(\frac{\norm{X - Z_j\beta_j^T}_{F}^{2}}{np}\right) + \operatorname{df}(\lambda_{1,j}) \frac{\log(np)}{np}
 \end{align}
-\cite{hubert, allen}
+wobei $\operatorname{df}(\lambda_{1,j}) = \norm{\beta_j}_0$ die Anzahl von null verschiedener Einträge sind. Dabei steht $\operatorname{df}$ für \textit{degrees of freedom}, welches die Anzahl freier Parameter bzw. den Freiheitsgrad darstellt \cite{hastie_elements}. Klar erkennbar in (\ref{bic_reconstruction}) ist der Kompromiss zwischen Rekonstruktionsfehler der $j$-ten Hauptkomponente und der Dünnbesetzung durch $\operatorname{df}(\lambda_{1,j})$. Mit steigendem $\lambda_{1,j}$ wird der Rekonstruktionsfehler größer und die Anzahl freier Parameter geringer. Wir sind angehalten $\lambda_{1,j}$ zu finden, die eine Balance zwischen den beiden Termen ermöglicht.
 
-wobei $\operatorname{df}(\lambda_{1,j}) = \norm{\beta_j}_0$ die Anzahl von null verschiedenen Einträge sind. df steht für \textit{degrees of freedom}, welches die Anzahl freier Parameter bzw. den Freiheitsgrad darstellt.
+Um nicht über $k$ Parameter optimieren zu müssen, kann man beispielsweise $\lambda_{1,j} = \lambda_1$ für alle $1 \leq j \leq k$ setzen. Eine weitere Möglichkeit wird in \cite{croux} beschrieben. Für $j>1$ sei $\mat{\tilde{B}}_{j-1}^{\perp}$ die Matrix, deren Spalten eine orthonormale Basis für das orthogonale Komplement für den durch $\beta_1, \ldots, \beta_{j-1}$ aufgespannten Raum sind. Wir bezeichnen $x_i^{(j-1)} = (\mat{\tilde{B}}_{j-1}^{\perp})^T x_i$ für $i = 1, \ldots, n$ und setzen $\lambda_{1,j} = \lambda_1\operatorname{Var}[\mat X^{(j)}]$, wobei $\mat X^{(j)}$ aus den auf das orthogonale Komplement der ersten $j-1$ Hauptachsen projizierten Daten $x_i^{(j-1)}$ besteht. Mithilfe dieses Ansatzes können wir eine vergleichbare Dünnbesetzung für alle Hauptachsen erhalten. Für die Wahl von $\lambda_1$ wird ein ähnliches BIC-Kriterium vorgeschlagen.
+\begin{align}
+\label{bic_ratio}
+\operatorname{BIC}(\lambda_1) = \frac{\norm{\mat X - \mat X \mat B \mat A^T}_{F}^{2}}{\norm{\mat X - \mat X \mat V \mat V^T}_{F}^{2}} + \operatorname{df}(\lambda_1) \frac{\log(n)}{n}
+\end{align}
+Für die log-likelihood-Funktion wird in (\ref{bic_ratio}) das Verhältnis zwischen Rekonstruktionsfehler der dünnbesetzten und der klassischen Hauptkomponentenanalyse gewählt. Welche der beiden BIC-Kriterien genutzt werden sollte, kommt auf den Anwendungsfall und den Rechenaufwand an, welchen man bereit ist in Kauf zu nehmen.
 
-Vorstellbar sind auch BIC-Kriterien, welche über $\lambda_1$ und $\lambda_2$
+Typischerweise wird für die Minimierung der BIC-Kriterien eine Rastersuche für $\lambda_1$ im Wertebereich $[0, \lambda_1^{max}]$ durchgeführt, wobei eine Wahl von $\lambda_1^{max}$ in Hauptachsen mit nur einem von Null verschiedenem Eintrag resultieren. Andere Verfahren wie die Zufallssuche, Bayessche oder gradienbasierte Optimierung sind an dieser Stelle denkbar, um ein passendes $\lambda_1$ zu finden. 
 
-Man formuliert ein Bayes Inf
-
+Wichtig zu erwähnen ist, dass BIC-Kriterien sich in $p \gg n$-Situationen schlecht verhalten.
+The BIC suffers from two main limitations[5]
+the above approximation is only valid for sample size n much larger than the number k of parameters in the model.
+the BIC cannot handle complex collections of models as in the variable selection (or feature selection) problem in high-dimension. 
 
 
 %----------------------------------------------------------------------------------------
