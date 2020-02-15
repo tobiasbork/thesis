@@ -455,14 +455,14 @@ Es stellt sich heraus, dass das Lasso zwei wesentliche Nachteile besitzt. Falls 
 \subsection{Elastic Net}
 \label{elastic_net}
 
-Damit im Fall $p > n$ mehr als $n$ Variablen selektiert werden können, betrachten wir eine Verallgemeinerung von Lasso und Ridge Regression. Durch die Einbettung einer $\ell_1$ und $\ell_2$-Norm erhalten wir das sog. \textit{Elastic Net} \cite{zou_elasticnet}.
+Damit im Fall $p > n$ mehr als $n$ Variablen selektiert werden können, betrachten wir eine Kombination von Lasso und Ridge Regression. Durch die Einbettung einer $\ell_1$ und $\ell_2$-Norm erhalten wir das sog. \textit{Elastic Net} \cite{zou_elasticnet}.
 \begin{align}
 \label{elastic_net_formulation}
 \hat{\beta}^{\text{en}} = \argmin_{\beta} \norm{y - \mat X \beta}_2^2 + \lambda_2 \norm{\beta}_{2}^{2} + \lambda_{1,j} \norm{\beta}_{1}
 \end{align}
 Wie zuvor wird durch den $\ell_1$-Strafterm ein dünnbesetztes Modell generiert. Dagegen fördert der $\ell_2$-Strafterm den Gruppeneffekt, stabilisiert den $\ell_1$ Regularisierungspfad und lässt eine beliebige Anzahl zu selektierender Variablen zu. Um eine doppelte Schrumpfung der Koeffizienten zu vermeiden, kann das Elastic Net mit dem Faktor $(1 + \lambda_2)$ korrigiert werden. 
 
-Ähnlich wie bei der Lasso Regression kann nur dann eine explizite Lösung von (\ref{elastic_net_formulation}) angegeben werden, falls die Spalten von $\mat X$ orthonormal sind. Daher wurden verschiedene Näherungsverfahren für eine numerische Lösung vorgeschlagen. Dazu gehören beispielsweise LARS-EN \cite{zou_elasticnet}, welches auf dem LARS Algorithmus für das Lasso basiert, und ein Koordinatenabstiegsverfahren \cite{friedman}. Letzteres werden wir in unseren Implementierung in Kapitel \ref{implementation} für ein Subproblem nutzen.
+Ähnlich wie bei der Lasso Regression kann nur dann eine explizite Lösung von (\ref{elastic_net_formulation}) angegeben werden, wenn die Spalten von $\mat X$ orthonormal sind. Daher wurden verschiedene Näherungsverfahren für eine numerische Lösung vorgeschlagen. Dazu gehören beispielsweise LARS-EN \cite{zou_elasticnet}, welches auf dem LARS Algorithmus für das Lasso basiert, und ein Koordinatenabstiegsverfahren \cite{friedman}. Letzteres werden wir in unseren Implementierung in Kapitel \ref{implementation} für ein Subproblem nutzen.
 
 https://stats.stackexchange.com/questions/123672/coordinate-descent-soft-thresholding-update-operator-for-lasso
 
@@ -475,18 +475,18 @@ order of computations as a single OLS fit
 Die Implementierung des Elastic Nets in scikit-learn \cite{scikit_learn} beruht auf einer anderen, aber sehr ähnlichen mathematischen Formulierung
 \begin{align}
 \label{elastic_net_python}
-\hat{\beta}^{\text{en}} = \argmin_{\beta} \frac{1}{2n} \norm{y - \mat X \beta}_2^2 + \alpha \gamma \norm{\beta}_{1} + \frac{1}{2}\alpha (1-\gamma) \norm{\beta}_{2}^2
+\hat{\beta}^{\text{en}} = \argmin_{\beta} \frac{1}{2n} \norm{y - \mat X \beta}_2^2 + \lambda \alpha \norm{\beta}_{1} + \frac{1}{2}\lambda (1-\alpha) \norm{\beta}_{2}^2
 \end{align}
-wobei $n$ die Anzahl an Beobachtungen im Datensatz und $\gamma \in [0,1]$ das Verhältnis zwischen $\ell_1$- und $\ell_2$-Norm ist. Mit $\gamma = 0$ reduziert sich (\ref{elastic_net_python}) auf Ridge und für $\gamma = 1$ auf die Lasso Regression. Somit können wir durch $\gamma$ das Verhältnis der beiden Regressionen kontrollieren und durch $\alpha$ die Stärke der Bestrafung. Setzt man 
+wobei $n$ die Anzahl an Beobachtungen im Datensatz und $\alpha \in [0,1]$ das Verhältnis zwischen $\ell_1$- und $\ell_2$-Norm ist. Mit $\alpha = 0$ reduziert sich (\ref{elastic_net_python}) auf Ridge und für $\alpha = 1$ auf die Lasso Regression. Somit können wir durch $\alpha$ das Verhältnis der beiden Regressionen kontrollieren und durch $\lambda$ die Stärke der Bestrafung. Setzt man 
 \begin{align}
- \alpha = \frac{2\lambda_2 + \lambda_1}{2n} \quad \text{und} \quad \gamma = \frac{\lambda_1}{2\lambda_2 + \lambda_1}
+ \lambda = \frac{2\lambda_2 + \lambda_1}{2n} \quad \text{und} \quad \alpha = \frac{\lambda_1}{2\lambda_2 + \lambda_1}
 \end{align}
 entspricht (\ref{elastic_net_python}) unser ursprünglich formulierten Problem. An dieser Stelle möchten wir anmerken, dass bei dieser Implementierung nicht die Möglichkeit besteht, die Koeffizienten unterschiedlich zu bestrafen im Gegensatz zu (\ref{elastic_net_formulation}).
 
 \subsection{Vergleich der Regressionsmethoden}
 \label{comparison_linear_models}
 
-Zur Veranschaulichung der oben eingeführten Methoden werden wir diese zur Anwendung bringen. Dabei greifen wir auf einen durch scikit-learn \cite{scikit_learn} bereitgestellten Datensatz, der erstmals durch \cite{efron_lars} öffentlich gemacht worden ist, zurück. In diesem wurden für $n = 442$ Diabetes Patienten $p=10$ verschiedene Variablen gemessen. Dazu gehören Alter (AGE), Geschlecht (SEX), Body Mass Index (BMI), Blutdruck (BP) und verschiedene Blutproben (Serum Measurements). Die Zielgröße $y$ enthält Werte für den Krankheitsfortschritt ein Jahr nach Behandlungsbeginn. Ein Ausschnitt des Datensatzes befindet sich in Tabelle \ref{diabetes_data_set}.
+Zur Veranschaulichung der oben eingeführten Methoden werden wir diese nun anwenden. Dabei greifen wir auf einen durch scikit-learn \cite{scikit_learn} bereitgestellten Datensatz, der erstmals durch \cite{efron_lars} öffentlich gemacht worden ist, zurück. In diesem wurden für $n = 442$ Diabetes Patienten $p=10$ verschiedene Variablen gemessen. Dazu gehören Alter (AGE), Geschlecht (SEX), Body Mass Index (BMI), Blutdruck (BP) und verschiedene Blutproben (Serum Measurements). Die Zielgröße $y$ enthält Werte für den Krankheitsfortschritt ein Jahr nach Behandlungsbeginn. Ein Ausschnitt des Datensatzes befindet sich in Tabelle \ref{diabetes_data_set}.
 
 \begin{table}
 \centering
@@ -502,12 +502,13 @@ Zur Veranschaulichung der oben eingeführten Methoden werden wir diese zur Anwen
 441 & 36 & 1 & 30.0 & 95 & 201 & 125.2 & 42 & 5 & 5.1 & 85 & 220\\
 442 & 36 & 1 & 19.6 & 71 & 250 & 133.2 & 97 & 3 & 4.6 & 92 & 57\\
 \end{tabular}
-\caption{Diabetes Datensatz \cite{efron_lars, diabetes_data}}
+\caption{Überblick über den Diabetes Datensatz aus \cite{diabetes_data}}
 \label{diabetes_data_set}
 \end{table}
 
-Schrumpfung bei Ridge Regression kontinuierlich.
-Die Ergebnisse der Regressionen können in Abbildung \ref{regression_coefficients} und \ref{regression_coefficients_mse} eingesehen werden. 
+In Abbildung \ref{regression_coefficients} sehen wir die Ergebnisse der verschiedenen Regressionsmethoden. Anhand von \ref{regression_coefficients} können wir die Schrumpfung der Regressionskoeffizienten mit Veränderung der Regularisierungsparameter $\lambda_1$, $\lambda_2$ bzw. $\lambda$ visuell nachvollziehen. Deutlich zu erkennen ist, dass bei der Ridge Regression eine kontinuierliche Schrumpfung der Koeffizienten stattfindet, d.h. sie werden erst für $\lambda_2 \to \infty$ auf Null gesetzt. Im Gegensatz dazu erkennt man bei der Lasso Regression, dass schon für kleine $\lambda_1$ einzelne Koeffizienten auf Null gesetzt werden und wir eine Dünnbesetzung erhalten. Das Elastic Net bildet eine natürliche Brücke zwischen Ridge und Lasso Regression. Einerseits können wir sehen, dass einzelne Koeffizienten auf Null gesetzt und andererseits, dass die Regularisierungspfade stabilisiert werden.
+
+Für die Wahl von $\lambda_1$, $\lambda_2$ bzw. $\lambda$ kann ein $k$-faches Kreuzvalidierungsverfahren eingesetzt werden. Hierbei wird der Datensatz in $k$ möglichst gleich große Teilmengen $T_1, \ldots, T_k$ zerlegt. Anschließend werden $k$ Durchläufe gestartet, wobei die jeweils $i$-te Teilmenge $T_{i}$ als Testmenge und die verbleibenden $k-1$ Teilmengen $\{T_{1},...,T_{k}\}\setminus \{T_{i}\}$ als Trainingsmenge verwendet werden. Mittelt man die mittleren quadratischen Fehler der Testmengen, erhält man ein Maß für dem Gesamtfehler. Man wählt dann den Regularisierungsparameter mit minimalem Gesamtfehler, welcher in Abbildung \ref{regression_coefficients} zu sehen ist.
 
 \begin{figure}
 \centering
@@ -534,27 +535,8 @@ Die Ergebnisse der Regressionen können in Abbildung \ref{regression_coefficient
 	\includegraphics[width = \textwidth]{figures/elastic_net_coefficients_cv.png}
 	\label{elastic_net_coefficients}
 	\vspace{-0.5cm}
-	\caption{Elastic Net, $\gamma = 0.98$}
+	\caption{Elastic Net, $\alpha = 0.99$}
 	\end{subfigure}
-\caption{Schrumpfung der Koeffizienten für verschiedene Regressionsmethoden bei Erhöhung des jeweiligen Regularisierungsparameters. Die vertikalen Linien stellen den Wert des jeweiligen Parameters dar, der durch ein 10-faches Kreuzvalidierungsverfahren bestimmt worden ist. (Erstellt mit scikit-learn)}
+\caption{Jede Linie stellt den Wert (y-Achse) des jeweiligen Regressionskoeffizienten mit Veränderung der Regularisierungsparameter $\lambda_2$, $\lambda_1$ bzw. $\lambda$ (x-Achse) dar. Zu sehen ist die unterschiedliche Art der Schrumpfung für die verschiedenen Strafterme. Die vertikalen Linien entsprechen dem Wert des jeweiligen Parameters, der durch ein 10-faches Kreuzvalidierungsverfahren bestimmt worden ist.}
 \label{regression_coefficients}
 \end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=0.9\textwidth]{figures/regression_coefficients_mse.png}
-\label{regression_coefficients_mse}
-\caption{Selektion des Modells gemäß der mittleren quadratischen Abweichung für Ridge, Lasso und Elastic Net Regression}
-\end{figure}
-
-
-%----------------------------------------------------------------------------------------
-%	Signaltheorie
-%----------------------------------------------------------------------------------------
-
-
-\section{Signaltheorie}
-\label{signal_processing}
-
-\subsection{Fouriertransformation}
-\subsection{Nyquist-Shannon Abtasttheorem}
