@@ -348,21 +348,20 @@ Die von uns eingeführten Strafterme werden vor allem eine Schrumpfung der Regre
 \item Interpretation: Eine hohe Anzahl an Variablen, die in das Modell einfließen erschwert unzweifelhaft eine Interpretation. Daher kann es von Vorteil sein nur einen Teil der Variablen für das Modell auszuwählen. Optimalerweise selektiert man solche, die eine möglichst genaue Vorhersage ermöglichen.
 \end{itemize}
 
-Ein naheliegender Ansatz zur Lösung dieser Probleme wäre es zu versuchen, eine $k$-Teilmenge der Variablen zu finden, die eine minimale Summe der Residuenquadrate aufweist. In \cite{hastie_elements} werden verschiedene Methoden zur exakten und approximativen Berechnung dieser Teilmenge beschrieben. Nicht immer wird die Genauigkeit der Vorhersagen durch Verwendung dieses Ansatzes besser. Dies liegt vor allem daran, dass Variablen für das Modell entweder ausgewählt oder verworfen werden. Daher beschäftigen wir uns nun mit Methoden, die eine kontinuierliche Schrumpfung der Regressionskoeffizienten erlauben.\\
+Ein naheliegender Ansatz zur Lösung dieser Probleme wäre es zu versuchen, eine $k$-Teilmenge der Variablen zu finden, die eine minimale Summe der Residuenquadrate aufweist. In \cite{hastie_elements} werden verschiedene Methoden zur exakten und approximativen Berechnung dieser Teilmenge beschrieben. Nicht immer wird die Genauigkeit der Vorhersagen durch Verwendung dieses Ansatzes besser. Dies liegt vor allem daran, dass Variablen für das Modell entweder ausgewählt oder verworfen werden. Daher beschäftigen wir uns nun mit Methoden, die eine kontinuierliche Schrumpfung der Regressionskoeffizienten erlauben.
 
 \subsection{Ridge Regression}
 
 Zu diesem Zweck kann die \textit{Tikhonov Regularisierung}, die auch unter dem Namen \textit{Ridge Regression} bekannt ist, genutzt werden. Mithilfe eines \textit{Ridge Strafterms} opfern wir einen Teil des Bias für verbesserte Vorhersagen im Sinne des Verzerrung-Varianz-Dilemmas. Wir formulieren das Ridge Regression Problem in der Lagrange Form
 \begin{align}
 \label{ridge_regression}
-\hat{\beta}^{\text{ridge}} = \argmin_{\beta} \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda\sum_{j=1}^p \beta_j^2
+\hat{\beta}^{\text{ridge}} = \argmin_{\beta} \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda_2\sum_{j=1}^p \beta_j^2
 \end{align}
-wobei $\lambda \geq 0$ ein Parameter ist, der die Stärke der Schrumpfung der Regressionskoeffizienten kontrolliert. Je größer $\lambda$, desto stärker ist die Schrumpfung der $\beta_j$. Durch die Einführung des $ell_2$-Strafterms garantiert (\ref{ridge_regression}) auch für $p > n$ eine eindeutige Lösung. Da $\beta_0$ nicht im Strafterm vorkommt, schätzen wir zunächst $\beta_0 = \bar{y} = \frac{1}{n}\sum_{i=1}^{n} y_i$ und zentrieren die Eingaben $x_{ij} = x_{ij} - \bar{x}_j$. Die eindeutige Lösung der zentrierten Version von (\ref{ridge_regression}) ist dann durch
+wobei $\lambda_2 \geq 0$ ein Parameter ist, der die Stärke der Schrumpfung der Regressionskoeffizienten kontrolliert. Je größer $\lambda_2$, desto stärker ist die Schrumpfung der $\beta_j$. Durch die Einführung des $\ell_2$-Strafterms garantiert (\ref{ridge_regression}) auch für $p > n$ eine eindeutige Lösung. Da $\beta_0$ nicht im Strafterm vorkommt, schätzen wir zunächst $\beta_0 = \bar{y} = \frac{1}{n}\sum_{i=1}^{n} y_i$ und zentrieren die Eingaben $x_{ij} = x_{ij} - \bar{x}_j$. Die eindeutige Lösung der zentrierten Version von (\ref{ridge_regression}) ist dann durch
 \begin{align}
-\hat{\beta}^{\text{ridge}}  = (\mat X^{\top} \mat X + \lambda\mat{I})^{-1}\mat{X}^{\top}y
+\hat{\beta}^{\text{ridge}}  = (\mat X^{\top} \mat X + \lambda_2\mat{I})^{-1}\mat{X}^{\top}y
 \end{align}
-gegeben, wobei $\beta = (\beta_1, \ldots, \beta_p)$ und $\mat{X} \in \mathbb{R}^{n \times p}$ die Matrix der $x_i$. Die durch die Ridge Regression erzeugten Koeffizienten sind also um den Faktor $\frac{1}{1+\lambda}$ gegenüber denen der klassischen linearen Regression skaliert. Eine Dünnbesetzung der Koeffizienten wird also erst für $\lambda \to \infty$ erreicht.\\
-
+gegeben, wobei $\beta = (\beta_1, \ldots, \beta_p)$ und $\mat{X} \in \mathbb{R}^{n \times p}$ die Matrix der $x_i$. Die durch die Ridge Regression erzeugten Koeffizienten sind also um den Faktor $\frac{1}{1+\lambda_2}$ gegenüber denen der klassischen linearen Regression skaliert. Eine Dünnbesetzung der Koeffizienten wird also erst für $\lambda_2 \to \infty$ erreicht.
 
 \subsection{LASSO}
 \label{lasso}
@@ -370,9 +369,9 @@ gegeben, wobei $\beta = (\beta_1, \ldots, \beta_p)$ und $\mat{X} \in \mathbb{R}^
 Um eine bessere Interpretation des Modells zu ermöglichen, versucht man bei der \textit{Lasso} Regression eine Lösung zu finden, bei welcher viele Koeffizienten gleich Null sind. Das Lasso wurde erstmals von Tibshirani in \cite{tibshirani_lasso} eingeführt und ist in der Signalanalyse unter dem Namen \textit{Basis Pursuit} \cite{chen} bekannt. Mathematisch gesehen erreichen wir eine Dünnbesetzung durch Einbettung eines $\ell_1$-Strafterms.
 \begin{align}
 \label{lasso_formulation}
-\hat{\beta}^{\text{lasso}} = \argmin_{\beta} \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda\sum_{j=1}^p \left|\beta_j\right|
+\hat{\beta}^{\text{lasso}} = \argmin_{\beta} \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda_1\sum_{j=1}^p \left|\beta_j\right|
 \end{align}
-Es wird also im Vergleich zu (\ref{ridge_regression}) lediglich die $\ell_2$-Norm durch eine $\ell_1$-Norm ausgetauscht. Bevor wir uns mit der Lösung dieses Problems beschäftigen, möchten wir erklären, warum die $\ell_1$-Norm eine Dünnbesetzung hervorruft. Zunächst geben wir eine geometrische Erklärung, welche in Abbildung \ref{lasso_ridge_regression_figure} zu sehen ist. Dort sind die $\ell_1$- und $\ell_2$-Beschränkungen, sowie die Höhenlinien der RSS-Funktion in zwei Dimensionen aufgezeichnet. Die optimalen Koeffizienten von Ridge und Lasso Regression ergeben sich nun aus dem Schnittpunkt der Höhenlinien mit der Begrenzung der jeweiligen Norm. Im Falle der $\ell_1$-Norm ist dieser Schnittpunkt mit einer hohen Wahrscheinlichkeit an eine der Ecken, so dass einer der beiden Koeffizienten auf Null gesetzt wird. Im Gegensatz dazu ist die Wahrscheinlichkeit, dass ein Koeffizient bei einer $\ell_2$-Begrenzung auf Null gesetzt wird, sehr gering, da keine Ecken vorhanden sind. Somit kommt jeder Randpunkt der Begrenzung als Schnittpunkt in Frage und es wird keine Dünnbesetzung, sondern lediglich eine kontinuierliche Schrumpfung der Koeffizienten hervorgerufen. Dieser Effekt verstärkt sich in höheren Dimensionen.
+Es wird also im Vergleich zu (\ref{ridge_regression}) lediglich die $\ell_2$-Norm durch eine $\ell_1$-Norm ausgetauscht. Bevor wir uns mit der Lösung dieses Problems beschäftigen, möchten wir erklären, warum die $\ell_1$-Norm eine Dünnbesetzung hervorruft. Zunächst geben wir eine geometrische Erklärung, welche in Abbildung \ref{lasso_ridge_regression_figure} zu sehen ist. Dort sind die $\ell_1$- und $\ell_2$-Beschränkungen, sowie die Höhenlinien der RSS-Funktion in zwei Dimensionen aufgezeichnet. Die optimalen Koeffizienten von Ridge und Lasso Regression ergeben sich nun aus dem Schnittpunkt der Höhenlinien mit der Begrenzung der jeweiligen Norm. Im Falle der $\ell_1$-Norm ist dieser Schnittpunkt mit einer hohen Wahrscheinlichkeit an eine der Ecken, so dass einer der beiden Koeffizienten auf Null gesetzt wird. Im Gegensatz dazu ist die Wahrscheinlichkeit bei einer $\ell_2$-Begrenzung sehr gering, da keine Ecken vorhanden sind. Somit kommt jeder Randpunkt der Begrenzung als Schnittpunkt in Frage und es wird keine Dünnbesetzung, sondern lediglich eine kontinuierliche Schrumpfung der Koeffizienten hervorgerufen. Dieser Effekt verstärkt sich in höheren Dimensionen.
 
 \begin{figure}
 \centering
@@ -384,7 +383,7 @@ Es wird also im Vergleich zu (\ref{ridge_regression}) lediglich die $\ell_2$-Nor
 An dieser Stelle kann man auf den Gedanken kommen, andere Strafterme zu verwenden, welche bei geometrischer Betrachtung die Wahrscheinlichkeit erhöhen eine Dünnbesetzung der Koeffizienten hervorzurufen. So kann man zum Beispiel die $\ell_q$-Normen als Strafterm für Werte $q < 1$ in Betracht ziehen. In Abbildung \ref{norm_figure} sind die Begrenzungen der $\ell_q$-Normen für verschiedene Werte von $q$ eingezeichnet. Für $q \rightarrow 0$ entstehen sternförmige Höhenlinien, welche immer weiter zum Ursprung gedrückt werden. Somit wird es immer wahrscheinlicher, dass die Höhenlinien der RSS-Funktion eine Ecke treffen und wir dünnbesetzte Koeffizienten erhalten. Daher kann man folgendes Berechnungsproblem definieren
 \begin{align}
 \label{sparse_regression}
-\hat{\beta}^{\text{sparse}} = \argmin_{\beta} \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda\sum_{j=1}^p \left|\beta_j\right|^q
+\hat{\beta}^{\text{sparse}} = \argmin_{\beta} \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda_q\sum_{j=1}^p \left|\beta_j\right|^q
 \end{align}
 Leider ist dies nur in der Theorie ein guter Ansatz. Das Problem liegt nicht im Effekt der verschiedenen Strafterme, sondern in der Berechnung. Für $q < 1$ ist (\ref{sparse_regression}) ein nicht-konvexes Optimierungsproblem, da $\norm{\cdot}_q$ keine Norm gemäß Definition \ref{norm} ist. Im Extremfall der $\ell_0$-\q{Norm} wird (\ref{sparse_regression}) sogar NP-schwer \cite{foucart}. Somit besteht keine effiziente Methode zur Berechnung von $\hat{\beta}^{\text{sparse}}$ zur Verfügung. Der Wert $q = 1$ ist eine Art Kompromisslösung, die einerseits effizient zu berechnen ist und andererseits noch immer eine dünnbesetzte Lösung liefert.
 
@@ -422,17 +421,15 @@ Leider ist dies nur in der Theorie ein guter Ansatz. Das Problem liegt nicht im 
 \label{norm_figure}
 \end{figure}
 
-Um eine mathematisch gründliche Erklärung für die Dünnbesetzung zu liefern, wenden wir uns der Lösung von (\ref{lasso_formulation}) zu. Diese kann nur dann explizit angegeben werden, wenn $\mat X$ orthonormale Spalten hat. Es hilft uns aber trotzdem diese Lösung zu verstehen??
+Um eine mathematisch gründliche Erklärung für die Dünnbesetzung zu liefern, wenden wir uns der Lösung von (\ref{lasso_formulation}) zu. Falls die Spalten von $\mat X$ orthonormal sind, ergibt sich eine explizite Lösung
 \begin{align}
-\hat{\beta}_j^{\text{lasso}} = \text{sign}(\hat{\beta}_j^{\text{OLS}}) \left(\left|\hat{\beta}_j^{\text{OLS}}\right| - \frac{\lambda}{2}\right)_{+}
+\hat{\beta}_j^{\text{lasso}} = \text{sign}(\hat{\beta}_j^{\text{OLS}}) \left(\left|\hat{\beta}_j^{\text{OLS}}\right| - \frac{\lambda_1}{2}\right)_{+}
 \end{align}
-wobei $(\cdot)_+ = max(\cdot, 0)$ ist. Der Beweis kann in \cite{murphy} nachgelesen werden. Die Lösung ist also durch den der sog. \textit{soft thresholding operator} gegeben, welcher durch
+wobei $(\cdot)_+ = max(\cdot, 0)$ ist. Der Beweis kann in \cite{murphy} nachgelesen werden. Die Lösung ist also durch den sog. \textit{soft thresholding operator} gegeben, welcher durch
 \begin{align}
 \text{soft}_{\delta}(x) = \text{sign}(x)(|x| - \delta)_+
 \end{align}
-definiert wird.
-
-Der Operator ist in Abbildung \ref{thresholding_figure} noch einmal graphisch dargestellt. Nun sind wir auch in der Lage zu verstehen, warum Tibshirani \cite{tibshirani_lasso} den Begriff Lasso eingeführt hat. Dieser steht für \textit{Least absolute selection and shrinkage operator}, was bedeutet, dass ein Teil der Koeffizienten $\hat{\beta}_j^{\text{OLS}}$ ausgewählt und im Betrag geschrumpft wird. Die neuen Lasso Koeffizienten ergeben sich also dadurch, dass zunächst alle Koeffizienten in $\hat{\beta}^{\text{OLS}}$, die kleiner als $\frac{\lambda}{2}$ sind, auf $0$ gesetzt werden und anschließend die Verbliebenden im Betrag um $\frac{\lambda}{2}$ geschrumpft werden. Somit ist klar, dass für $\lambda \geq \lambda_{\text{max}}$ alle Koeffizienten $\hat{\beta}_j^{\text{lasso}} = 0$ sind, wobei $\lambda_{\text{max}} = \norm{\mat X^{\top}y}_{\infty}$. (Der Wert $\lambda_{\text{max}}$ beruht auf der Beobachtung, dass $0$ der optimale Wert der Koeffizienten ist falls $(\mat X^{\top}y)_j \in [-\lambda, \lambda]$ für alle $j$.) 
+definiert wird. Dieser ist in Abbildung \ref{thresholding_figure} im Gegensatz zum hard-thresholding Operator dargestellt. Nun sind wir auch in der Lage zu verstehen, warum Tibshirani \cite{tibshirani_lasso} den Begriff Lasso eingeführt hat, welcher für \textit{Least absolute selection and shrinkage operator} steht. Es werden zunächst alle Koeffizienten in $\hat{\beta}^{\text{OLS}}$, die kleiner als $\frac{\lambda_1}{2}$ sind, auf $0$ gesetzt und die Verbliebenden anschließend im Betrag um $\frac{\lambda_1}{2}$ geschrumpft. 
 
 \begin{figure}
 \centering
@@ -451,36 +448,45 @@ Der Operator ist in Abbildung \ref{thresholding_figure} noch einmal graphisch da
 \label{thresholding_figure}
 \end{figure}
 
-Wir wenden uns nun einer mathematischen Lösung des Lasso zu. Im Gegensatz zu Ridge Regression kann man im Allgemeinen keine explizite Lösung angeben. Nur für den Fall, dass.
-Da $\norm{\beta}_1$ nicht differenzierbar ist wenn $\beta_j = 0$ ist, sind wir bei (\ref{lasso_formulation}) mit einem nicht glattem Optimierungsproblem konfrontiert. Seit der Problemformulierung in 1996 wurde eine Vielzahl an Algorithmen entwickelt bzw. adaptiert, die eine numerische Lösung liefern. Dazu gehören Least-angle Regression (LARS) \cite{efron_lars}, Koordinaten-Abstiegsverfahren \cite{friedman}, Subdifferential Methoden und  Näherungs-Gradientenverfahren \cite{yang, vandenberghe}. Letztere sind eine natürliche Erweiterung von Gradientenverfahren wenn die Zielfunktion nicht differenzierbar ist. Wir werden später auf das Koordinaten-Abstiegsverfahren näher eingehen, welches wir bei der Implementierung der dünnbesetzten Hauptkomponentenanalyse nutzen.
+Für den allgemeinen Fall wird (\ref{lasso_formulation}) mithilfe von Näherungsverfahren gelöst. Da $\norm{\beta}_1$ nicht differenzierbar ist wenn $\beta_j = 0$, sind wir mit einem nicht glattem Optimierungsproblem konfrontiert. Seit der Problemformulierung wurde eine Vielzahl an Algorithmen entwickelt bzw. adaptiert, die eine numerische Lösung liefern. Dazu gehören Least-angle Regression (LARS) \cite{efron_lars}, Koordinaten-Abstiegsverfahren \cite{friedman}, Subdifferential-Methoden und  Näherungs-Gradientenverfahren \cite{yang, vandenberghe}. Letztere sind eine natürliche Erweiterung von Gradientenverfahren falls die Zielfunktion nicht differenzierbar ist. In Abschnitt \ref{elastic_net}, werden wir auf ein Koordinaten-Abstiegsverfahren näher eingehen.
 
-Es stellt sich heraus, dass das Lasso zwei wesentliche Nachteile besitzt. Falls es im Datensatz Gruppen stark korrelierter Variablen gibt, so tendiert die Methode dazu nur eine Variable aus einer Gruppe statt die Gruppe als Ganzes auszuwählen. In vielen Anwendungen ist man aber gerade daran interessiert. Zum Beispiel bei der Suche nach Genen, welche mit einer bestimmten Krankheit verbunden sind, möchte man alle assoziierten Koeffizienten finden anstatt nur einem Gen aus einer Gruppe. Darüber hinaus führt dies oft dazu, dass der Vorhersagefehler vergrößert wird und somit die Methode nicht ganz so robust ist. Um diesem Problem zu entgegnen kann man das sog. \textit{Group Lasso} verwenden \cite{yuan}, bei welcher man zuvor Gruppen im Datensatz festlegen kann. Der im Zuge dieser Arbeit aber wichtigere Aspekt ist, dass das Lasso im Fall $p > n$ maximal $n$ Variablen selektieren kann. Dies ist für moderne Datensätze, für welche $p \gg n$ gilt oft nicht ausreichend. Der Grund dafür wird in ... klar. Why LASSO can select at most n predictors https://stats.stackexchange.com/questions/386116/why-does-lasso-select-at-most-n-predictors
-
-Coordinate Descent for EN oder Lasso? https://stats.stackexchange.com/questions/123672/coordinate-descent-soft-thresholding-update-operator-for-lasso
-
-https://www.kaggle.com/residentmario/soft-thresholding-with-lasso-regression\\
+Es stellt sich heraus, dass das Lasso zwei wesentliche Nachteile besitzt. Falls es im Datensatz Gruppen stark korrelierter Variablen gibt, tendiert die Methode dazu nur eine Variable je Gruppe statt die Gruppe als Ganzes auszuwählen. Zum Beispiel bei der Suche nach Genen, welche mit einer bestimmten Krankheit verbunden sind, ist man aber daran interessiert, alle assoziierten Koeffizienten zu finden. Darüber hinaus führt dieser Effekt zu verschlechterten Vorhersagen. Um diesem Problem zu entgegnen kann man das sog. \textit{Group Lasso} verwenden \cite{yuan}, bei welcher man zuvor Gruppen im Datensatz festlegen kann. Der im Zuge dieser Arbeit aber wichtigere Nachteil ist, dass das Lasso für $p > n$ Datensätze maximal $n$ Variablen selektieren kann. Da $\mat X$ in diesem Fall maximal Rang $n$ hat, können wir $y$ mithilfe von $n$ Variablen perfekt vorhersagen. Das Lasso wählt dann die $n$ Variablen, welche $\lambda_1\norm{\beta}_1$ minimieren. Für moderne Datensätze mit $p \gg n$ ist es aber oft nicht ausreichend, nur $n$ von null verschieden Koeffizienten zuzulassen.
 
 \subsection{Elastic Net}
-
-Damit im Fall $p > n$ mehr als $n$ Variablen selektiert werden, kann man die beiden vorgestellten Methoden kombinieren. Durch die Einbettung einer $\ell_1$ und $\ell_2$-Norm erhalten wir das sog. \textit{Elastic Net} \cite{zou_elasticnet}.
-\begin{align}
 \label{elastic_net}
+
+Damit im Fall $p > n$ mehr als $n$ Variablen selektiert werden können, betrachten wir eine Verallgemeinerung von Lasso und Ridge Regression. Durch die Einbettung einer $\ell_1$ und $\ell_2$-Norm erhalten wir das sog. \textit{Elastic Net} \cite{zou_elasticnet}.
+\begin{align}
+\label{elastic_net_formulation}
 \hat{\beta}^{\text{en}} = \argmin_{\beta} \norm{y - \mat X \beta}_2^2 + \lambda_2 \norm{\beta}_{2}^{2} + \lambda_{1,j} \norm{\beta}_{1}
 \end{align}
-Wie zuvor wird durch den $\ell_1$-Strafterm ein dünnbesetztes Modell generiert. Der $\ell_2$-Strafterm fördert den Gruppeneffekt, stabilisiert den $\ell_1$ Regularisierungspfad und lässt eine beliebige Anzahl zu selektierender Variablen zu.
+Wie zuvor wird durch den $\ell_1$-Strafterm ein dünnbesetztes Modell generiert. Dagegen fördert der $\ell_2$-Strafterm den Gruppeneffekt, stabilisiert den $\ell_1$ Regularisierungspfad und lässt eine beliebige Anzahl zu selektierender Variablen zu. Um eine doppelte Schrumpfung der Koeffizienten zu vermeiden, kann das Elastic Net mit dem Faktor $(1 + \lambda_2)$ korrigiert werden. 
 
-Ähnlich wie bei der Lasso Regression kann nur im Fall orthogonaler Spalten von $\mat X$ eine explizite Lösung mithilfe des soft thresholding operators von (\ref{elastic_net}) angegeben werden. Mit leichten Modifikationen der Algorithmen für das Lasso erhalten wir eine numerische Lösung. So wurde LARS-EN \cite{zou_elasticnet} oder ein Koordinatenabstiegsverfahren vorgeschlagen \cite{friedman}.
+Ähnlich wie bei der Lasso Regression kann nur dann eine explizite Lösung von (\ref{elastic_net_formulation}) angegeben werden, falls die Spalten von $\mat X$ orthonormal sind. Daher wurden verschiedene Näherungsverfahren für eine numerische Lösung vorgeschlagen. Dazu gehören beispielsweise LARS-EN \cite{zou_elasticnet}, welches auf dem LARS Algorithmus für das Lasso basiert, und ein Koordinatenabstiegsverfahren \cite{friedman}. Letzteres werden wir in unseren Implementierung in Kapitel \ref{implementation} für ein Subproblem nutzen.
+
+https://stats.stackexchange.com/questions/123672/coordinate-descent-soft-thresholding-update-operator-for-lasso
 
 We propose an efficient algorithm called LARS-EN to solve the elastic net efficiently, which is
 based on the recently proposed algorithmLARSof Efron et al. (2004). They proved that, starting
 from zero, the lasso solution paths grow piecewise linearly in a predictable way. They proposed
 a new algorithm called LARS to solve the entire lasso solution path efficiently by using the same
-order of computations as a single OLS fit\\
+order of computations as a single OLS fit
+
+Die Implementierung des Elastic Nets in scikit-learn \cite{scikit_learn} beruht auf einer anderen, aber sehr ähnlichen mathematischen Formulierung
+\begin{align}
+\label{elastic_net_python}
+\hat{\beta}^{\text{en}} = \argmin_{\beta} \frac{1}{2n} \norm{y - \mat X \beta}_2^2 + \alpha \gamma \norm{\beta}_{1} + \frac{1}{2}\alpha (1-\gamma) \norm{\beta}_{2}^2
+\end{align}
+wobei $n$ die Anzahl an Beobachtungen im Datensatz und $\gamma \in [0,1]$ das Verhältnis zwischen $\ell_1$- und $\ell_2$-Norm ist. Mit $\gamma = 0$ reduziert sich (\ref{elastic_net_python}) auf Ridge und für $\gamma = 1$ auf die Lasso Regression. Somit können wir durch $\gamma$ das Verhältnis der beiden Regressionen kontrollieren und durch $\alpha$ die Stärke der Bestrafung. Setzt man 
+\begin{align}
+ \alpha = \frac{2\lambda_2 + \lambda_1}{2n} \quad \text{und} \quad \gamma = \frac{\lambda_1}{2\lambda_2 + \lambda_1}
+\end{align}
+entspricht (\ref{elastic_net_python}) unser ursprünglich formulierten Problem. An dieser Stelle möchten wir anmerken, dass bei dieser Implementierung nicht die Möglichkeit besteht, die Koeffizienten unterschiedlich zu bestrafen im Gegensatz zu (\ref{elastic_net_formulation}).
 
 \subsection{Vergleich der Regressionsmethoden}
 \label{comparison_linear_models}
 
-Zur Veranschaulichung der oben eingeführten Methoden werden wir diese auf ein Beispiel anwenden. Dabei greifen wir auf einen durch scikit-learn \cite{scikit_learn} bereitgestellten Datensatz, der erstmals durch \cite{efron_lars} öffentlich gemacht worden ist, zurück. In diesem wurden für $n = 442$ Diabetes Patienten $p=10$ verschiedene Variablen gemessen. Dazu gehören Alter (AGE), Geschlecht (SEX), Body Mass Index (BMI), Blutdruck (BP) und verschiedene Blutproben (Serum Measurements). Die Zielgröße $y$ enthält Werte für den Krankheitsfortschritt ein Jahr nach Behandlungsbeginn. Ein Ausschnitt des Datensatzes befindet sich in Tabelle \ref{diabetes_data_set}.
+Zur Veranschaulichung der oben eingeführten Methoden werden wir diese zur Anwendung bringen. Dabei greifen wir auf einen durch scikit-learn \cite{scikit_learn} bereitgestellten Datensatz, der erstmals durch \cite{efron_lars} öffentlich gemacht worden ist, zurück. In diesem wurden für $n = 442$ Diabetes Patienten $p=10$ verschiedene Variablen gemessen. Dazu gehören Alter (AGE), Geschlecht (SEX), Body Mass Index (BMI), Blutdruck (BP) und verschiedene Blutproben (Serum Measurements). Die Zielgröße $y$ enthält Werte für den Krankheitsfortschritt ein Jahr nach Behandlungsbeginn. Ein Ausschnitt des Datensatzes befindet sich in Tabelle \ref{diabetes_data_set}.
 
 \begin{table}
 \centering
@@ -502,18 +508,6 @@ Zur Veranschaulichung der oben eingeführten Methoden werden wir diese auf ein B
 
 Schrumpfung bei Ridge Regression kontinuierlich.
 Die Ergebnisse der Regressionen können in Abbildung \ref{regression_coefficients} und \ref{regression_coefficients_mse} eingesehen werden. 
-
-Die Implementierung des Elastic Nets in scikit-learn \cite{scikit_learn} beruht auf einer anderen, aber sehr ähnlichen mathematischen Formulierung
-\begin{align}
-\label{elastic_net_python}
-\hat{\beta}^{\text{en}} = \argmin_{\beta} \frac{1}{2n} \norm{y - \mat X \beta}_2^2 + \alpha \gamma \norm{\beta}_{2}^{2} + \frac{1}{2}\alpha (1-\gamma) \norm{\beta}_{1}
-\end{align}
-wobei $n$ die Anzahl an Beobachtungen im Datensatz und $\gamma$ das Verhältnis der $\ell_2$- zur $\ell_1$-Norm ist. Wählen wir $\gamma = 0$ so reduziert sich (\ref{elastic_net_python}) auf Ridge Regression und für $\gamma = 1$ auf das Lasso. So können wir mit $\gamma$ das Verhältnis der beiden Regressionen kontrollieren und mit $\alpha$ die Stärke der Bestrafung. Man beachte, dass bei dieser Implementierung nicht die Möglichkeit besteht die Koeffizienten unterschiedlich zu bestrafen.
-Setzt man 
-\begin{align}
- \alpha = \frac{2\lambda_2 + \lambda_1}{2n} \quad \text{und} \quad \gamma = \frac{\lambda_1}{2\lambda_2 + \lambda_1}
-\end{align}
-so reduziert sich (\ref{elastic_net_python}) auf unser ursprünglich formuliertes Problem.
 
 \begin{figure}
 \centering
