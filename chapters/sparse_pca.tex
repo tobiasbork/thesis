@@ -210,6 +210,8 @@ Eine korrekte Methode wird von Camacho et al. eingeführt. Hierbei zerlegen wir 
 If deflation is performed in the score space $EP = P^T E^T = 0$.
 Damit kann die Varianz eines Datensatzes in die Varianz der Rekonstruktion und der Residuen aufgeteilt werden. Ersterer Teil entspricht der erklärten Varianz unseres Modells und wird daher mit $\norm{\mat Z \mat B^T}_{F}^{2}$ berechnet.
 
+Manchmal sind wir mit den Ergebnissen der Hauptkomponentenanalyse nicht zufrieden und wollen daher die Anzahl an Hauptkomponenten erhöhen. Im Gegensatz zur klassischen Variante ändern sich dadurch die Werte der Hauptkomponenten, die schon zuvor im Modell waren. Es können also nicht ohne weiteres mehr Hauptkomponenten hinzugefügt werden, da dies eine Neuberechnung aller Komponenten erfordert.
+
 
 %----------------------------------------------------------------------------------------
 %	Wahl der Hyperparameter
@@ -257,20 +259,27 @@ the BIC cannot handle complex collections of models as in the variable selection
 \label{spca_theorems}
 
 
-Zu Abschluss dieses Kapitels möchten wir uns mit theoretischen Aussagen zur dünnbesetzten Hauptkomponentenanalyse auseinandersetzen.  Von wesentlicher Bedeutung ist die Konsistenz der Methode im Vergleich zur klassischen Variante.
+Zu Abschluss dieses Kapitels möchten wir uns mit theoretischen Aussagen zur dünnbesetzten Hauptkomponentenanalyse auseinandersetzen. Von wesentlicher Bedeutung ist die Konsistenz der Methode im Vergleich zur klassischen Variante für hochdimensionale Datensätze.
 
-Durch ref werden wir sehen, dass das Sparse PCA Kriterium nur von der Kovarianzmatrix abhängt. Um eine Populationsversion der dünnbesetzen Hauptkomponete zu erhalten ersetzen wir $\mat X^T \mat X$ schlicht durch die Kovarianzmatrix $\mat \Sigma$.
+In Kapitel \ref{implementation} werden wir sehen, dass das Sparse PCA Kriterium nur von der Kovarianzmatrix abhängt. Um eine Populationsversion der dünnbesetzen Hauptkomponete zu erhalten, ersetzen wir wie zuvor $\mat X^T \mat X$ durch die Kovarianzmatrix $\mat \Sigma$. Wie in Abschnitt \ref{pca_theorems} werden wir ein \textit{single component model} betrachten
+\begin{align}
+\label{single_component_model_spca}
+x_i = l_j v_1 + \sigma r_i \quad i = 1, \ldots n,
+\end{align}
+in welchem $v_1 \in \mathbb{R}^p$ der zu schätzende Eigenvektor ist. Dabei sind $l_i \sim N(0,1)$ unabhängig gleichverteilte Gaußsche Zufallseffekte und $r_i \sim N_p(0, \mat I)$ unabhängige Rauschvektoren. Johnstone und Lu haben ein Resultat für die Konsistenz der Hauptkomponentenanalyse gezeigt, falls diese auf eine Teilmenge der Variablen angewendet wird. Dies liefert eine theoretische Rechtfertigung der dünnbesetzten Variante.
 
+Wir bezeichnen mit $\hat{I} = \{j \, \colon \, \hat{\sigma}_j^2 \geq \sigma^2 (1 + \alpha_n)\}$ die Indexmenge der auszuwählenden Variablen, wobei $\hat{\sigma}_j^2$ die Stichprobenvarianz der $j$-ten Variable und $\alpha_n = \alpha (n^{-1}\log(\max \{n,p\}))^{\frac{1}{2}}$ für ein hinreichend großes $\alpha$ ist. Da die großen Einträge von $\hat{v}_1$ mit Variablen großer Varianz korrespondieren, wählen wir 
+$$\hat{v}_{1j}^I = \begin{cases} 
+      \hat{v}_{1j} & j \in \hat{I}\\
+      0 & j \not\in \hat{I}
+   \end{cases}$$
+Dann können erhalten wir unter geeigneten Bedingungen eine Konsistenz.
 
+\begin{thm}[Konsistenz der dünnbesetzten Hauptkomponentenanalyse bei konstantem asymptotischem Verhältnis von $n$ und $p$ \cite{johnstone}]
+Für $n \to \infty$ sei die Signalstärke $\norm{v_1}^2 \to \rho$ asymptotisch stabil und $n^{-1}\log(\max \{n,p\}) \to 0$. Bezeichne mit $v_i^{(r)}$ den $r$-größten Eintrag von $v_i$. Unter der Annahme, dass die Einträge der Hauptachsen für alle $n$ schnell abfallen, d.h.
+$$|v_1^{(r)}| \leq Cr^{\frac{-1}{q}} \quad \text{für } q \in (0,2) \text{ und } c < \infty$$
+ist die dünnbesetzte Hauptkomponentenanalyse fast sicher konsistent
+$$\mathbb{P}\left[\lim_{n \to \infty} \operatorname{angle}(\hat{v}_1^I, v_1) = 0\right] = 1$$ 
+\end{thm}
 
-
-
-recomputation necessary of principal components when changing number of pc's.
-
-Alexandre d’Aspremont, Optimal Solutions for Sparse Principal Component Analysis
-We then use the same relaxation to derive sufficient conditions for global optimality of a
-solution, which can be tested in O(n
-3
-) per pattern. We discuss applications in subset selection and
-sparse recovery and show on artificial examples and biological data that our algorithm does provide
-globally optimal solutions in many cases.
+In einer \textit{high dimension low sample size (HDLSS)} Situation haben Shen et al. mithilfe eines spiked covariance models die Konsistenz ihrer Variante von Sparse PCA \cite{shen} unter geeigneten Bedingungen gezeigt. Der einzige Unterschied zu der von der Variante von Zou et al. ist, dass die Hauptachsen dort sequentiell statt simultan berechnet werden. Für Details bezüglich der speziellen Bedingungen für eine Konsistenz verweisen wir auf \cite{shen_consistency}.

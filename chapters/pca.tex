@@ -270,9 +270,7 @@ In Tabelle \ref{pca_extensions_overview} sind einige Ideen, die in der Literatur
 
 Zu Abschluss dieses Kapitels werden wir einige interessante Eigenschaften sowie Theoreme präsentieren. Der Fokus wird vor allem auf der Inkonsistenz der Hauptkomponentenanalyse in hochdimensionalen Fällen sein.
 
-Eine wichtige Eigenschaft ist die Unkorreliertheit der Hauptkomponenten. Dies lässt sich leicht anhand der Stichprobenkovarianzmatrix der Hauptkomponenten $\frac{1}{n-1}\mat Z^T \mat Z = \frac{1}{n-1}(\mat X \mat V)^{\top}\mat X \mat V = \mat V^{\top}\mat{\Sigma}\mat V$ sehen, welche aufgrund von $\mat V^T \mat V = \mat I_{k \times k}$ eine Diagonalmatrix ist. Somit können wir von einer Hauptkomponente und deren erklärte Varianz reden ohne uns dabei auf andere beziehen zu müssen.
-
-Unter der Annahme, dass wir uniqueness of PCA?
+Eine wichtige Eigenschaft ist die Unkorreliertheit der Hauptkomponenten. Dies lässt sich leicht anhand der Stichprobenkovarianzmatrix der Hauptkomponenten $\frac{1}{n-1}\mat Z^T \mat Z = \frac{1}{n-1}(\mat X \mat V)^{\top}\mat X \mat V = \mat V^{\top}\mat{\Sigma}\mat V$ sehen, welche aufgrund von $\mat V^T \mat V = \mat I_{k \times k}$ eine Diagonalmatrix ist. Somit können wir von einer Hauptkomponente und deren erklärte Varianz sprechen ohne uns dabei auf andere beziehen zu müssen.
 
 Falls mehr Variablen ausgewählt werden sollen, no recomputation necessary.
 
@@ -305,7 +303,7 @@ in welchem $v_1 \in \mathbb{R}^p$ der zu schätzende Eigenvektor ist. Dabei sind
 
 \begin{thm}[Inkonsistenz der Hauptkomponentenanalyse bei konstantem asymptotischem Verhältnis von $n$ und $p$ \cite{johnstone}]
 \label{pca_inconsistency_ratio}
-Sei $\sigma$ die Stärke des Rauschens im Modell (\ref{single_component_model}) und $\omega = \lim_{n \rightarrow \infty} \frac{\norm{v_1}^{2}}{\sigma^2} > 0$ das limitierende Signal-Rausch-Verhältnis. Weiterhin sei 
+Sei $\sigma$ die Stärke des Rauschens im Modell (\ref{single_component_model}) und $\lim_{n \rightarrow \infty} \frac{\norm{v_1}^{2}}{\sigma^2} = \omega > 0$ das limitierende Signal-Rausch-Verhältnis. Weiterhin sei 
 $$R(\bar{v}_1, v_1) = \inner{\frac{\bar{v}_1}{\norm{\bar{v}_1}}}{\frac{v_1}{\norm{v_1}}} = \cos{(\operatorname{angle}(\bar{v}_1, v_1))}.$$
 Unter der Annahme, dass $\lim_{n \rightarrow \infty} \frac{p_n}{n} = c$ gilt
 $$\mathbb{P}\left[\lim_{n \rightarrow \infty} R^2(\bar{v}_1, v_1) = R_{\infty}^2(\omega, c)\right] = 1$$
@@ -314,5 +312,5 @@ wobei $R_{\infty}^2(\omega, c) = \frac{(\omega^2 - c)_+}{\omega^2 + c\omega}$.
 
 Wir sehen, dass $R_{\infty}^2(\omega, c) < 1$ genau dann, wenn $c > 0$ und somit ist $\bar{v}_1$ ein konsistenter Schätzer für $v_1$ genau dann, wenn $c = 0$. Für $c > 0$ ist die Hauptkomponentenanalyse daher inkonsistent. 
 
-Ein sehr ähnliches Resultat hält auch für ein sog. \textit{spiked covariance model}, in welcher mehrere Komponenten betrachtet werden \cite{paul}. Des Weiteren zeigen Jung und Marron eine starke Inkonsistenz der Stichprobenhauptachsen in einer HDLSS-Situation unter geeigneten Modellannahmen. Dabei kann Konsistenz nur dann gewährleistet werden, wenn die führenden Eigenwerte klar größer sind als die Restlichen und weitere Eigenschaften gewährleistet sind. Für Details verweisen wir auf \cite{jung}.
+Ein sehr ähnliches Resultat hält auch für ein sog. \textit{spiked covariance model}, in welcher mehrere Komponenten betrachtet werden \cite{paul}. Des Weiteren zeigen Jung und Marron eine starke Inkonsistenz der Stichprobenhauptachsen in einer HDLSS-Situation unter geeigneten Modellannahmen. In diesem Fall kann Konsistenz nur dann gewährleistet werden, wenn unter anderem die führenden Eigenwerte klar größer sind als die Restlichen. Für Details weiterer spezieller Bedingungen verweisen wir auf \cite{jung}.
 

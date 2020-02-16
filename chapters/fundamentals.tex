@@ -250,7 +250,7 @@ $$\norm{x}_{q}^{q} = \sum_{i=1}^{n} \abs{x_i}^q \quad \underset{q \rightarrow 0}
 Wir werden diese Schreibweise analog für Matrizen anstatt Vektoren verwenden. Dabei wollen wir betonen, dass die $\ell_0$-\q{Norm} keine wirkliche Norm ist, da die Abbildung nicht homogen ist. Trotzdem ist diese \q{Norm} in der Theorie der komprimierten Erfassung (Englisch: \textit{compressive sensing}) sehr nützlich. Des Weiteren werden wir die Notation $\norm{\cdot}_q$ gemäß der Definition in \ref{lp_norm} auch für Werte $0 < q < 1$ verwenden, obwohl durch diese Abbildung ebenfalls keine Norm gegeben ist.
 
 %----------------------------------------------------------------------------------------
-%	Statistik
+%	Generalisierte lineare Modelle
 %----------------------------------------------------------------------------------------
 
 \section{Generalisierte lineare Modelle}
@@ -305,6 +305,12 @@ Die Frage nach einem günstigen Modell liegt also in der Modellkomplexität und 
 \label{bias_variance_tradeoff}
 \end{figure}
 
+
+%----------------------------------------------------------------------------------------
+%	Lineare Regression
+%----------------------------------------------------------------------------------------
+
+
 \subsection{Lineare Regression}
 
 Bei der Regressionsanalyse werden Zusammenhänge zwischen
@@ -350,6 +356,12 @@ Die von uns eingeführten Strafterme werden vor allem eine Schrumpfung der Regre
 
 Ein naheliegender Ansatz zur Lösung dieser Probleme wäre es zu versuchen, eine $k$-Teilmenge der Variablen zu finden, die eine minimale Summe der Residuenquadrate aufweist. In \cite{hastie_elements} werden verschiedene Methoden zur exakten und approximativen Berechnung dieser Teilmenge beschrieben. Nicht immer wird die Genauigkeit der Vorhersagen durch Verwendung dieses Ansatzes besser. Dies liegt vor allem daran, dass Variablen für das Modell entweder ausgewählt oder verworfen werden. Daher beschäftigen wir uns nun mit Methoden, die eine kontinuierliche Schrumpfung der Regressionskoeffizienten erlauben.
 
+
+%----------------------------------------------------------------------------------------
+%	Ridge Regression
+%----------------------------------------------------------------------------------------
+
+
 \subsection{Ridge Regression}
 
 Zu diesem Zweck kann die \textit{Tikhonov Regularisierung}, die auch unter dem Namen \textit{Ridge Regression} bekannt ist, genutzt werden. Mithilfe eines \textit{Ridge Strafterms} opfern wir einen Teil des Bias für verbesserte Vorhersagen im Sinne des Verzerrung-Varianz-Dilemmas. Wir formulieren das Ridge Regression Problem in der Lagrange Form
@@ -363,7 +375,13 @@ wobei $\lambda_2 \geq 0$ ein Parameter ist, der die Stärke der Schrumpfung der 
 \end{align}
 gegeben, wobei $\beta = (\beta_1, \ldots, \beta_p)$ und $\mat{X} \in \mathbb{R}^{n \times p}$ die Matrix der $x_i$. Die durch die Ridge Regression erzeugten Koeffizienten sind also um den Faktor $\frac{1}{1+\lambda_2}$ gegenüber denen der klassischen linearen Regression skaliert. Eine Dünnbesetzung der Koeffizienten wird also erst für $\lambda_2 \to \infty$ erreicht.
 
-\subsection{LASSO}
+
+%----------------------------------------------------------------------------------------
+%	Lasso
+%----------------------------------------------------------------------------------------
+
+
+\subsection{Lasso}
 \label{lasso}
 
 Um eine bessere Interpretation des Modells zu ermöglichen, versucht man bei der \textit{Lasso} Regression eine Lösung zu finden, bei welcher viele Koeffizienten gleich Null sind. Das Lasso wurde erstmals von Tibshirani in \cite{tibshirani_lasso} eingeführt und ist in der Signalanalyse unter dem Namen \textit{Basis Pursuit} \cite{chen} bekannt. Mathematisch gesehen erreichen wir eine Dünnbesetzung durch Einbettung eines $\ell_1$-Strafterms.
@@ -429,7 +447,7 @@ wobei $(\cdot)_+ = max(\cdot, 0)$ ist. Der Beweis kann in \cite{murphy} nachgele
 \begin{align}
 \text{soft}_{\delta}(x) = \text{sign}(x)(|x| - \delta)_+
 \end{align}
-definiert wird. Dieser ist in Abbildung \ref{thresholding_figure} im Gegensatz zum hard-thresholding Operator dargestellt. Nun sind wir auch in der Lage zu verstehen, warum Tibshirani \cite{tibshirani_lasso} den Begriff Lasso eingeführt hat, welcher für \textit{Least absolute selection and shrinkage operator} steht. Es werden zunächst alle Koeffizienten in $\hat{\beta}^{\text{OLS}}$, die kleiner als $\frac{\lambda_1}{2}$ sind, auf $0$ gesetzt und die Verbliebenden anschließend im Betrag um $\frac{\lambda_1}{2}$ geschrumpft. 
+definiert wird. Dieser ist in Abbildung \ref{thresholding_figure} zusammen mit dem hard-thresholding Operator dargestellt. Nun sind wir auch in der Lage zu verstehen, warum Tibshirani \cite{tibshirani_lasso} den Begriff Lasso eingeführt hat, welcher für \textit{Least absolute selection and shrinkage operator} steht. Es werden zunächst alle Koeffizienten in $\hat{\beta}^{\text{OLS}}$, die kleiner als $\frac{\lambda_1}{2}$ sind, auf $0$ gesetzt und die Verbliebenden anschließend im Betrag um $\frac{\lambda_1}{2}$ geschrumpft. 
 
 \begin{figure}
 \centering
@@ -448,9 +466,15 @@ definiert wird. Dieser ist in Abbildung \ref{thresholding_figure} im Gegensatz z
 \label{thresholding_figure}
 \end{figure}
 
-Für den allgemeinen Fall wird (\ref{lasso_formulation}) mithilfe von Näherungsverfahren gelöst. Da $\norm{\beta}_1$ nicht differenzierbar ist wenn $\beta_j = 0$, sind wir mit einem nicht glattem Optimierungsproblem konfrontiert. Seit der Problemformulierung wurde eine Vielzahl an Algorithmen entwickelt bzw. adaptiert, die eine numerische Lösung liefern. Dazu gehören Least-angle Regression (LARS) \cite{efron_lars}, Koordinaten-Abstiegsverfahren \cite{friedman}, Subdifferential-Methoden und  Näherungs-Gradientenverfahren \cite{yang, vandenberghe}. Letztere sind eine natürliche Erweiterung von Gradientenverfahren falls die Zielfunktion nicht differenzierbar ist. In Abschnitt \ref{elastic_net}, werden wir auf ein Koordinaten-Abstiegsverfahren näher eingehen.
+Für den allgemeinen Fall wird (\ref{lasso_formulation}) mithilfe von Näherungsverfahren gelöst. Da $\norm{\beta}_1$ nicht differenzierbar ist wenn $\beta_j = 0$, sind wir mit einem nicht glattem Optimierungsproblem konfrontiert. Seit der Problemformulierung wurde eine Vielzahl an Algorithmen entwickelt bzw. adaptiert, die eine numerische Lösung liefern. Dazu gehören Least-angle Regression (LARS) \cite{efron_lars}, Koordinaten-Abstiegsverfahren \cite{friedman}, Subdifferential-Methoden und  Näherungs-Gradientenverfahren \cite{yang, vandenberghe}. Letztere sind eine natürliche Erweiterung von Gradientenverfahren falls die Zielfunktion nicht differenzierbar ist. Im folgendem Abschnitt werden wir auf ein Koordinaten-Abstiegsverfahren näher eingehen.
 
 Es stellt sich heraus, dass das Lasso zwei wesentliche Nachteile besitzt. Falls es im Datensatz Gruppen stark korrelierter Variablen gibt, tendiert die Methode dazu nur eine Variable je Gruppe statt die Gruppe als Ganzes auszuwählen. Zum Beispiel bei der Suche nach Genen, welche mit einer bestimmten Krankheit verbunden sind, ist man aber daran interessiert, alle assoziierten Koeffizienten zu finden. Darüber hinaus führt dieser Effekt zu verschlechterten Vorhersagen. Um diesem Problem zu entgegnen kann man das sog. \textit{Group Lasso} verwenden \cite{yuan}, bei welcher man zuvor Gruppen im Datensatz festlegen kann. Der im Zuge dieser Arbeit aber wichtigere Nachteil ist, dass das Lasso für $p > n$ Datensätze maximal $n$ Variablen selektieren kann. Da $\mat X$ in diesem Fall maximal Rang $n$ hat, können wir $y$ mithilfe von $n$ Variablen perfekt vorhersagen. Das Lasso wählt dann die $n$ Variablen, welche $\lambda_1\norm{\beta}_1$ minimieren. Für moderne Datensätze mit $p \gg n$ ist es aber oft nicht ausreichend, nur $n$ von null verschieden Koeffizienten zuzulassen.
+
+
+%----------------------------------------------------------------------------------------
+%	Elastic Net
+%----------------------------------------------------------------------------------------
+
 
 \subsection{Elastic Net}
 \label{elastic_net}
@@ -458,30 +482,62 @@ Es stellt sich heraus, dass das Lasso zwei wesentliche Nachteile besitzt. Falls 
 Damit im Fall $p > n$ mehr als $n$ Variablen selektiert werden können, betrachten wir eine Kombination von Lasso und Ridge Regression. Durch die Einbettung einer $\ell_1$ und $\ell_2$-Norm erhalten wir das sog. \textit{Elastic Net} \cite{zou_elasticnet}.
 \begin{align}
 \label{elastic_net_formulation}
-\hat{\beta}^{\text{en}} = \argmin_{\beta} \norm{y - \mat X \beta}_2^2 + \lambda_2 \norm{\beta}_{2}^{2} + \lambda_{1,j} \norm{\beta}_{1}
+\hat{\beta}^{\text{en}} = \argmin_{\beta} \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda_1\sum_{j=1}^p \left|\beta_j\right| + \lambda_2\sum_{j=1}^p \beta_j^2
 \end{align}
-Wie zuvor wird durch den $\ell_1$-Strafterm ein dünnbesetztes Modell generiert. Dagegen fördert der $\ell_2$-Strafterm den Gruppeneffekt, stabilisiert den $\ell_1$ Regularisierungspfad und lässt eine beliebige Anzahl zu selektierender Variablen zu. Um eine doppelte Schrumpfung der Koeffizienten zu vermeiden, kann das Elastic Net mit dem Faktor $(1 + \lambda_2)$ korrigiert werden. 
+Wie zuvor wird durch den $\ell_1$-Strafterm ein dünnbesetztes Modell generiert. Dagegen fördert der $\ell_2$-Strafterm den Gruppeneffekt, stabilisiert den Regularisierungspfad und lässt eine beliebige Anzahl zu selektierender Variablen zu. Um eine doppelte Schrumpfung der Koeffizienten zu vermeiden, kann das Elastic Net mit dem Faktor $(1 + \lambda_2)$ korrigiert werden. 
 
-Ähnlich wie bei der Lasso Regression kann nur dann eine explizite Lösung von (\ref{elastic_net_formulation}) angegeben werden, wenn die Spalten von $\mat X$ orthonormal sind. Daher wurden verschiedene Näherungsverfahren für eine numerische Lösung vorgeschlagen. Dazu gehören beispielsweise LARS-EN \cite{zou_elasticnet}, welches auf dem LARS Algorithmus für das Lasso basiert, und ein Koordinatenabstiegsverfahren \cite{friedman}. Letzteres werden wir in unseren Implementierung in Kapitel \ref{implementation} für ein Subproblem nutzen.
-
-https://stats.stackexchange.com/questions/123672/coordinate-descent-soft-thresholding-update-operator-for-lasso
-
-We propose an efficient algorithm called LARS-EN to solve the elastic net efficiently, which is
-based on the recently proposed algorithmLARSof Efron et al. (2004). They proved that, starting
-from zero, the lasso solution paths grow piecewise linearly in a predictable way. They proposed
-a new algorithm called LARS to solve the entire lasso solution path efficiently by using the same
-order of computations as a single OLS fit
-
-Die Implementierung des Elastic Nets in scikit-learn \cite{scikit_learn} beruht auf einer anderen, aber sehr ähnlichen mathematischen Formulierung
+Ähnlich wie bei der Lasso Regression kann nur dann eine explizite Lösung von (\ref{elastic_net_formulation}) angegeben werden, wenn die Spalten von $\mat X$ orthonormal sind. Für eine numerische Lösung wurden zum Beispiel LARS-EN \cite{zou_elasticnet}, welches auf dem LARS Algorithmus für das Lasso basiert, und ein Koordinatenabstiegsverfahren \cite{friedman} vorgeschlagen. Die Implementierung des Elastic Nets in scikit-learn \cite{scikit_learn} beruht auf letzterem Verfahren mit einer ähnlichen mathematischen Formulierung wie in (\ref{elastic_net_formulation})
 \begin{align}
 \label{elastic_net_python}
-\hat{\beta}^{\text{en}} = \argmin_{\beta} \frac{1}{2n} \norm{y - \mat X \beta}_2^2 + \lambda \alpha \norm{\beta}_{1} + \frac{1}{2}\lambda (1-\alpha) \norm{\beta}_{2}^2
+\argmin_{\beta} R_{\lambda}(\beta) = \argmin_{\beta} \frac{1}{2n}  \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda \alpha \norm{\beta}_{1} + \frac{\lambda}{2}(1-\alpha) \norm{\beta}_{2}^2
 \end{align}
-wobei $n$ die Anzahl an Beobachtungen im Datensatz und $\alpha \in [0,1]$ das Verhältnis zwischen $\ell_1$- und $\ell_2$-Norm ist. Mit $\alpha = 0$ reduziert sich (\ref{elastic_net_python}) auf Ridge und für $\alpha = 1$ auf die Lasso Regression. Somit können wir durch $\alpha$ das Verhältnis der beiden Regressionen kontrollieren und durch $\lambda$ die Stärke der Bestrafung. Setzt man 
+wobei $\alpha \in [0,1]$ das Verhältnis zwischen $\ell_1$- und $\ell_2$-Norm ist. Mit $\alpha = 0$ reduziert sich (\ref{elastic_net_python}) auf Ridge und für $\alpha = 1$ auf die Lasso Regression. Während wir mit $\alpha$ das Verhältnis der beiden Regressionen bestimmen, können wir mit $\lambda$ die Stärke der Bestrafung kontrollieren. Setzt man 
 \begin{align}
- \lambda = \frac{2\lambda_2 + \lambda_1}{2n} \quad \text{und} \quad \alpha = \frac{\lambda_1}{2\lambda_2 + \lambda_1}
+\lambda = \frac{2\lambda_2 + \lambda_1}{2n} \quad \text{und} \quad \alpha = \frac{\lambda_1}{2\lambda_2 + \lambda_1}
 \end{align}
-entspricht (\ref{elastic_net_python}) unser ursprünglich formulierten Problem. An dieser Stelle möchten wir anmerken, dass bei dieser Implementierung nicht die Möglichkeit besteht, die Koeffizienten unterschiedlich zu bestrafen im Gegensatz zu (\ref{elastic_net_formulation}).
+entspricht (\ref{elastic_net_python}) unser ursprünglich formulierten Problem. Für unterschiedliche Bestrafung der Koeffizienten können wir Skalierungsparameter $\gamma_j$ zulassen und $\lambda_j = \lambda\gamma_j$ setzen.
+
+Oft ist es schwer alle Koeffizienten gleichzeitig zu optimieren. Daher nutzt man bei einem Koordinatenabstiegsverfahren aus, dass eine partielle Optimierung für den $j$-ten Koeffizienten einfach zu berechnen ist, während alle anderen fixiert werden. Mithilfe der bisherigen Schätzer $\tilde{\beta}_0$ und $\tilde{\beta}_l$ für $l \neq j$, lösen wir
+\begin{align}
+\label{coordinate_enet_problem}
+\tilde{\beta}_j = \argmin_{\beta_j} R_{\lambda}(\tilde{\beta}_0, \ldots, \tilde{\beta}_{j-1}, \beta_j, \tilde{\beta}_{j+1}, \ldots, \tilde{\beta}_p)
+\end{align}
+Da $R_{\lambda}(\tilde{\beta}_0, \ldots, \tilde{\beta}_{j-1}, \beta_j, \tilde{\beta}_{j+1}, \ldots, \tilde{\beta}_p)$ für $\beta_j = 0$ nicht differenzierbar ist, werden zur Lösung von (\ref{coordinate_enet_problem}) Subdifferentiale benutzt, welche eine Verallgemeinerung des Gradienten auf nicht differenzierbare konvexe Funktionen ist. Wir werden uns auf die Angabe einer Lösung beschränken und verweisen für eine Herleitung dieser auf \cite{donoho}. Der Einfachheit und Übersichtlichkeit halber nehmen wir an, dass die Variablen standardisiert wurden, d.h. $\sum_{i=1}^n x_{ij} = 0$ und $\frac{1}{n}\sum_{i=1}^n x_{ij}^2 = 1$. Dann ergibt sich die explizite Lösung
+\begin{align}
+\tilde{\beta}_j = \frac{\operatorname{soft}_{\lambda\alpha} (\frac{1}{n}\sum_{i=1}^n x_{ij}(y_i - (\tilde{\beta}_0 + \sum_{l \neq j} x_{il}\tilde{\beta}_l)))}{1 + \lambda (1-\alpha)}
+\end{align}
+Dabei ist $y_i - (\tilde{\beta}_0 + \sum_{l \neq j} x_{il}\tilde{\beta}_l)$ das partielle Residuum der $i$-ten Beobachtung bei Anpassung von $\beta_j$, d.h. das Residuum bei bestmöglicher Vorhersage ohne Einbeziehung von $\beta_j$. Der Term $\frac{1}{n}\sum_{i=1}^n x_{ij}(y_i - (\tilde{\beta}_0 + \sum_{l \neq j} x_{il}\tilde{\beta}_l))$ ist ein Maß dafür, ob eine Einbeziehung von $\beta_j$ in das Modell die Vorhersagen verbessert. Nach Berechnung dieses Werts, wenden wir soft-thresholding gemäß der $\ell_1$-Bestrafung an und schrumpfen die Koeffizienten mit dem Faktor $1+\lambda(1-\alpha)$ für den Beitrag der $\ell_2$-Norm. Wegen der Standardisierung gilt
+\begin{align}
+\label{cd_fast_explaination}
+\frac{1}{n}\sum_{i=1}^n x_{ij}(y_i - (\tilde{\beta}_0 + \sum_{l \neq j} x_{il}\tilde{\beta}_l)) = \frac{1}{n}\sum_{i=1}^n x_{ij}r_i + \tilde{\beta}_j
+\end{align}
+wobei $r_i$ das aktuelle Residuum der $i$-ten Beobachtung ist. Anhand von (\ref{cd_fast_explaination}) können wir erkennen, warum das Koordinatenabstiegsverfahren effizient ist. Viele der Koeffizienten, die zuvor Null waren, bleiben nach der soft-thresholding Operation Null, wenn die Residuen bezüglich $\beta_j$ nicht zu groß sind. Daher muss $\beta_j$ in vielen Fällen nicht aktualisiert werden.
+
+Für die Wahl des Koeffizienten, welcher als nächstes minimiert werden soll, gibt es verschiedene Möglichkeiten. Man kann zyklisch, zufällig oder in die Richtung des steilsten Abstiegs entlang der Koordinaten vorgehen. In Algorithmus \ref{enet_algorithm} haben wir das zyklische Koordinatenabstiegsverfahren zusammengefasst.
+
+\begin{algorithm}[tbh]
+    \caption{Koordinatenabstiegsverfahren für das Elastic Net}
+    \label{enet_algorithm}
+    \begin{algorithmic}[1]
+        \Procedure{elasticnet}{$\mat X, y, \lambda, \alpha$}
+        	\State Initialisiere $\beta = (\mat X^T\mat X + \lambda\mat I)^{-1}\mat X^Ty$
+            \While {nicht konvergiert}
+                \For {$j = 1, \ldots, p$}
+                	\State $c_j \gets \frac{1}{n}\sum_{i=1}^n x_{ij}(y_i - (\beta_0 + \sum_{l \neq j} x_{il}\beta_l))$
+                	\State $\beta_j \gets \frac{\operatorname{soft}_{\lambda\alpha}(c_j)}{1 + \lambda (1-\alpha)}$
+        		\EndFor
+        	\EndWhile
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm} 
+
+Auch wenn klassische Kriterien für die Konvergenz von Koordinatenabstiegsverfahren aufgrund der Differenzierbarkeit, welche nicht hier nicht gegeben ist, nicht zutreffen, besitzt (\ref{elastic_net_python}) eine Eigenschaft, für welche das Verfahren konvergiert \cite{tseng}. Bezüglich der Laufzeit .
+
+
+%----------------------------------------------------------------------------------------
+%	Vergleich der Regressionsmethoden
+%----------------------------------------------------------------------------------------
+
 
 \subsection{Vergleich der Regressionsmethoden}
 \label{comparison_linear_models}
