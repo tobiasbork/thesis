@@ -158,6 +158,6 @@ Um ein genaues Verständnis der Ergebnisse zu garantieren, haben wir uns dazu en
 
 Bezüglich der Aufrufstruktur der Methode haben wir eine Reparametrisierung vorgenommen, um die Notation mit der ElasticNet-Klasse in scikit-learn zu vereinheitlichen. Ähnlich wie in Abschnitt \ref{comparison_linear_models} definieren wir
 \begin{align}
-\alpha = \frac{2\lambda_2 + \lambda_1}{2n} \quad \text{und} \quad \gamma = \frac{\lambda_1}{2\lambda_2 + \lambda_1}
+\lambda = \frac{2\lambda_2 + \lambda_1}{2n} \quad \text{und} \quad \alpha = \frac{\lambda_1}{2\lambda_2 + \lambda_1}
 \end{align}
 wobei $\alpha$ die Stärke der Bestrafung und $\gamma$ das Verhältnis des $\ell_1$ zum $\ell_2$-Strafterm beschreibt.
