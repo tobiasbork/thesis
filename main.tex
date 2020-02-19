@@ -79,8 +79,6 @@ headsepline, % Uncomment to get a line under the header
 \newcommand{\rnp}{\mathbb{R}^{n \times p}}
 \newcommand{\rn}{\mathbb{R}^n}
 
-\captionsetup[subfigure]{width=0.9\textwidth}
-
 \makeatletter
 \newenvironment{chapquote}[2][2em]
   {\setlength{\@tempdima}{#1}%
@@ -89,6 +87,11 @@ headsepline, % Uncomment to get a line under the header
    \itshape}
   {\par\normalfont\hfill--\ \chapquote@author\hspace*{\@tempdima}\par\bigskip}
 \makeatother
+
+\captionsetup[subfigure]{width=0.9\textwidth}
+
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
 
 %----------------------------------------------------------------------------------------
 %	MARGIN SETTINGS
