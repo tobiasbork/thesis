@@ -1,31 +1,38 @@
 % Main chapter title
-\chapter{Ausblick / Zusammenfassung}
+\chapter{Zusammenfassung}
 
 % Chapter label
 \label{conclusion}
 
-\section{Einsetzbarkeit}
-Wann ist die Methode sinnvoll einzusetzen?
+Im Zuge dieser Arbeit haben wir die Konstruktion, Theorie und Anwendung der dünnbesetzten Hauptkomponentenanalyse detailliert erläutert.
+Nach einer kurzen Einführung in die Thematik und deren Relevanz in der Praxis, haben wir uns mit den mathematischen Grundlagen des Verfahrens beschäftigt. Besonders wichtig waren Kenntnisse aus der linearen Algebra und verallgemeinerter Regressionsmodelle. Anschließend wurde das wohl weitverbreiteste Dimensionsreduktionsverfahren, die Hauptkomponentenanalyse, in verschiedenen Formen vorgestellt. Grenzen, mögliche Erweiterungen und theoretische Aussagen des klassischen Verfahrens wurden beschrieben, um ein umfassendes Bild zu vermitteln. Im weiteren Verlauf wurde ein Kernproblem herausgestellt, was zur Idee der dünnbesetzten Hauptkomponentenanalyse führt. Zu diesem Zweck wurde ein in der Literatur vorgeschlagener Ansatz detailliert erklärt und eine numerische Lösung entwickelt. Mithilfe einer eigenen Implementierung haben wir die dünnbesetzte Hauptkomponentenanalyse auf einen realen Datensatz angewandt. Die beachtlichen Ergebnisse wurden kritisch hinterfragt und validiert. Darüber hinaus haben wir herausgearbeitet, wie das Verfahren in der Praxis einzusetzen ist.
 
-We now have a good understanding of the role of
-sparsity in PCA and ways to effectively exploit the sparsity.
-There are still remaining issues. A very important issue to
-be investigated further is automated SPCA. By “automated”
-we mean that there is a principled but not overly complicated
-procedure to set these sparse parameters in SPCA.
-This question is particularly challenging when we solve
-several sparse principal components jointly.
 
-Kritik 
-results in very large residuals
-highly correlated scores
-q is no updated due to the normalization step
+%----------------------------------------------------------------------------------------
+%	Diskussion
+%----------------------------------------------------------------------------------------
 
-Subproblem schneller lösbar mit Verbindung zu SVM
 
-BIC-Kriterium tends to break in the high-dimensional case
+\section{Diskussion}
 
-\section{Übertragbarkeit}
-Übertragbarkeit auf andere Datensätze
+Wir besitzen nun ein sehr gutes Verständnis über die Rolle der Dünnbesetzung und deren Einsatz für die Entwicklung transparenter Modelle. Allerdings gibt es noch immer Details und Zusammenhänge, welche es näher zu verstehen gilt. So ist man für die dünnbesetzte Hauptkomponentenanalyse ist man noch immer auf der Suche nach Kriterien, welche eine automatisierte Wahl der Modellparameter ermöglichen. Teilweise mussten wir in unserer Anwendung manuelle Gewichtungen vornehmen, um brauchbare Ergebnisse zu erzielen. Vorerst sind wir also dazu angehalten eigene Analysen durchzuführen und automatisierte Kriterien kritisch zu hinterfragen.
 
-\section{Ongoing Research / Weitere Techniken}
+In Kapitel \ref{relaxation} haben wir erwähnt, dass es durchaus andere Wege gibt, dass Problem der dünnbesetzten Hauptkomponentenanalyse zu relaxieren. Allgemein gibt es leider keinen besten Weg bzw. einen besten Algorithmus, so dass jeder Vorschlag seine Vor- und Nachteile beinhaltet. Bislang haben wir keine Kritik an dem von uns vorgestellten Ansatz durch Zou und Hastie \cite{zou_sparsepca} geäußert. Jedoch gibt es auch hier Schwierigkeiten, die bei der Verwendung zu beachten sind. 
+
+Im Vergleich zu anderen Methoden produziert der Algorithmus stärker korrelierte Hauptkomponenten. In der Praxis wäre es aber wünschenswert, wenn jede Hauptkomponente eine eigene Bedeutung im Kontext besitzt. Durch die Korrektur der Hauptkomponenten mit der Moore-Penrose-Inversen, wie es in \cite{camacho} vorgeschlagen wurde, wird eine Verringerung der Korrelation erreicht. Durch die Korrektur ist das Niveau der Korrelation mit anderen Methoden vergleichbar. 
+
+Weitere Kritik bezieht sich auf die Art der Modellierung. Das Sparse-PCA-Kriterium aus Kapitel \ref{sparse_pca} ist ein Optimierungsproblem über zwei Matrizen $\mat A$ und $\mat B$. Da sowohl $\mat A$ durch die Orthogonalitätsbedingung als auch $\mat B$ durch die verschiedenen Strafterme eingeschränkt ist, fehlt es dem Modell an Flexibilität. Je nach Stärke der Bestrafungen können wir daher nie die gesamte Varianz des Datensatzes erklären. Des Weiteren sind die dünnbesetzten Hauptachsen nicht wie üblich normalisiert. Zou und Hastie normalisieren die Hauptachsen daher am Ende des Algorithmus. Allerdings müsste die Matrix $\mat A$ dementsprechend angepasst werden, was in ihrer Arbeit nicht berücksichtigt wird und zu einem hohen Rekonstruktionsfehler führen kann. Daran erkennen wir, dass die Autoren primär an den dünnbesetzten Hauptachsen interessiert waren. Andere Verfahren erlauben eine flexiblere Modellierung, aber erreichen nicht immer eine vergleichbare Dünnbesetzung oder Laufzeit. Es fehlt der Literatur an einem weitreichendem Vergleich der verschiedenen Methoden in der Praxis.
+
+
+%----------------------------------------------------------------------------------------
+%	Ausblick
+%----------------------------------------------------------------------------------------
+
+
+\section{Ausblick}
+
+In unserer Implementierung des Algorithmus haben wir bereits eine Verbesserung der Laufzeit gegenüber der von Zou und Hastie für hochdimensionale Datensätze erreicht. Wir können den Algorithmus weiter verschnellern, indem wir einen Teil parallelisieren. Zwar müssen die Iterationen hintereinander ausgeführt werden, aber wir können das Elastic Net Subproblem für jede Hauptachse unabhängig voneinander berechnen. Mithilfe dieser Parallelisierung ist es möglich noch bessere Laufzeiten in der Praxis zu erhalten.
+
+Auch wenn algorithmische Reduktionen in der theoretischen Informatik häufig genutzt werden, bleiben sie im Bereich des Machine Learnings oft unberücksichtigt. In unserem Fall ist es tatsächlich möglich, das Elastic Net auf ein anderes weitverbreitetes überwachtes Verfahren zurückzuführen, eine sog. \textit{Support Vector Machine (SVM)}. Diese kommen sehr häufig für Mustererkennung bzw. Klassifikation der Beobachtungen in einem Datensatz zum Einsatz. In \cite{zhou} wird gezeigt, dass zu jeder Elastic Net Instanz ein binäres Klassifikationsproblem konstruiert werden kann, so dass die trennende Hyperebene eine identische Lösung nach Skalierung liefert. Dies ermöglicht die Nutzung schneller parallelisierter CPU-basierten und auch GPU-basierten SVM-Lösern. Dadurch lässt sich in der Praxis eine um zwei Größenordnungen bessere Laufzeit erreichen. Für eine zukünftige Nutzung des von uns implementierten Algorithmus kann es daher sinnvoll sein, dieser Art Reduktion zu nutzen.
+
+Zusammenfassend konnten wir in dieser Arbeit sowohl die Theorie der dünnbesetzten Hauptkomponentenanalyse aufarbeiten, als auch einen praktischen Teil beisteuern. Mithilfe der eigenen Implementierung haben wir beachtliche Ergebnisse erzielt, welche die Brauchbarkeit des Verfahrens für Frequenzdaten bestätigt. 
