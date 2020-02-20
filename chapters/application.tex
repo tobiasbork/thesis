@@ -4,49 +4,42 @@
 % Chapter Label
 \label{application}
 
-In diesem Kapitel beschäftigen wir uns mit der Anwendung der dünnbesetzten Hauptkomponentenanalyse auf Frequenzdaten einer Mühle. Dafür stehen uns Zeitreihen von Beschleunigungssensoren, welche die Vibration der Maschine messen, sowie akustische Daten, welche durch Mikrofone aufgezeichnet werden, zur Verfügung. Wir sind interessiert daran herauszufinden, ob sich mithilfe der Zeitreihen Aussagen über die Partikelgröße des Materials treffen lassen. Aufgrund der Beschaffenheit des Datensatzes sind viele überwachte Lernverfahren in diesem Zusammenhang unbrauchbar. Im Zuge einer explorativen Analyse kann daher eine Dimensionsreduktion sinnvoll sein. Dabei sind wir nicht unbedingt an der niedrigdimensionalen Repräsentation der Daten interessiert, sondern viel mehr an der Herausfilterung wichtiger Frequenzen. Idealerweise erhalten wir eine Trennung der Frequenzen je nachdem, ob sie durch die Maschine oder durch das Material erzeugt worden sind. Die Möglichkeit der Interpretation und die Konsistenz waren Anlass für die Verwendung der dünnbesetzten Hauptkomponentenanalyse in diesem Zusammenhang. 
+In diesem Kapitel beschäftigen wir uns mit der Anwendung der dünnbesetzten Hauptkomponentenanalyse auf Frequenzdaten einer Mühle. Dafür stehen uns Zeitreihen von Beschleunigungssensoren und Mikrofonen zur Verfügung, welche an der Maschine angebracht sind, um die Vibration bzw. die Akustik zu messen. Wir sind interessiert daran herauszufinden, ob sich mithilfe der Zeitreihen Aussagen über die Partikelgröße des Materials treffen lassen. Aufgrund der geringen Beobachtungszahl des Datensatzes sind viele überwachte Lernverfahren in diesem Zusammenhang unbrauchbar. Im Zuge einer explorativen Analyse kann daher eine Dimensionsreduktion sinnvoll sein. Dabei sind wir nicht unbedingt an der niedrigdimensionalen Repräsentation der Daten interessiert, sondern viel mehr an der Herausfilterung wichtiger Frequenzen. Idealerweise können wir die Frequenzen dem Material oder der Maschine zuordnen, so dass wir zwischen Material- und Maschineneigenschaften unterscheiden können. Die Möglichkeit der Interpretation und die Konsistenz in hochdimensionalen Fällen waren Anlass für die Verwendung der dünnbesetzten Hauptkomponentenanalyse in diesem Zusammenhang. 
 
-Zunächst werden wir dafür in Abschnitt \ref{data_set} den Datensatz näher beschreiben und Vorverarbeitungsschritte in \ref{prepros
-} erläutern. Ergebnisse der Anwendung. Darüber hinaus werden wir die Wahl der Hyperparameter, die Laufzeit und die Korrektheit des Algorithmus in \ref{evaluation} thematisieren.
-
-Ob eine derartige Methode für diesen Datensatz sinnvoll war, werden wir in Kapitel \ref{conclusion} diskutieren.
-
-Wo erwähnen wir, dass $\lambda$ in unseren Versuchen für alle Achsen gleich gewählt wird, auch wenn unterschiedliche Bestrafungen prinzipiell möglich sind?
+Zunächst werden wir den Datensatz näher beschreiben in Abschnitt \ref{data_set} und Vorverarbeitungsschritte in \ref{preprocessing} erläutern. Nachdem wir in \ref{application_frequency_data} erklären, welche Experimente durchgeführt worden sind, wenden wir uns den Ergebnissen in \ref{evaluation} zu. Zu einer detaillierten Auswertung gehören sowohl eine klassische Analyse und ein Vergleich mit der Hauptkomponentenanalyse, als auch das Verhalten des Algorithmus an sich. Dazu werden wir die Wahl der Hyperparameter, die Laufzeit und die Konvergenz des Algorithmus thematisieren. Zu Abschluss dieses Kapitels werden wir die Korrektheit der von Camacho et al. \cite{camacho} berechneten Varianzen empirisch validieren. Ob eine derartige Methode für diesen Datensatz ein sinnvoller Ansatz war, werden wir in Kapitel \ref{conclusion} diskutieren.
 
 
 %----------------------------------------------------------------------------------------
-%	Beschreibungs des Datensatzes
+%	Beschreibung des Datensatzes
 %----------------------------------------------------------------------------------------
 
 
 \section{Beschreibung des Datensatzes}
 \label{data_set}
 
-Wir verfügen über Zeitreihen von Beschleunigungssensoren sowie Mikrofonen, die an unterschiedlichen Positionen einer Mühle angebracht sind. Um eine Trennung von Maschine und Material in den Daten zu ermöglichen, wurden Messungen sowohl mit als auch ohne Material durchgeführt. Des Weiteren wurden verschiedene Eigenschaften der Maschine verändert, was zu unterschiedlichen Mahlergebnissen führt. 
-
-Durch eine hohe Abtastrate haben wir es mit einem hochdimensionalen Datensatz zu tun. Für jeden angebrachten Sensor haben wir somit $p \approx 5000000$ Zeitpunkte. Mit nur $n \approx 30$ Messungen, wobei Messungen mit Material mehrmals aufgezeichnet worden sind, sehen wir uns mit einer \textit{high dimension low sample size (HDLSS)} Situation konfrontiert. 
+Wie bereits erwähnt, verfügen wir über Zeitreihen verschiedener Sensoren, 
+die an unterschiedlichen Positionen einer Mühle angebracht sind. Insgesamt wurden $n \approx 30$ Messungen bei laufendem Mahlprozess gestartet. Bei jeder dieser wurde dasselbe Material verwendet und ein festgelegter Zeitraum betrachtet. Um eine Trennung von Maschine und Material in den Daten zu ermöglichen, wurden Messungen sowohl mit als auch ohne Material durchgeführt. Des Weiteren wurden verschiedene Betriebszustände der Maschine variiert, damit ein möglicher Zusammenhang mit dem Mahlergebnis hergestellt werden kann. Durch eine hohe Abtastrate haben wir es mit einem hochdimensionalen Datensatz zu tun. Für jeden angebrachten Sensor haben wir somit $p \approx 5,000,000$ Zeitpunkte. Mit nur wenigen Messungen, wobei Messungen mit Material mehrmals aufgezeichnet worden sind, sehen wir uns mit einer \textit{high dimension low sample size (HDLSS)} Situation konfrontiert. 
 
 \section{Vorverarbeitung der Daten}
 \label{preprocessing}
 
-Vor der Anwendung der dünnbesetzten Hauptkomponentenanalyse auf den Datensatz haben wir einige Vorverarbeitungsschritte vorgenommen. Anfänglich sind uns wie beschrieben Zeitreihen gegeben. Da die Messungen zu zufälligen Zeitpunkten bei laufendem Mahlprozess gestartet worden sind, können einzelne Zeitpunkte nicht direkt miteinander verglichen werden. Mit einer Fouriertransformation der Daten können wir anstatt auf der Zeitachse auf den Frequenzen arbeiten, welche besser verglichen werden können. Zusätzlich erhofft man Rauscheffekte in dieser Darstellung besser zu erkennen. In Abbildung \ref{fft_example} zeigen wir das Ergebnis einer Fouriertransformation beispielhaft für einen Sensor.
+Vor der Anwendung der dünnbesetzten Hauptkomponentenanalyse haben wir einige Vorverarbeitungsschritte vorgenommen. Da die Messungen zu zufälligen Zeitpunkten bei laufendem Mahlprozess gestartet worden sind, können einzelne Zeitpunkte nicht direkt miteinander verglichen werden. Mit einer Fouriertransformation der Daten können wir anstatt auf der Zeitachse auf den Frequenzen arbeiten, welche uns tiefere Einblicke ermöglichen. Auf diesem Wege sind sowohl Unterschiede zwischen Messungen, als auch mögliche Rauscheffekte leichter zu erkennen. In Abbildung \ref{fft_example} zeigen wir das Ergebnis einer Fouriertransformation beispielhaft für eine Messung eines Beschleunigungssensors.
 
 \begin{figure}
 \centering
-\begin{subfigure}{0.9\textwidth}
-\includegraphics[width=\textwidth]{figures/Signal_0_fft_example.png}
-\caption{Signal 0 fft example}
-\end{subfigure}
-%
-\begin{subfigure}{0.9\textwidth}
 \includegraphics[width=\textwidth]{figures/Signal_5_fft_example.png}
 \caption{Signal 5 fft example}
-\end{subfigure}
 \label{fft_example}
 \end{figure}
 
-Es wird sich zeigen, dass der Algorithmus für die dünnbesetzte Hauptkomponentenanalyse sehr rechenintensiv sein kann. Daher haben wir uns entschieden, nur einen Teil der ursprünglichen Zeitreihe zu verwenden. Abbildung REF rechtfertigt diesen Schritt. Hier sieht man, dass sich die Frequenzen über die Zeit kaum ändern, was daran liegt, dass der Maschine konstant Material zugeführt wird. Somit können wir die Dimension um einen Faktor $100$ reduzieren ohne wichtige Informationen zu verlieren. Des Weiteren wurden Teile der Frequenzen, welche außerhalb des Frequenzbereichs des jeweiligen Sensors liegen, abgeschnitten. Zu Schluss haben wir die Daten ähnlich wie bei der klassischen Hauptkomponentenanalyse zentriert, um die Varianzen der verschiedenen Frequenzen vergleichbarer zu machen.
+Es wird sich zeigen, dass der Algorithmus für die dünnbesetzte Hauptkomponentenanalyse sehr rechenintensiv sein kann. Daher haben wir uns entschieden, nur einen Teil der ursprünglichen Zeitreihe zu verwenden. Mithilfe einem Blick auf das Spektrogramm in Abbildung \ref{spectrogram} erkennen wir, dass sich die Frequenzen über den Messzeitraum kaum verändern. Dies ist darauf zurückzuführen, dass der Maschine konstant Material zugeführt wird. Daher können wir die Dimension um einen Faktor $100$ reduzieren ohne wichtige Informationen zu verlieren. Des Weiteren wurden Teile der Frequenzen, welche außerhalb des Frequenzbereichs des jeweiligen Sensors liegen, abgeschnitten. Somit verbleiben wir mit $p \approx 15,000$ Variablen. Um die Varianzen der Frequenzen vergleichbarer zu machen, haben wir die Daten ähnlich wie bei der klassischen Hauptkomponentenanalyse zentriert.
 
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{figures/Signal_5_time_frequency_change.png}
+\caption{Signal 5 time frequency change}
+\label{spectrogram}
+\end{figure}
 
 %----------------------------------------------------------------------------------------
 %	Anwedung auf Frequenzdaten
@@ -56,9 +49,11 @@ Es wird sich zeigen, dass der Algorithmus für die dünnbesetzte Hauptkomponente
 \section{Anwendung auf Frequenzdaten}
 \label{application_frequency_data}
 
-Unsere Implementierung ermöglicht verschiedene Modellparameter zu wählen. Für eine Beschränkung der Laufzeit setzen wir eine maximale Anzahl an Iterationen von $500$ und eine Toleranz von $10^{-4}$. Falls nach $500$ Iterationen die vorgegebene Toleranz noch immer nicht erreicht ist, werden wir dies im Folgenden kenntlich machen. Ein weiterer Parameter den es zu wählen gilt, ist die Anzahl zu berechnender Hauptkomponenten. Wie bereits in \ref{sparse_pca_theorems} beschrieben, wird dazu meist die klassische Hauptkomponentenanalyse verwendet. Wir haben uns für Analysezwecke dazu entschieden einen Durchlauf mit $2$ und einen mit $10$ Hauptkomponenten zu starten. Interessanter ist die Wahl der Hyperparameter $\lambda$ und $\alpha$, welche wesentlichen Einfluss auf die Ergebnisse besitzen. Für die Wahl von $\lambda$ haben wir einerseits mehrere Werte ausprobiert, als auch eine Rastersuche bezüglich der in \ref{choice_of_tuning_parameters} beschriebenen BIC-Kriterien durchgeführt. Dafür verwenden wir auf einer log-Skala gleichverteilte Werte im Bereich zwischen $10^{-7}$ und $10^0$. Dagegen wählen wir für das Verhältnis zwischen Lasso und Ridge-Bestrafung die Werte $[0.1, 0.5, 0.7, 0.9, 0.95, 0.99, 1]$. Mithilfe der Kreuzvalidierung kann dann ein bester Wert für $\alpha$ bestimmt werden. Es hat sich in den Anwendungen gezeigt, dass eine geeignete Liste für $\alpha$ mehr Werte nahe bei $1$ hat, da sich dort die größten Änderungen ergeben. Damit stärken wir den Lasso-Strafterm im Vergleich zum Ridge-Strafterm. (Minimieren wir zeitgleich über $\lambda$ und $\alpha$
+Unsere Implementierung ermöglicht eine Wahl verschiedene Parameter bezüglich des Modells bzw. des Algorithmus. Für eine Beschränkung der Laufzeit setzen wir eine maximale Anzahl an Iterationen von $500$ und eine Toleranz von $10^{-4}$. Falls nach $500$ Iterationen die vorgegebene Toleranz noch immer nicht erreicht ist, werden wir dies im Folgenden kenntlich machen. Ein Modellparameter, den es zu wählen gilt, ist die Anzahl zu berechnender Hauptkomponenten. Wie bereits in \ref{spca_theorems} beschrieben, wird dazu meist das Ergebnis einer klassischen Hauptkomponentenanalyse verwendet. Es hat sich gezeigt, dass $2$ Hauptkomponenten für die meisten Sensoren ausreichen, um einen Großteil des Datensatzes zu erklären. Zu Analysezwecken haben wir uns dennoch entschieden einen Durchlauf mit $2$ und einen mit $10$ Hauptkomponenten zu starten. 
 
-Exemplarisch werden wir uns nun mit einem der akustischen und einem der Beschleunigungssensoren weiter beschäftigen. An dieser Stelle möchten wir erwähnen, dass wir die Sensoren getrennt betrachten, d.h. die dünnbesetzte Hauptkomponentenanalyse auf die Sensoren einzeln anwenden. Dies ist aufgrund der Unterschiedlichkeit der Sensoren sinnvoll. Um einen Vergleich zu ermöglichen, haben wir zeitgleich die klassische Hauptkomponentenanalyse auf den Datensatz angewandt. Wir möchten nun ausgewählte Ergebnisse vorstellen. 
+Interessanter ist die Wahl der Hyperparameter $\lambda$ und $\alpha$, welche wesentlichen Einfluss auf die Ergebnisse besitzen. Auch wenn prinzipiell die Möglichkeit besteht, differenzierte Bestrafungen je Hauptkomponente $\lambda_j$ auszuwählen, beschränken wir uns der Einfachheit halber auf eine einheitliche Bestrafung. Für die Wahl von $\lambda$ haben wir sowohl mehrere Werte ausprobiert, als auch eine Rastersuche bezüglich der in \ref{choice_of_tuning_parameters} beschriebenen BIC-Kriterien durchgeführt. Dafür verwenden wir auf einer log-Skala gleichverteilte Werte im Bereich zwischen $10^{-7}$ und $10^0$. Dagegen wählen wir für das Verhältnis zwischen Lasso und Ridge-Bestrafung die Werte $[0.1,\, 0.5,\, 0.7,\, 0.9,\, 0.95,\, 0.99,\, 1]$. Mithilfe des BIC-Kriteriums können wir zeitgleich über $\lambda$ und $\alpha$ optimieren. Es hat sich in den Anwendungen gezeigt, dass eine geeignete Liste für $\alpha$ mehr Werte nahe $1$ hat, da sich dort die größten Änderungen ergeben. Damit stärken wir den Lasso-Strafterm im Vergleich zum Ridge-Strafterm.
+
+Exemplarisch werden wir uns nun mit einem der akustischen und einem der Beschleunigungssensoren weiter beschäftigen. An dieser Stelle möchten wir erwähnen, dass wir die Sensoren getrennt betrachten, d.h. die dünnbesetzte Hauptkomponentenanalyse auf die Sensoren einzeln anwenden. Dies ist aufgrund der Unterschiedlichkeit der Sensoren sinnvoll. Wir werden nun ausgewählte Ergebnisse vorstellen. 
 
 
 %----------------------------------------------------------------------------------------
@@ -69,7 +64,7 @@ Exemplarisch werden wir uns nun mit einem der akustischen und einem der Beschleu
 \section{Auswertung der Ergebnisse}
 \label{evaluation}
 
-Im Rahmen dieser Arbeit können wir nun einen begrenzten Teil der Ergebnisse vorstellen. Ziel wird es sein, alle wesentlichen Effekte zu erläutern und gegebenenfalls weiter ins Detail zu gehen. 
+Im Rahmen dieser Arbeit können wir nun einen begrenzten Teil der Ergebnisse präsentieren. Ziel wird es sein, wesentliche Ergebnisse und Effekte des Algorithmus zu erläutern und gegebenenfalls weiter ins Detail zu gehen. 
 
 
 %----------------------------------------------------------------------------------------
@@ -79,67 +74,52 @@ Im Rahmen dieser Arbeit können wir nun einen begrenzten Teil der Ergebnisse vor
 
 \subsection{Klassische Analyse der Hauptachsen}
 
-Zunächst wollen wir einen Blick auf die entstehenden Hauptachsen und Hauptkomponenten werfen. Dazu betrachten wir Abbildung REF, in welcher sowohl die klassischen als auch die dünnbesetzten Hauptachsen für zwei verschiedene Sensoren dargestellt sind. Anhand der Hauptachsen können wir erkennen, welche Frequenzen eine entscheidende Rolle bei der Erhaltung der maximalen Varianz spielen. Demnach sind die größten Unterschiede im Datensatz bei den Frequenzen mit der größten Werten in diesem Bild. In beiden Fällen besitzen die klassischen Hauptachsen $\approx20,000$ von Null verschiedene Einträge, auch wenn dies gerade für den akustischen Sensor schwer zu erkennen ist. Direkt darunter befinden sich die zugehörigen dünnbesetzten Hauptachsen, welche nur $1$ bzw. $\approx200$ von Null verschiedene Einträge besitzen. Wir haben daher eine wesentliche Reduktion in der Komplexität der Hauptachsen erreicht. Dies ist wichtig, wenn es darum geht die Ergebnisse zu interpretieren. Ein Blick auf Abbildung REF
+Zunächst wollen wir eine klassische Analyse durchführen, wie sie oft für ein derartiges Verfahren gemacht wird. Um einen Vergleich zu ermöglichen, haben wir sowohl die klassische als auch die dünnbesetzte Hauptkomponentenanalyse durchgeführt. 
+
+Für einen ersten Einblick in die Ergebnisse betrachten wir Abbildung \ref{sparse_pca_classical_analysis_pc_graph} bzw. \ref{sparse_pca_classical_analysis_sparse_pc_graph}, in welcher die ersten beiden Hauptkomponenten gegeneinander aufgezeichnet sind. Dies ist die Darstellung der Daten bezüglich der neu gefundenen Variablen. Zuerst wenden wir uns den Ergebnissen der klassischen Hauptkomponentenanalyse zu. Man sieht schnell, dass sich vier Gruppierungen ergeben. Durch die Transformation sehen wir eine deutliche Trennung zwischen Messungen mit und ohne Material, welche im Bild durch verschiedene Farben markiert sind. Des Weiteren sind die Messungen mit bzw. ohne Material in zwei Untergruppen geteilt. Die Unterschiede sind auf verschiedene Betriebszustände der Maschine zurückzuführen, auf welche wir hier nicht genauer eingehen können. Vergleichen wir dieses Ergebnis mit der dünnbesetzten Variante in Abbildung \ref{sparse_pca_classical_analysis_sparse_pc_graph}, erkennen wir viele Gemeinsamkeiten. Es treten dieselben Gruppierungen wie zuvor auf, so dass noch immer eine Trennung der Messungen bezüglich der Befüllung möglich ist. Ein kleinerer Unterschied ist in der zweiten Hauptkomponenten zu sehen, da bei der dünnbesetzten Variante drei Messungen noch stärker separiert werden.
+
+Nun gilt es, das Zustandekommen dieses Bildes zu erklären. Wir wollen verstehen, warum wir eine Trennung zwischen Messungen bezüglich der Befüllung sehen. Vor allem interessieren wir uns dafür, welche Frequenzen für diesen Unterschied verantwortlich sind. Zu diesem Zweck betrachten wir Abbildung \ref{sparse_pca_classical_analysis_principal_axis} bzw. \ref{sparse_pca_classical_analysis_sparse_principal_axis}, in welcher die Hauptachsen der beiden Varianten zu sehen sind. Anhand der Hauptachsen können wir erkennen, welche Frequenzen eine entscheidende Rolle bei der Erhaltung der maximalen Varianz spielen. Demnach sind die größten Unterschiede im Datensatz auf die Frequenzen mit der größten Amplitude zurückzuführen. Auch wenn es in den niederen Frequenzen nicht leicht zu erkennen ist, sind bei der klassischen Hauptachse alle $\approx 15,000$ Einträge von Null verschieden sind. Eine Erklärung der beschriebenen Effekte ist hier quasi unmöglich. Wir können lediglich aussagen, dass die höheren Frequenzen in einer gewissen Weise wichtig sind. Genau hier liegt das Problem der klassischen Variante, denn eine Interpretation der Hauptachsen ist selten möglich. Dagegen reduziert sich bei der dünnbesetzten Variante die Anzahl von Null verschiedener Einträge auf $\approx 200$ für $\lambda = 0.1$ und $\alpha = 0.1$. Durch die eingeschränkte Modellkomplexität erkennen wir drei Peaks im Frequenzspektrum. Im Wesentlichen sind also nur viel weniger Frequenzen für die beschriebene Trennung verantwortlich. Daher können wir folgern, dass genau diese Frequenzen durch die Maschine verursacht werden. Mit diesem Verfahren ist es also möglich Frequenzen zu identifizieren, welche eine klare Bedeutung im Kontext besitzen.
+
+Zuletzt betrachtet man Abbildung \ref{sparse_pca_classical_analysis_scree_plot}, welche einen sog. \textit{scree plot} zeigt und oft als Bewertungsmittel von Dimensionsreduktionsverfahren dient. Mithilfe dieses Bildes kann man einsehen, welchen Anteil der Varianz des Datensatzes mit der niedrigdimensionalen Repräsentation erklärt wird. Zur Verdeutlichung der Effekte haben wir $10$ Hauptkomponenten berechnet. Es zeichnet sich ein klarer Varianzverlust je Hauptkomponente ab, wenn wir die dünnbesetzte Hauptkomponentenanalyse nutzen. Hier erhalten wir nur $25$\% der Information des Datensatz, während  es im Gegensatz dazu $95$\% bei der klassischen Variante sind. Besonders deutlich wird der Kompromiss, den wir eingehen müssen. Dadurch, dass unsere Hauptachsen einfacher zu interpretieren sind, verlieren wir an erklärter Varianz. Ein geeignetes Maß zwischen Modellkomplexität und Rekonstruktionsfehler zu finden, kann von der Anwendung und der Intention abhängen. In unserem Fall ist die Möglichkeit einer Interpretation der Hauptachsen deutlich wichtiger als die Varianzerhaltung. Wir haben durch Abbildung \ref{sparse_pca_classical_analysis_pc_graph} bzw. \ref{sparse_pca_classical_analysis_sparse_pc_graph} gesehen, dass uns durch einen Rückgang der Varianz nicht zwangsläufig Informationen verloren gehen müssen. Wir konnten trotz geringer Varianz ein ähnliches Bild mit verschiedenen Gruppierungen erzielen.
 
 \begin{figure}
 \centering
-%
-\begin{subfigure}{0.9\textwidth}
-\includegraphics[width=\textwidth]{figures/Signal_0_principal_axis.png}
-\caption{Signal 0 principal axis}
-\end{subfigure}
-%
-\begin{subfigure}{0.9\textwidth}
-\includegraphics[width=\textwidth]{figures/Signal_0_sparse_principal_axis.png}
-\caption{Signal 0 sparse principal axis}
-\end{subfigure}
-%
-\begin{subfigure}{0.45\textwidth}
-\includegraphics[width = \textwidth]{figures/Signal_0_pc_graph.png}
-\caption{Signal 5 PC Graph}
-\end{subfigure}
-%
-\begin{subfigure}{0.45\textwidth}
-\includegraphics[width = \textwidth]{figures/Signal_0_sparse_pc_graph.png}
-\caption{Signal 5 Sparse PC Graph}
-\end{subfigure}
-%
-\begin{subfigure}{0.9\textwidth}
-\includegraphics[width = \textwidth]{figures/Signal_0_scree_plot_10.png}
-\caption{Signal 0 Scree Plot}
-\end{subfigure}
-\caption{Vergleich der klassischen mit der dünnbesetzten Hauptkomponentenanalyse für ein $\lambda=0.0001$ und $\alpha = 0.95$.}
-\end{figure}
-
-\begin{figure}
-\centering
-\begin{subfigure}{0.9\textwidth}
-\includegraphics[width=\textwidth]{figures/Signal_5_principal_axis.png}
-\caption{Signal 5 principal axis}
-\end{subfigure}
-%
-\begin{subfigure}{0.9\textwidth}
-\includegraphics[width=\textwidth]{figures/Signal_5_sparse_principal_axis.png}
-\caption{Signal 5 sparse principal axis}
-\end{subfigure}
-%
 \begin{subfigure}{0.45\textwidth}
 \centering
 \includegraphics[width = \textwidth]{figures/Signal_5_pc_graph.png}
 \caption{Signal 5 PC Graph}
+\label{sparse_pca_classical_analysis_pc_graph}
 \end{subfigure}
 %
 \begin{subfigure}{0.45\textwidth}
 \centering
 \includegraphics[width = \textwidth]{figures/Signal_5_sparse_pc_graph.png}
 \caption{Signal 5 Sparse PC Graph}
+\label{sparse_pca_classical_analysis_sparse_pc_graph}
 \end{subfigure}
 %
 \begin{subfigure}{0.9\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/Signal_5_principal_axis.png}
+\caption{Signal 5 principal axis}
+\label{sparse_pca_classical_analysis_principal_axis}
+\end{subfigure}
+%
+\begin{subfigure}{0.9\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/Signal_5_sparse_principal_axis.png}
+\caption{Signal 5 sparse principal axis}
+\label{sparse_pca_classical_analysis_sparse_principal_axis}
+\end{subfigure}
+%
+\begin{subfigure}{0.9\textwidth}
+\centering
 \includegraphics[width = \textwidth]{figures/Signal_5_scree_plot_10.png}
 \caption{Signal 5 Scree Plot}
+\label{sparse_pca_classical_analysis_scree_plot}
 \end{subfigure}
 \caption{Vergleich der klassischen mit der dünnbesetzten Hauptkomponentenanalyse für ein $\lambda=0.1$ und $\alpha = 0.1$.}
+\label{sparse_pca_classical_analysis}
 \end{figure}
 
 
@@ -189,9 +169,26 @@ Um eine automatisierte Wahl von $\lambda$ und $\alpha$ zu ermöglichen, haben wi
 
 \subsection{Verhalten des Algorithmus}
 
-Im Zuge dieser Arbeit möchten wir nicht nur die Ergebnisse einiger Experimente, sondern auch das Verhalten des Algorithmus an sich beschreiben. Dafür werden wir uns verschiedene Größen wie Laufzeit, Anzahl Iterationen und Toleranz ansehen. 
+Im Zuge dieser Arbeit möchten wir nicht nur die Ergebnisse einiger Experimente, sondern auch das Verhalten des Algorithmus an sich beschreiben. Dafür werden wir uns verschiedene Größen wie Laufzeit, Anzahl Iterationen und Toleranz ansehen. Um ein Gefühl für diese Größen bei der dünnbesetzten Hauptkomponentenanalyse zu bekommen, haben wir einen Überblick in Tabelle \ref{algorithm_analysis_table} erstellt. Interessant dabei ist vor allem die Abhängigkeit vom Hyperparameter $\lambda$. Je kleiner wir die Bestrafung wählen, desto länger dauert der Algorithmus und desto mehr Iterationen werden benötigt. Da bei kleinem $\lambda$ mehr von Null verschiedene Einträge in den Hauptachsen erlaubt werden, stimmt diese Beobachtung mit der Komplexität des Algorithmus von Abschnitt \ref{complexity} überein. (PROFILE CODE) Die meiste Zeit wird dabei nicht überraschend für das Lösen des Elastic Nets verwendet. Hingegen sind die Kosten für das Minimieren über $\mat A$ unabhängig von den Hyperparametern und im Wesentlichen durch eine Singulärwertzerlegung bestimmt, welche für diesen Datensatz in einem Bruchteil einer Sekunde gelöst werden kann. Ein Blick auf Tabelle REF zeigt die Ergebnisse eines Profilers.
 
-Gerechnet wurde auf Intel Xeon Gold 6130F@2.10GHz.
+\setlength{\tabcolsep}{12pt}
+\begin{table}
+\centering
+\label{algorithm_analysis_table}
+\begin{tabular}{cccc}
+$\bm{\lambda}$ & \textbf{Laufzeit} & \textbf{Iterationen} & \textbf{Toleranz}\\\hline\addlinespace
+$10^{-6}$ & $65235.76$ sec & $>500$ & $2.271780 \cdot 10^{-1}$\\
+$10^{-5}$ & $9158.24$ sec & $>500$ & $4.132993 \cdot 10^{-4}$\\
+$10^{-4}$ & $777.36$ sec & $99$ & $4.233382 \cdot 10^{-5}$\\
+$10^{-3}$ & $201.49$ sec & $54$ & $5.531939 \cdot 10^{-5}$\\
+$10^{-2}$ & $20.19$ sec & $5$ & $0$\\
+$10^{-1}$ & $4.65$ sec & $1$ & $0$\\
+\end{tabular}
+\caption{Die Tabelle gibt einen Überblick über die Veränderung von Laufzeit, Iteration und Toleranz in Abhängigkeit von $\lambda$. Dabei wurde $\alpha=0.5$ und die Anzahl an Hauptkomponenten $k=10$ fest gewählt.\\Gerechnet wurde auf einem Intel Xeon Gold 6130F@2.10GHz.}
+\end{table}
+\setlength{\tabcolsep}{6pt}
+
+Genaues Verhalten anders.
 
 Laufzeit pro Iteration erhöht sich mit $\alpha$.
 \begin{figure}
@@ -200,6 +197,8 @@ Laufzeit pro Iteration erhöht sich mit $\alpha$.
 \caption{In dieser Abbildung ist die Laufzeit pro Iteration bei Veränderung des Hyperparameters $\lambda$ auf einer logarithmischen Skala zu sehen. Da auch $\alpha$ in unseren Experimenten variiert worden ist und mehrere Sensoren betrachtet werden, sehen wir mehrere Punkte je $\lambda$. Im Mittel klar zu erkennen ist ein Anstieg der Laufzeit bei Verringerung der Stärke der Bestrafung $\lambda$.}
 \label{run_time_per_iteration}
 \end{figure}
+
+
 
 Anzahl an Iterationen mit $\alpha$?
 

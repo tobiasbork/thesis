@@ -78,6 +78,7 @@ wobei $\beta_{ij}^{(l)}$ der $j$-te Eintrag der dünnbesetzten Hauptachse $\beta
 
 
 \section{Komplexität}
+\label{complexity}
 
 Wir werden uns nun mit der Komplexität von Algorithmus \ref{spca_algorithm} beschäftigen. Dabei unterscheiden wir zwischen den beiden Fällen $n > p$ und $p \gg n$, in welcher (\ref{sub_problem_enet}) auf eine andere Weise gelöst werden kann. Falls $p$ nur geringfügig größer ist als $n$ wenden wir weiterhin die beschriebene Methode an.\\
 
@@ -92,7 +93,9 @@ Für die Berechnung von (\ref{sub_problem_enet}) lässt sich in ein Trick anwend
 umformen, sehen wir, dass sowohl (\ref{sub_problem_enet}) als auch (\ref{sub_problem_procrustes}) nur von der Kovarianzmatrix $\mat X^T \mat X$ abhängen. Daher ist es sinnvoll, diese vorab zu berechnen, um die Anzahl an Multiplikation je Iteration zu verringern. Ersetzen wir $\mat X^T\mat X$ durch die Kovarianzmatrix $\mat \Sigma$, erhalten wir eine Populationsversion der dünnbesetzten Hauptkomponentenanalyse. Auch wenn (\ref{sub_problem_enet_covariance}) mit $\mat \Sigma$ nicht direkt ein Elastic Net Problem ist, kann man dies mithilfe von $Y^{**} = \mat{\Sigma}^{\frac{1}{2}} \alpha_j$ und $\mat X^{**} = \mat{\Sigma}^{\frac{1}{2}}$ in ein Elastic Net Problem transformieren
 $$\hat{\beta}_j = \argmin_{\beta} \norm{Y^{**} - \mat X^{**} \beta}_2^2 + \lambda \norm{\beta}_2^2 + \lambda_{1,j}\norm{\beta}_1$$
 Dadurch ergibt sich die folgende Laufzeit für die einzelnen Komponenten in Algorithmus \ref{spca_algorithm}.
-\begin{center}
+
+\begin{table}
+\centering
 \begin{tabular}{ll}
 Berechnung & Komplexität\\\hline\hspace{0.2cm}
 $\mat X^T\mat X$ & $\mathcal{O}(np^2)$\\
@@ -100,7 +103,7 @@ $\mat X^T\mat X \mat B$ & $\mathcal{O}(p^2k)$\\
 Singulärwertzerlegung von $\mat X^T\mat X \mat B$ & $\mathcal{O}(pk^2)$\\
 Lösung des Elastic Net Problems (\ref{sub_problem_enet_covariance}) & $\mathcal{O}(p^3)$
 \end{tabular}
-\end{center}
+\end{table}
 Insgesamt ergibt sich aufgrund von $k \leq p$ eine Laufzeit von $(np^2) + m\mathcal{O}(p^3)$, wobei $m$ die Anzahl an Iterationen darstellt. Diese Schranke ist sehr gut im Hinblick auf eine hohe Beobachtungszahl, wird aber für hochdimensionale Daten (z.B. $p > 100$) ineffizient.\\
 
 \textbf{Fall: } $\mathbf{p \gg n}$
