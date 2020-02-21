@@ -211,12 +211,12 @@ In vielen Anwendungen der numerischen Mathematik benötigt man für die Angabe e
 
 \begin{defn}[Moore-Penrose-Inverse \cite{israel}]
 Die \textit{Moore-Penrose-Inverse} einer Matrix $\mat A \in \mathbb{R}^{m \times n}$ ist die eindeutig bestimmte Matrix $\mat{A}^+ \in \mathbb{R}^{n \times m}$, welche die folgenden vier Eigenschaften erfüllt
-\begin{itemize}
+\begin{enumerate}[(i)]
 \item $\mat A \mat A^+ \mat A = \mat A$
 \item $\mat A^+ \mat A \mat A^+ = \mat A^+$
 \item $(\mat A \mat A^+)^T = \mat A \mat A^+$
 \item $(\mat A^+ \mat A)^T = \mat A^+ \mat A$
-\end{itemize}
+\end{enumerate}
 \end{defn}
 
 Für quadratische, nichtsinguläre Matrizen entspricht die Pseudoinverse der regulären Inversen $\mat A^+ = \mat A^{-1}$. Sind die Spalten bzw. Zeilen der Matrix $\mat A$ linear unabhängig, gilt $\mat A^{+} = (\mat A^T \mat A)^{-1} \mat A^T$ bzw. $\mat A^{+} = \mat A^T (\mat A \mat A^T)^{-1}$. Im Allgemeinen kann die Pseudoinverse mithilfe einer Singulärwertzerlegung berechnet werden. Ist $\mat A = \mat U \mat D \mat V^T$ eine Singulärwertzerlegung von $\mat A$, gilt $\mat A^+ = \mat V \mat D^+ \mat U^T$. Für eine Diagonalmatrix $\mat D$ entsteht die Pseudoinverse durch Transponieren und Invertieren der von null verschiedenen Elemente
@@ -545,12 +545,12 @@ Auch wenn klassische Kriterien für die Konvergenz von Koordinatenabstiegsverfah
 \subsection{Vergleich der Regressionsmethoden}
 \label{comparison_linear_models}
 
-Zur Veranschaulichung der oben eingeführten Methoden werden wir diese nun anwenden. Dabei greifen wir auf einen durch scikit-learn \cite{scikit_learn} bereitgestellten Datensatz, der erstmals durch \cite{efron_lars} öffentlich gemacht worden ist, zurück. In diesem wurden für $n = 442$ Diabetes Patienten $p=10$ verschiedene Variablen gemessen. Dazu gehören Alter (AGE), Geschlecht (SEX), Body Mass Index (BMI), Blutdruck (BP) und verschiedene Blutproben (Serum Measurements). Die Zielgröße $y$ enthält Werte für den Krankheitsfortschritt ein Jahr nach Behandlungsbeginn. Ein Ausschnitt des Datensatzes befindet sich in Tabelle \ref{diabetes_data_set}.
+Zur Veranschaulichung der oben eingeführten Methoden werden wir diese nun anwenden. Dabei greifen wir auf einen durch scikit-learn \cite{scikit_learn} bereitgestellten Datensatz, der erstmals durch \cite{efron_lars} öffentlich gemacht worden ist, zurück. In diesem wurden für $n = 442$ Diabetes Patienten $p=10$ verschiedene Variablen gemessen. Dazu gehören Alter (AGE), Geschlecht (SEX), Body Mass Index (BMI), Blutdruck (BP) und verschiedene Blutproben (S1, \ldots, S6). Die Zielgröße $y$ enthält Werte für den Krankheitsfortschritt ein Jahr nach Behandlungsbeginn. Ein Ausschnitt des Datensatzes befindet sich in Tabelle \ref{diabetes_data_set}.
 
 \begin{table}
 \centering
 \begin{tabular}[c]{c|cccccccccc|c}
-& \thead{AGE} & \thead{SEX} & \thead{BMI} & \thead{BP} & \multicolumn{6}{c|}{\ldots \thead{Serum Measurements} \ldots} & \thead{Response}\\
+& \thead{AGE} & \thead{SEX} & \thead{BMI} & \thead{BP} & \multicolumn{6}{c|}{\ldots \thead{Blutproben} \ldots} & \thead{Zielgröße}\\
 \thead{Patient} & \thead{x1} & \thead{x2} & \thead{x3} & \thead{x4} & \thead{x5} & \thead{x6} & \thead{x7} & \thead{x8} & \thead{x9} & \thead{x10} & \thead{y}\\
 \hline
 1 & 59 & 2 & 32.1 & 101 & 157 & 93.2 & 38 & 4 & 4.9 & 87 & 151\\
@@ -565,9 +565,9 @@ Zur Veranschaulichung der oben eingeführten Methoden werden wir diese nun anwen
 \label{diabetes_data_set}
 \end{table}
 
-In Abbildung \ref{regression_coefficients} sehen wir die Ergebnisse der verschiedenen Regressionsmethoden. Anhand von \ref{regression_coefficients} können wir die Schrumpfung der Regressionskoeffizienten mit Veränderung der Regularisierungsparameter $\lambda_1$, $\lambda_2$ bzw. $\lambda$ visuell nachvollziehen. Deutlich zu erkennen ist, dass bei der Ridge Regression eine kontinuierliche Schrumpfung der Koeffizienten stattfindet, d.h. sie werden erst für $\lambda_2 \to \infty$ auf Null gesetzt. Im Gegensatz dazu erkennt man bei der Lasso Regression, dass schon für kleine $\lambda_1$ einzelne Koeffizienten auf Null gesetzt werden und wir eine Dünnbesetzung erhalten. Das Elastic Net bildet eine natürliche Brücke zwischen Ridge und Lasso Regression. Einerseits können wir sehen, dass einzelne Koeffizienten auf Null gesetzt und andererseits, dass die Regularisierungspfade stabilisiert werden.
+In Abbildung \ref{regression_coefficients} sehen wir die Ergebnisse der verschiedenen Regressionsmethoden. Anhand von \ref{regression_coefficients} können wir die Schrumpfung der Regressionskoeffizienten mit Veränderung der Regularisierungsparameter $\lambda_1$, $\lambda_2$ bzw. $\lambda$ visuell nachvollziehen. Deutlich zu erkennen ist, dass bei der Ridge Regression eine kontinuierliche Schrumpfung der Koeffizienten stattfindet, d.h. sie werden erst für $\lambda_2 \to \infty$ auf Null gesetzt. Im Gegensatz dazu erkennt man bei der Lasso Regression, dass schon für kleine $\lambda_1$ einzelne Koeffizienten auf Null gesetzt werden und wir eine Dünnbesetzung erhalten. Das Elastic Net bildet eine natürliche Brücke zwischen Ridge und Lasso Regression. Einerseits können wir sehen, dass einzelne Koeffizienten auf Null gesetzt werden und andererseits eine Stabilisierung der Regularisierungspfade.
 
-Für die Wahl von $\lambda_1$, $\lambda_2$ bzw. $\lambda$ kann ein $k$-faches Kreuzvalidierungsverfahren eingesetzt werden. Hierbei wird der Datensatz in $k$ möglichst gleich große Teilmengen $T_1, \ldots, T_k$ zerlegt. Anschließend werden $k$ Durchläufe gestartet, wobei die jeweils $i$-te Teilmenge $T_{i}$ als Testmenge und die verbleibenden $k-1$ Teilmengen $\{T_{1},...,T_{k}\}\setminus \{T_{i}\}$ als Trainingsmenge verwendet werden. Mittelt man die mittleren quadratischen Fehler der Testmengen, erhält man ein Maß für dem Gesamtfehler. Man wählt dann den Regularisierungsparameter mit minimalem Gesamtfehler, welcher in Abbildung \ref{regression_coefficients} zu sehen ist.
+Um ein geeignetes Modell zu erhalten, müssen die Parameter $\lambda_1$, $\lambda_2$ bzw. $\lambda$ geeignet gewählt werden. Zu diesem Zweck kann ein $k$-faches Kreuzvalidierungsverfahren eingesetzt werden. Hierbei wird der Datensatz in $k$ möglichst gleich große Teilmengen $T_1, \ldots, T_k$ zerlegt. Anschließend werden $k$ Durchläufe gestartet, wobei die jeweils $i$-te Teilmenge $T_{i}$ als Testmenge und die verbleibenden $k-1$ Teilmengen $\{T_{1},...,T_{k}\}\setminus \{T_{i}\}$ als Trainingsmenge verwendet werden. Mittelt man die mittleren quadratischen Fehler der Testmengen, erhält man ein Maß für dem Gesamtfehler. Man wählt dann den Regularisierungsparameter mit minimalem Gesamtfehler, welcher in Abbildung \ref{regression_coefficients} eingezeichnet ist.
 
 \begin{figure}
 \centering
@@ -576,7 +576,7 @@ Für die Wahl von $\lambda_1$, $\lambda_2$ bzw. $\lambda$ kann ein $k$-faches Kr
 	\includegraphics[width = \textwidth]{figures/ridge_regression_coefficients_cv.png}
 	\label{ridge_regression_coefficients}
 	\vspace{-0.5cm}
-	\caption{Ridge Regression}
+	\caption{Verhalten der Ridge Regression bei Veränderung von $\lambda_2$.}
 	\vspace{0.5cm}
 	\end{subfigure}
 	%	
@@ -585,7 +585,7 @@ Für die Wahl von $\lambda_1$, $\lambda_2$ bzw. $\lambda$ kann ein $k$-faches Kr
 	\includegraphics[width = \textwidth]{figures/lasso_regression_coefficients_cv.png}
 	\label{lasso_regression_coefficients}
 	\vspace{-0.5cm}
-	\caption{Lasso Regression}
+	\caption{Verhalten der Lasso Regression bei Veränderung von $\lambda_1$.}
 	\vspace{0.5cm}
 	\end{subfigure}
 	%
@@ -594,8 +594,8 @@ Für die Wahl von $\lambda_1$, $\lambda_2$ bzw. $\lambda$ kann ein $k$-faches Kr
 	\includegraphics[width = \textwidth]{figures/elastic_net_coefficients_cv.png}
 	\label{elastic_net_coefficients}
 	\vspace{-0.5cm}
-	\caption{Elastic Net, $\alpha = 0.99$}
+	\caption{Verhalten der Ridge Regression bei Veränderung von $\lambda$ mit $\alpha = 0.99$ fest.}
 	\end{subfigure}
-\caption{Jede Linie stellt den Wert (y-Achse) des jeweiligen Regressionskoeffizienten mit Veränderung der Regularisierungsparameter $\lambda_2$, $\lambda_1$ bzw. $\lambda$ (x-Achse) dar. Zu sehen ist die unterschiedliche Art der Schrumpfung für die verschiedenen Strafterme. Die vertikalen Linien entsprechen dem Wert des jeweiligen Parameters, der durch ein 10-faches Kreuzvalidierungsverfahren bestimmt worden ist.}
+\caption{Jede Linie entspricht dem Wert des jeweiligen Regressionskoeffizienten in Abhängigkeit der Regularisierungsparameter $\lambda_2$, $\lambda_1$ bzw. $\lambda$ (x-Achse) dar. Zu sehen ist die unterschiedliche Art der Schrumpfung für die verschiedenen Strafterme. Die vertikalen Linien entsprechen dem Wert des jeweiligen Parameters, der durch ein 10-faches Kreuzvalidierungsverfahren bestimmt worden ist.}
 \label{regression_coefficients}
 \end{figure}
