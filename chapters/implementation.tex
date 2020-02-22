@@ -4,65 +4,65 @@
 % Chapter label
 \label{implementation}
 
-In diesem Kapitel werden wir einen Algorithmus beschreiben, der das Sparse PCA Kriterium (\ref{spca_criterion}) minimiert. Wir sehen uns mit einem nicht-konvexem Optimierungsproblem konfrontiert. Allerdings können wir ausnutzen, dass (\ref{spca_criterion}) konvex bezüglich $\hat{\mat A}$ bzw. $\hat{\mat B}$ ist, falls wir eine der beiden Matrizen fixieren. uDazu werden wir uns zunächst mit dem allgemeinen Fall beschäftigen bevor wir den Fall $n \ll p$ genauer betrachten, um eine effiziente Berechnung zu garantieren. Zu Schluss dieses Kapitels werden wir uns genauer mit der Laufzeit des Algorithmus auseinandersetzen. 
+In diesem Kapitel werden wir einen Algorithmus beschreiben, der das Sparse PCA Kriterium (\ref{spca_criterion}) minimiert. Dabei sehen wir uns mit einem nicht-konvexem Optimierungsproblem konfrontiert. Allerdings können wir ausnutzen, dass (\ref{spca_criterion}) konvex bezüglich $\hat{\mat A}$ bzw. $\hat{\mat B}$ ist, falls wir eine der beiden Matrizen fixieren. Im Folgenden werden wir zunächst eine allgemeine numerische Lösung präsentieren und die Komplexität des assoziierten Algorithmus bestimmen. In einer HDLSS-Situation werden wir diesen in \ref{numerical_solution_p_greater_n} leicht abändern, um eine effiziente Berechnung zu garantieren. Zu Schluss dieses Kapitels diskutieren wir Details einer eigenen Implementierung in Python.
 
 \section{Numerische Lösung}
 \label{spca_numerical_solution}
 
-Zunächst möchten wir das Sparse PCA Kriterium erneut formulieren. Sei $\mat{A}_{p \times k} = [ \alpha_1, \ldots ,\alpha_k ]$ und $\mat{B}_{p \times k} = [ \beta_1, \ldots ,\beta_k ]$. Wie zuvor bezeichnen wir mit $x_i$ die $i$-te Zeile von $\mat X$. Dann lautet das Sparse PCA Kriterium
+Für eine einfache Übersicht werden wir das Sparse PCA Kriterium hier wiederholen.
+\begin{align}
+\label{spca_criterion_restatement}
+\begin{split}
+(\hat{\mat{A}}, \hat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}_2^2 + \lambda_2 \sum_{j=1}^{k}\norm{\beta_j}_2^2 + \sum_{j=1}^k \lambda_{1,j} \norm{\beta_j}_1\\
+\text{unter der Nebenbedingung, dass } \mat{A}^T\mat{A} = I_{k \times k}.
+\end{split}
+\end{align}
+Wie beschrieben handelt es sich bei (\ref{spca_criterion_restatement}) um ein bikonvexes Optimierungsproblem. Daher liegt es nahe einen alternierenden Ansatz zu wählen, um das Problem numerisch zu lösen. Somit fixieren wir im Folgenden eine der beiden Matrizen.
 
-$$(\hat{\mat{A}}, \hat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}_2^2 + \lambda \sum_{j=1}^{k}\norm{\beta_j}_2^2 + \sum_{j=1}^k \lambda_{1,j} \norm{\beta_j}_1$$
-
-$$\text{unter der Nebenbedingung, dass } \mat{A}^T\mat{A} = I_{k \times k}$$
-
-Durch die Einführung der Matrix $\mat B$ in das Kriterium in Kapitel \ref{sparse_pca} wird über die beiden Matrizen $\mat A$ und $\mat B$ minimiert. Man kann zeigen, dass es sich bei (...) um ein nicht-konvexes Optimierungsproblem handelt. (CITE) Allerdings stellt sich heraus, dass das Problem konvex für festes $\mat A$ bzw. festes $\mat B$ ist. (Überprüfung!!!) Daher liegt es nahe einen alternierenden Ansatz zu wählen, um das Problem numerisch zu lösen. Wir betrachten im Folgenden also zwei Optimierungsprobleme.
-
-$\mat B$ \textbf{gegeben} $\mat A$:
+\subsubsection{$\mat B$ gegeben $\mat A$:}
 
 Wir wenden uns zunächst der Verlustfunktion zu. Hierfür sei $\mat A_{\perp} \in \mathbb{R}^{p \times (p-k)}$ eine orthonormale Matrix, so dass $[\mat A ; \mat A_{\perp}]$ $p \times p$ orthonormal ist. Dann gilt
 
 \begin{align*}
 \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}_2^2 & = \norm{\mat X - \mat X \mat B \mat A^T}_F^{2}\\
 & = \norm{\mat X \mat A_{\perp}}_F^2 + \norm{\mat X \mat A - \mat X \mat B}_F^2\\
-& = \norm{\mat X \mat A_{\perp}}_F^2 + \sum_{j=1}^{k}\norm{\mat X \alpha_j - \mat X\beta_j}_2^2
+& = \norm{\mat X \mat A_{\perp}}_F^2 + \sum_{j=1}^{k}\norm{\mat X \alpha_j - \mat X\beta_j}_2^2.
 \end{align*}
-
-Wir setzen $Y_j^* = \mat X \alpha_j$ für alle $1 \leq j \leq n$. Somit reduziert sich (...) für fixes $\mat A$ auf das Lösen von $k$ elastic net Problemen
+Somit reduziert sich (\ref{spca_criterion_restatement}) für fixes $\mat A$ auf das Lösen von $k$ Elastic Net Problemen
 \begin{align}
 \label{sub_problem_enet}
-\hat{\beta}_j = \argmin_{\beta_j} \norm{Y_j^* - \mat X \beta_j}_2^2 + \lambda_2 \norm{\beta_j}_2^2 + \lambda_{1,j}\norm{\beta_j}_1
+\hat{\beta}_j = \argmin_{\beta_j} \norm{Y_j^* - \mat X \beta_j}_2^2 + \lambda_2 \norm{\beta_j}_2^2 + \lambda_{1,j}\norm{\beta_j}_1,
 \end{align}
-In Kapitel \ref{fundamentals} haben wir uns bereits mit elastic nets beschäftigt und einen effizienten Algorithmus zur Lösung dieser präsentiert.
+wobei $Y_j^* = \mat X \alpha_j$ für alle $1 \leq j \leq k$. In Kapitel \ref{fundamentals} haben wir uns ausführlich mit Elastic Nets beschäftigt und ein effizientes Koordinatenabstiegsverfahren zur Lösung dieser präsentiert.
 
-$\mat A$ \textbf{gegeben} $\mat B$:
+\subsubsection{$\mat A$ gegeben $\mat B$:}
 
-Fixieren wir die Matrix $\mat B$, so können wir uns auf das Minimieren der Zielfunktion $\sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}_2^2 = \norm{\mat X - \mat X \mat B \mat A^T}_F^{2}$ beschränken, da die Bedingungen an $\beta_j$ nicht von Relevanz beim Optimieren über $\mat A$ sind. Somit ergibt sich 
+Fixieren wir die Matrix $\mat B$, können wir uns auf das Minimieren der Verlustfunktion $\norm{\mat X - \mat X \mat B \mat A^T}_F^{2}$ beschränken, da die Bedingungen an $\beta_j$ nicht von Relevanz beim Optimieren über $\mat A$ sind. Somit reduziert sich (\ref{spca_criterion_restatement}) für fixes $\mat B$ auf das Lösen von
 \begin{align}
 \label{sub_problem_procrustes}
 \begin{split}
 \hat{\mat A} = \argmin_{\mat A}\norm{\mat X - \mat X \mat B \mat A^T}_F^2\\
-\text{unter der Nebenbedingung, dass } \mat A \mat A^T = \mat I_{k \times k}
+\text{unter der Nebenbedingung, dass } \mat A \mat A^T = \mat I_{k \times k}.
 \end{split}
 \end{align}
-
-Für dieses Optimierungsproblem lässt sich eine explizite Lösung angeben, da es eine Form von Procrustes Rotationsproblem ist, welches wir in Theorem REF beschrieben haben. Sei daher 
-$$(\mat X^T \mat X) \mat B = \mat U \mat D \mat V^T$$ eine Singulärwertzerlegung. Dann ist $\hat{\mat A} = \mat U \mat V^T$.
-
-Es ist sinnvoll zu erwähnen, dass für die Lösung beider Teilprobleme nur die Gram-Matrix $\mat X^T \mat X$ bekannt sein muss. Dies erleichtert die Berechnung.
+Für dieses Optimierungsproblem lässt sich eine explizite Lösung angeben. Es ist eine Form von Procrustes Rotationsproblem, welches wir ebenfalls in Kapitel \ref{fundamentals} beschrieben haben. Die Matrix $\mat X \mat B$ soll durch Multiplikation mit einer orthogonalen Matrix $\mat A$ in $\mat X$ überführt werden. Berechnen wir eine Singulärwertzerlegung von $(\mat X^T \mat X) \mat B = \mat U \mat D \mat V^T,$ ist die Lösung für (\ref{sub_problem_procrustes}) gegeben durch
+\begin{align}
+\hat{\mat A} = \mat U \mat V^T.
+\end{align}
 
 \section{Algorithmus}
 
-Durch die Vorarbeit im vorangegangenem Abschnitt können wir einen effizienten Algorithmus zur Lösung des Sparse PCA Kriteriums angeben. Zuerst initialisieren wir $\mat A$ mit den ersten $k$ Hauptachsen. Anschließend minimieren wir abwechselnd über $\mat B$ gegeben $\mat A$ und $\mat A$ gegeben $\mat B$ solange bis ein geeignetes Konvergenzkriterium erfüllt ist oder wir eine maximale Anzahl an Iterationen erreicht haben. Durch abschließende Normalisierung der Spalten von $\mat B$ erhalten wir die dünnbesetzten Hauptachsen. Eine Übersicht haben wir in Algorithmus \ref{spca_algorithm} erstellt.
+Durch die Vorarbeit im vorangegangenem Abschnitt können wir einen effizienten Algorithmus zur Lösung des Sparse PCA Kriteriums angeben. Zuerst initialisieren wir $\mat A$ mit den ersten $k$ Hauptachsen. Anschließend minimieren wir abwechselnd über die Matrizen $\mat A$ und $\mat B$ bis ein geeignetes Konvergenzkriterium erfüllt ist oder wir eine maximale Anzahl an Iterationen erreicht haben. Durch abschließende Normalisierung der Spalten von $\mat B$ erhalten wir die dünnbesetzten Hauptachsen. Eine Übersicht haben wir in Algorithmus \ref{spca_algorithm} erstellt.
 
 \begin{algorithm}[tbh]
     \caption{Sparse Principal Component Analysis}
     \label{spca_algorithm}
     \begin{algorithmic}[1]
-        \Procedure{SPCA}{$\mat A, \mat B$}
+        \Procedure{SPCA}{$\mat A, \mat B, \lambda_2, \lambda_{1,j}$}
         	\State $\mat A \gets \mat V[,1 \colon k]$, die ersten $k$ Hauptachsen
             \While{nicht konvergiert}
                 \State Gegeben festes $\mat A = [\alpha_1, \ldots, \alpha_k]$, löse das elastic net Problem
-                $$\hat{\beta}_j = \argmin_{\beta_j} \norm{\mat X \alpha_j - \mat X \beta_j}^{2} + \lambda \norm{\beta_j}^2 + \lambda_{1,j}\norm{\beta_j}_{1} \quad \text{für } j = 1, \ldots, k$$
+                $$\hat{\beta}_j = \argmin_{\beta_j} \norm{\mat X \alpha_j - \mat X \beta_j}^{2} + \lambda_2 \norm{\beta_j}^2 + \lambda_{1,j}\norm{\beta_j}_{1} \quad \text{für } j = 1, \ldots, k$$
                 \State Gegeben festes $\mat B = [\beta_1, \ldots, \beta_k]$, berechne die Singulärwerzerlegung von $$\mat X^T \mat X \mat B = \mat U \mat D \mat V^T$$
                 $$\mat A \gets \mat U \mat V^T$$
             \EndWhile
@@ -71,9 +71,9 @@ Durch die Vorarbeit im vorangegangenem Abschnitt können wir einen effizienten A
     \end{algorithmic}
 \end{algorithm} 
 
-Es stellt sich nun die Frage nach einem passendem Abbruchkriterium. Da für uns am Schluss des Algorithmus nur die dünnbesetzten Hauptachsen relevant sind, liegt es nahe ein Konvergenzkriterium für $\mat B$ zu wählen. Zou et al. brechen in ihrer Implementierung die Iteration ab, falls
-$$\max_{\substack{1 \leq i \leq p \\ 1 \leq j \leq k}} \left| \frac{\beta_{ij}^{(l+1)}}{\norm{\beta_i}} - \frac{\beta_{ij}^{(l)}}{\norm{\beta_i}} \right| < \epsilon$$
-wobei $\beta_{ij}^{(l)}$ der $j$-te Eintrag der dünnbesetzten Hauptachse $\beta_i$ in der $l$-ten Iteration ist. Sobald also die Änderung in $\mat B^{(l)}$ klein genug ist, kann die while-Schleife abgebrochen werden. Um die Laufzeit des Algorithmus zu beschränken, ist es sinnvoll ein zusätzliches Abbruchkriterium zu definieren. So werden wir bei Anwendung des Algorithmus eine maximale Anzahl an Iterationen $l_{max}$ festlegen, die nicht überschritten werden darf.
+Es stellt sich nun die Frage nach einem passendem Abbruchkriterium. Da für uns am Schluss des Algorithmus nur die dünnbesetzten Hauptachsen relevant sind, liegt es nahe ein Konvergenzkriterium für $\mat B$ zu wählen. Zou et al. brechen die Iteration in ihrer Implementierung ab, falls
+$$\max_{\substack{1 \leq i \leq p \\ 1 \leq j \leq k}} \left| \frac{\beta_{ij}^{(l+1)}}{\norm{\beta_i}} - \frac{\beta_{ij}^{(l)}}{\norm{\beta_i}} \right| < \epsilon ,$$
+wobei $\beta_{ij}^{(l)}$ der $j$-te Eintrag der dünnbesetzten Hauptachse $\beta_i$ in der $l$-ten Iteration ist. Sobald also die Änderung in $\mat B$ klein genug ist, kann die while-Schleife beendet werden. Um die Laufzeit des Algorithmus zu beschränken, ist es sinnvoll ein zusätzliches Abbruchkriterium zu definieren. So werden wir bei Anwendung des Algorithmus eine maximale Anzahl an Iterationen $l_{max}$ festlegen, die nicht überschritten werden darf.
 
 
 
@@ -87,11 +87,11 @@ Wir werden uns nun mit der Komplexität von Algorithmus \ref{spca_algorithm} bes
 Für die Berechnung von (\ref{sub_problem_enet}) lässt sich in ein Trick anwenden. Indem wir
 \begin{align}
 \label{sub_problem_enet_covariance}
-\hat{\beta}_j & = \argmin_{\beta_j} \norm{Y_j^* - \mat X \beta_j}_2^2 + \lambda \norm{\beta_j}_2^2 + \lambda_{1,j}\norm{\beta_j}_1 \nonumber\\
+\hat{\beta}_j & = \argmin_{\beta_j} \norm{Y_j^* - \mat X \beta_j}_2^2 + \lambda_2 \norm{\beta_j}_2^2 + \lambda_{1,j}\norm{\beta_j}_1 \nonumber\\
 & = \argmin_{\beta_j} (\alpha_j - \beta_j)^T \mat X^T \mat X (\alpha_j - \beta_j) + \lambda_2 \norm{\beta_j}_2^2 + \lambda_{1,j}\norm{\beta_j}_1
 \end{align}
 umformen, sehen wir, dass sowohl (\ref{sub_problem_enet}) als auch (\ref{sub_problem_procrustes}) nur von der Kovarianzmatrix $\mat X^T \mat X$ abhängen. Daher ist es sinnvoll, diese vorab zu berechnen, um die Anzahl an Multiplikation je Iteration zu verringern. Ersetzen wir $\mat X^T\mat X$ durch die Kovarianzmatrix $\mat \Sigma$, erhalten wir eine Populationsversion der dünnbesetzten Hauptkomponentenanalyse. Auch wenn (\ref{sub_problem_enet_covariance}) mit $\mat \Sigma$ nicht direkt ein Elastic Net Problem ist, kann man dies mithilfe von $Y^{**} = \mat{\Sigma}^{\frac{1}{2}} \alpha_j$ und $\mat X^{**} = \mat{\Sigma}^{\frac{1}{2}}$ in ein Elastic Net Problem transformieren
-$$\hat{\beta}_j = \argmin_{\beta} \norm{Y^{**} - \mat X^{**} \beta}_2^2 + \lambda \norm{\beta}_2^2 + \lambda_{1,j}\norm{\beta}_1$$
+$$\hat{\beta}_j = \argmin_{\beta} \norm{Y^{**} - \mat X^{**} \beta}_2^2 + \lambda_2 \norm{\beta}_2^2 + \lambda_{1,j}\norm{\beta}_1$$
 Dadurch ergibt sich die folgende Laufzeit für die einzelnen Komponenten in Algorithmus \ref{spca_algorithm}.
 
 \begin{table}
@@ -115,6 +115,7 @@ Wir bezeichnen mit $J$ die Anzahl von Null verschiedener Einträge der Hauptachs
 %----------------------------------------------------------------------------------------
 
 \section{Numerische Lösung im Fall $p \gg n$}
+\label{numerical_solution_p_greater_n}
 
 Für viele Anwendungen kann die Anzahl an Variablen die Anzahl an Beobachtungen deutlich übersteigen. In diesem Fall ist sehr rechenintensiv.
 
