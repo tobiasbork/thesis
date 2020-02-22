@@ -129,9 +129,9 @@ Wir werden uns nun mit dem von Zou, Hastie und Tibshirani in \cite{zou_sparsepca
 
 \begin{thm} \label{pca_regression_formulation_ridge}
 Sei $\mat{A}_{p \times k} = [ \alpha_1, \ldots ,\alpha_k ]$ und $\mat{B}_{p \times k} = [ \beta_1, \ldots ,\beta_k ]$. Für ein $\lambda_2 > 0$ sei
-$$(\hat{\mat{A}}, \hat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}^2 + \lambda_2 \sum_{j=1}^{k}\norm{\beta_j}^2$$
+$$(\widehat{\mat{A}}, \widehat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}^2 + \lambda_2 \sum_{j=1}^{k}\norm{\beta_j}^2$$
 $$\text{wobei } \mat{A}^T\mat{A} = I_{k \times k}.$$
-Dann ist $\hat{\beta}_j \propto \hat{v}_j$ für $j = 1,2,\ldots,k$. 
+Dann ist $\widehat{\beta}_j \propto \widehat{v}_j$ für $j = 1,2,\ldots,k$. 
 \end{thm}
 
 Fordern wir $\mat A =  \mat B$ reduziert sich die Verlustfunktion $\sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}^2$ auf die klassische Hauptkomponentenanalyse in (\ref{pca_regression_formulation}). Theorem \ref{pca_regression_formulation_ridge} zeigt, dass wir die Bedingung $\mat A = \mat B$ unter Einführung eines Ridge-Strafterms vernachlässigen können. Mithilfe dieser Verallgemeinerung können wir die Hauptkomponentenanalyse flexibel modifizieren.
@@ -140,7 +140,7 @@ Um dünnbesetzte Hauptachsen zu erhalten, können wir einen $\ell_1$-Strafterm i
 \begin{align}
 \label{spca_criterion}
 \begin{split}
-(\hat{\mat{A}}, \hat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}_2^2 + \lambda_2 \sum_{j=1}^{k}\norm{\beta_j}_2^2 + \sum_{j=1}^k \lambda_{1,j} \norm{\beta_j}_1\\
+(\widehat{\mat{A}}, \widehat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}_2^2 + \lambda_2 \sum_{j=1}^{k}\norm{\beta_j}_2^2 + \sum_{j=1}^k \lambda_{1,j} \norm{\beta_j}_1\\
 \text{unter der Nebenbedingung, dass } \mat{A}^T\mat{A} = I_{k \times k}.
 \end{split}
 \end{align}
@@ -170,40 +170,40 @@ Der Erfolg der Hauptkomponentenanalyse beruht vor allem darauf, dass die Hauptko
 
 Camacho et al. zeigen, dass viele der Varianten der dünnbesetzten Hauptkomponentenanalyse bezüglich dieser Aspekte Probleme aufweisen. Insbesondere wurde die Berechnung der Hauptkomponenten, Residuen und der erklärten Varianz bislang falsch durchgeführt. Wir möchten an dieser Stelle die Unterschiede detailliert erklären.
 
-Typischerweise wurden die Hauptkomponenten $\hat{\mat Z}$ bislang wie bei der klassischen Hauptkomponentenanalyse berechnet, indem man $\hat{\mat Z} = \mat X \hat{\mat B}$ setzt \cite{zou_sparsepca}. Allerdings vernachlässigt man in diesem Fall, dass die Hauptachsen nicht orthogonal zueinander sind. Dies wird deutlich, wenn wir die Hauptkomponentenanalyse wie in (\ref{pca_minimize_reconstruction_error}) als eine bestmögliche Rekonstruktion der Datenmatrix $\mat X$ auffassen.
+Typischerweise wurden die Hauptkomponenten $\widehat{\mat Z}$ bislang wie bei der klassischen Hauptkomponentenanalyse berechnet, indem man $\widehat{\mat Z} = \mat X \widehat{\mat B}$ setzt \cite{zou_sparsepca}. Allerdings vernachlässigt man in diesem Fall, dass die Hauptachsen nicht orthogonal zueinander sind. Dies wird deutlich, wenn wir die Hauptkomponentenanalyse wie in (\ref{pca_minimize_reconstruction_error}) als eine bestmögliche Rekonstruktion der Datenmatrix $\mat X$ auffassen.
 \begin{align}
 \label{pca_scores_loadings_model}
-\mat X = \hat{\mat Z} \hat{\mat B}^T + \hat{\mat E},
+\mat X = \widehat{\mat Z} \widehat{\mat B}^T + \widehat{\mat E},
 \end{align}
-wobei $\hat{\mat E}$ die Matrix der Residuen ist. Ist uns eine volle Rang Approximation $\mat X = \hat{\mat Z} \hat{\mat B}^T$ gegeben, können wir beide Seiten mit $\hat{\mat B}$ multiplizieren, um die Hauptkomponenten zu erhalten $\mat X \hat{\mat B} = \hat{\mat Z} \hat{\mat B}^T \hat{\mat B} = \hat{\mat Z}$. Letzterer Schritt ist aber nur gültig, falls die Hauptachsen orthogonal zueinander sind. Daher muss bei der dünnbesetzten Variante mit der Moore-Penrose-Inversen $(\hat{\mat B}^T \hat{\mat B})^+$ korrigiert werden. Demnach sollten die Hauptkomponenten durch
+wobei $\widehat{\mat E}$ die Matrix der Residuen ist. Ist uns eine volle Rang Approximation $\mat X = \widehat{\mat Z} \widehat{\mat B}^T$ gegeben, können wir beide Seiten mit $\widehat{\mat B}$ multiplizieren, um die Hauptkomponenten zu erhalten $\mat X \widehat{\mat B} = \widehat{\mat Z} \widehat{\mat B}^T \widehat{\mat B} = \widehat{\mat Z}$. Letzterer Schritt ist aber nur gültig, falls die Hauptachsen orthogonal zueinander sind. Daher muss bei der dünnbesetzten Variante mit der Moore-Penrose-Inversen $(\widehat{\mat B}^T \widehat{\mat B})^+$ korrigiert werden. Demnach sollten die Hauptkomponenten durch
 \begin{align}
 \label{corrected_scores_sparse_pca}
-\hat{\mat Z} = \mat X \hat{\mat B}^T (\hat{\mat B}^T \hat{\mat B})^+
+\widehat{\mat Z} = \mat X \widehat{\mat B}^T (\widehat{\mat B}^T \widehat{\mat B})^+
 \end{align}
 berechnet werden. Wir möchten an dieser Stelle anmerken, dass durch (\ref{corrected_scores_sparse_pca}) keine sequentielle Berechnung der Hauptkomponenten mehr möglich ist. Es können also nicht ohne weiteres mehr Hauptkomponenten zum Modell hinzugefügt werden, da jede Hauptkomponente von allen Hauptachsen abhängt und somit eine Neuberechnung erfordert. Im Gegenzug zeigen Camacho et al. empirisch, dass die Korrelation zwischen den Hauptkomponenten durch (\ref{corrected_scores_sparse_pca}) deutlich sinkt, was für viele Anwendungen von Vorteil sein kann.
 
-Für die Modellbewertung wird oft der Anteil erklärter Varianz des Datensatzes herangezogen, wie in Abschnitt \ref{selection_principal_components} beschrieben. Zou et al. erkennen, dass aufgrund der Korrelation der Hauptkomponenten die Varianzen nicht wie gewohnt errechnet werden können und schlagen folgende Methode vor. Die erklärte Varianz für die ersten $j+1$ Hauptkomponenten sollte sich aus der Summe der ersten $j$ und der erklärten Varianz der $j+1$-ten Hauptkomponente $\hat{Z}_{j+1}$ ergeben. Aufgrund der Korrelation erhält die Varianz von $\hat{Z}_{j+1}$ aber Beiträge anderer Hauptkomponenten. Um nur die zusätzlich durch $\hat{Z}_{j+1}$ erhaltene Varianz zu erhalten und lineare Abhängigkeiten zu entfernen, nutzen Zou et al. eine Projektion
+Für die Modellbewertung wird oft der Anteil erklärter Varianz des Datensatzes herangezogen, wie in Abschnitt \ref{selection_principal_components} beschrieben. Zou et al. erkennen, dass aufgrund der Korrelation der Hauptkomponenten die Varianzen nicht wie gewohnt errechnet werden können und schlagen folgende Methode vor. Die erklärte Varianz für die ersten $j+1$ Hauptkomponenten sollte sich aus der Summe der ersten $j$ und der erklärten Varianz der $j+1$-ten Hauptkomponente $\widehat{Z}_{j+1}$ ergeben. Aufgrund der Korrelation erhält die Varianz von $\widehat{Z}_{j+1}$ aber Beiträge anderer Hauptkomponenten. Um nur die zusätzlich durch $\widehat{Z}_{j+1}$ erhaltene Varianz zu erhalten und lineare Abhängigkeiten zu entfernen, nutzen Zou et al. eine Projektion
 \begin{align}
 \label{zou_orthogonal_projection}
-\hat{Z}_{j\cdot 1, \ldots, j-1} = \hat{Z}_j - \mat P_{1, \ldots, j-1}\hat{Z}_j
+\widehat{Z}_{j\cdot 1, \ldots, j-1} = \widehat{Z}_j - \mat P_{1, \ldots, j-1}\widehat{Z}_j
 \end{align}
-wobei $\mat P_{1, \ldots, j-1}$ die orthogonale Projektionsmatrix auf $\{\hat{Z}_i\}_1^{j-1}$ ist. Mit $\hat{Z}_{j\cdot 1, \ldots, j-1}$ bezeichnen wir also die Residuen nach Anpassung von $\hat{Z}_j$ durch $\hat{Z}_1, \ldots, \hat{Z}_{j-1}$. Man beachte, dass (\ref{zou_orthogonal_projection}) von der Reihenfolge der $\hat{Z}_i$ abhängt. Aufgrund der natürlichen Ordnung bei der Hauptkomponentenanalyse stellt dies aber kein Problem dar.
+wobei $\mat P_{1, \ldots, j-1}$ die orthogonale Projektionsmatrix auf $\{\widehat{Z}_i\}_1^{j-1}$ ist. Mit $\widehat{Z}_{j\cdot 1, \ldots, j-1}$ bezeichnen wir also die Residuen nach Anpassung von $\widehat{Z}_j$ durch $\widehat{Z}_1, \ldots, \widehat{Z}_{j-1}$. Man beachte, dass (\ref{zou_orthogonal_projection}) von der Reihenfolge der $\widehat{Z}_i$ abhängt. Aufgrund der natürlichen Ordnung bei der Hauptkomponentenanalyse stellt dies aber kein Problem dar.
 Somit ergibt sich die Gesamtvarianz der ersten $k$ Hauptkomponenten durch 
 \begin{align}
 \label{zou_explained_variance}
-\sum_{j=1}^k \norm{\hat{Z}_{j\cdot 1, \ldots, j-1}}^2.
+\sum_{j=1}^k \norm{\widehat{Z}_{j\cdot 1, \ldots, j-1}}^2.
 \end{align}
-Mithilfe einer QR-Zerlegung von $\hat{\mat Z} = \mat Q \mat R$, wobei $\mat Q$ orthonormal und $\mat R$ eine recht obere Dreiecksmatrix ist, können wir (\ref{zou_explained_variance}) schnell berechnen, denn $\norm{\hat{Z}_{j\cdot 1, \ldots, j-1}}^2 = R_{jj}^2$. Auch wenn dieser Ansatz zunächst sinnvoll scheinen mag, werden wir in Kapitel \ref{application} anhand unseres Datensatzes zeigen, dass durch (\ref{zou_explained_variance}) keine korrekte Berechnung der erklärten Varianz erfolgt. Das Problem des Ansatzes liegt darin, dass der Bezug zum Rekonstruktionsfehler unklar ist. Anders als bei der klassischen Hauptkomponentenanalyse stimmen erklärte Varianz und Rekonstruktionsfehler bei der dünnbesetzten Variante nicht mehr überein.
+Mithilfe einer QR-Zerlegung von $\widehat{\mat Z} = \mat Q \mat R$, wobei $\mat Q$ orthonormal und $\mat R$ eine recht obere Dreiecksmatrix ist, können wir (\ref{zou_explained_variance}) schnell berechnen, denn $\norm{\widehat{Z}_{j\cdot 1, \ldots, j-1}}^2 = R_{jj}^2$. Auch wenn dieser Ansatz zunächst sinnvoll scheinen mag, werden wir in Kapitel \ref{application} anhand unseres Datensatzes zeigen, dass durch (\ref{zou_explained_variance}) keine korrekte Berechnung der erklärten Varianz erfolgt. Das Problem des Ansatzes liegt darin, dass der Bezug zum Rekonstruktionsfehler unklar ist. Anders als bei der klassischen Hauptkomponentenanalyse stimmen erklärte Varianz und Rekonstruktionsfehler bei der dünnbesetzten Variante nicht mehr überein.
 
-Eine korrekte Methode wird von Camacho et al. eingeführt. Hierbei zerlegen wir die Varianz des Modells $\mat X = \hat{\mat Z} \hat{\mat B}^T + \hat{\mat{E}}$ in zwei Teile.
+Eine korrekte Methode wird von Camacho et al. eingeführt. Hierbei zerlegen wir die Varianz des Modells $\mat X = \widehat{\mat Z} \widehat{\mat B}^T + \widehat{\mat{E}}$ in zwei Teile.
 \begin{align}
 \label{camacho_explained_variance}
-\norm{\mat X}_F^2 & = \norm{\hat{\mat{Z}} \hat{\mat{B}}^T + \hat{\mat{E}}}_{F}^{2} \nonumber\\
-& = \spur{\hat{\mat{B}} \hat{\mat{Z}}^T \hat{\mat{Z}} \hat{\mat{B}}^T} + \spur{\hat{\mat{B}} \hat{\mat{Z}}^T \hat{\mat{E}}} + \spur{\hat{\mat{E}}^T\hat{\mat{Z}} \hat{\mat{B}}^T} + \spur{\hat{\mat{E}}^T \hat{\mat{E}}} \nonumber\\
-& = \spur{\hat{\mat{B}} \hat{\mat{Z}}^T \hat{\mat{Z}} \hat{\mat{B}}^T} + \spur{\hat{\mat{E}}^T \hat{\mat{E}}} \nonumber\\
-& = \norm{\hat{\mat{Z}} \hat{\mat{B}}^T}_{F}^{2} + \norm{\hat{\mat{E}}}_{F}^{2}
+\norm{\mat X}_F^2 & = \norm{\widehat{\mat{Z}} \widehat{\mat{B}}^T + \widehat{\mat{E}}}_{F}^{2} \nonumber\\
+& = \spur{\widehat{\mat{B}} \widehat{\mat{Z}}^T \widehat{\mat{Z}} \widehat{\mat{B}}^T} + \spur{\widehat{\mat{B}} \widehat{\mat{Z}}^T \widehat{\mat{E}}} + \spur{\widehat{\mat{E}}^T\widehat{\mat{Z}} \widehat{\mat{B}}^T} + \spur{\widehat{\mat{E}}^T \widehat{\mat{E}}} \nonumber\\
+& = \spur{\widehat{\mat{B}} \widehat{\mat{Z}}^T \widehat{\mat{Z}} \widehat{\mat{B}}^T} + \spur{\widehat{\mat{E}}^T \widehat{\mat{E}}} \nonumber\\
+& = \norm{\widehat{\mat{Z}} \widehat{\mat{B}}^T}_{F}^{2} + \norm{\widehat{\mat{E}}}_{F}^{2}
 \end{align}
-Damit kann die Varianz eines Datensatzes in Rekonstruktion und Residuum aufgeteilt werden. Ersterer Teil entspricht der erklärten Varianz unseres Modells und wird daher mit $\norm{\hat{\mat{Z}} \hat{\mat{B}}^T}_{F}^{2}$ berechnet. 
+Damit kann die Varianz eines Datensatzes in Rekonstruktion und Residuum aufgeteilt werden. Ersterer Teil entspricht der erklärten Varianz unseres Modells und wird daher mit $\norm{\widehat{\mat{Z}} \widehat{\mat{B}}^T}_{F}^{2}$ berechnet. 
 
 
 %----------------------------------------------------------------------------------------
@@ -224,10 +224,10 @@ Komplizierter gestaltet sich eine Wahl von $\lambda_{1,j}$, welche die Modellkom
 \end{align}
 wobei $\operatorname{df}(\lambda_{1,j}) = \norm{\beta_j}_0$ die Anzahl von null verschiedener Einträge sind. Dabei steht $\operatorname{df}$ für \textit{degrees of freedom}, welches die Anzahl freier Parameter darstellt \cite{hastie_elements}. Klar erkennbar in (\ref{bic_reconstruction}) ist der Kompromiss zwischen Rekonstruktionsfehler der $j$-ten Hauptkomponente und der Dünnbesetzung durch $\operatorname{df}(\lambda_{1,j})$. Mit steigendem $\lambda_{1,j}$ wird der Rekonstruktionsfehler größer und die Anzahl freier Parameter geringer. Wir sind angehalten $\lambda_{1,j}$ zu finden, welche eine Balance zwischen den beiden Termen ermöglichen.
 
-Um nicht über $k$ Parameter optimieren zu müssen, kann man $\lambda_{1,j} = \lambda_1$ für alle $1 \leq j \leq k$ setzen. Eine weitere Möglichkeit wird in \cite{croux} beschrieben. Für $j>1$ sei $\mat{\hat{B}}_{j-1}^{\perp}$ die Matrix, deren Spalten eine orthonormale Basis für das orthogonale Komplement für den durch $\hat{\beta}_1, \ldots, \hat{\beta}_{j-1}$ aufgespannten Raum sind. Wir berechnen $x_i^{(j-1)} = (\mat{\hat{B}}_{j-1}^{\perp})^T x_i$ für $i = 1, \ldots, n$ und setzen $\lambda_{1,j} = \lambda_1\operatorname{Var}[\mat X^{(j)}]$, wobei $\mat X^{(j)}$ aus den auf das orthogonale Komplement der ersten $j-1$ Hauptachsen projizierten Daten $x_i^{(j-1)}$ besteht. Mithilfe dieses Ansatzes können wir eine vergleichbare Dünnbesetzung für alle Hauptachsen erreichen. Nun muss lediglich $\lambda_1$ gewählt werden. Hierfür wird von \cite{croux, guo} ein ähnliches BIC-Kriterium vorgeschlagen
+Um nicht über $k$ Parameter optimieren zu müssen, kann man $\lambda_{1,j} = \lambda_1$ für alle $1 \leq j \leq k$ setzen. Eine weitere Möglichkeit wird in \cite{croux} beschrieben. Für $j>1$ sei $\mat{\widehat{B}}_{j-1}^{\perp}$ die Matrix, deren Spalten eine orthonormale Basis für das orthogonale Komplement für den durch $\widehat{\beta}_1, \ldots, \widehat{\beta}_{j-1}$ aufgespannten Raum sind. Wir berechnen $x_i^{(j-1)} = (\mat{\widehat{B}}_{j-1}^{\perp})^T x_i$ für $i = 1, \ldots, n$ und setzen $\lambda_{1,j} = \lambda_1\operatorname{Var}[\mat X^{(j)}]$, wobei $\mat X^{(j)}$ aus den auf das orthogonale Komplement der ersten $j-1$ Hauptachsen projizierten Daten $x_i^{(j-1)}$ besteht. Mithilfe dieses Ansatzes können wir eine vergleichbare Dünnbesetzung für alle Hauptachsen erreichen. Nun muss lediglich $\lambda_1$ gewählt werden. Hierfür wird von \cite{croux, guo} ein ähnliches BIC-Kriterium vorgeschlagen
 \begin{align}
 \label{bic_ratio}
-\operatorname{BIC}(\lambda_1) = \frac{\norm{\mat X - \mat X \hat{\mat{B}} \hat{\mat A}^T}_{F}^{2}}{\norm{\mat X - \mat X \hat{\mat V} \hat{\mat V}^T}_{F}^{2}} + \operatorname{df}(\lambda_1) \frac{\log(n)}{n}.
+\operatorname{BIC}(\lambda_1) = \frac{\norm{\mat X - \mat X \widehat{\mat{B}} \widehat{\mat A}^T}_{F}^{2}}{\norm{\mat X - \mat X \widehat{\mat V} \widehat{\mat V}^T}_{F}^{2}} + \operatorname{df}(\lambda_1) \frac{\log(n)}{n}.
 \end{align}
 Für die log-likelihood-Funktion wird in (\ref{bic_ratio}) das Verhältnis des Rekonstruktionsfehler zwischen dünnbesetzter und der klassischer Hauptkomponentenanalyse gewählt. Welche der beiden BIC-Kriterien genutzt werden sollte, kommt auf den Anwendungsfall an.
 
@@ -252,10 +252,10 @@ x_i = l_j v_1 + \sigma r_i \quad i = 1, \ldots n,
 \end{align}
 in welchem $v_1 \in \mathbb{R}^p$ der zu schätzende Eigenvektor ist. Dabei sind $l_i \sim N(0,1)$ unabhängig gleichverteilte Gaußsche Zufallseffekte und $r_i \sim N_p(0, \mat I)$ unabhängige Rauschvektoren. Johnstone und Lu \cite{johnstone} zeigen ein Resultat für die Konsistenz der Hauptkomponentenanalyse, falls diese auf eine Teilmenge der Variablen angewendet wird. Dies liefert eine theoretische Rechtfertigung der dünnbesetzten Variante.
 
-Wir bezeichnen mit $\hat{I} = \{j \, \colon \, \hat{\sigma}_j^2 \geq \sigma^2 (1 + \alpha_n)\}$ die Indexmenge der zu selektierenden Variablen, wobei $\hat{\sigma}_j^2$ die Stichprobenvarianz der $j$-ten Variable und $\alpha_n = \alpha (n^{-1}\log(\max \{n,p\}))^{\frac{1}{2}}$ für ein hinreichend großes $\alpha$ ist. Da die großen Einträge von $\hat{v}_1$ mit Variablen großer Varianz korrespondieren, wählen wir 
-$$\hat{v}_{1j}^I = \begin{cases} 
-      \hat{v}_{1j} & j \in \hat{I}\\
-      0 & j \not\in \hat{I}
+Wir bezeichnen mit $\widehat{I} = \{j \, \colon \, \widehat{\sigma}_j^2 \geq \sigma^2 (1 + \alpha_n)\}$ die Indexmenge der zu selektierenden Variablen, wobei $\widehat{\sigma}_j^2$ die Stichprobenvarianz der $j$-ten Variable und $\alpha_n = \alpha (n^{-1}\log(\max \{n,p\}))^{\frac{1}{2}}$ für ein hinreichend großes $\alpha$ ist. Da die großen Einträge von $\widehat{v}_1$ mit Variablen großer Varianz korrespondieren, wählen wir 
+$$\widehat{v}_{1j}^I = \begin{cases} 
+      \widehat{v}_{1j} & j \in \widehat{I}\\
+      0 & j \not\in \widehat{I}
    \end{cases}$$
 Mit dieser Auswahl erhalten wir ein Konsistenz-Theorem unter geeigneten Modellannahmen.
 
@@ -263,7 +263,7 @@ Mit dieser Auswahl erhalten wir ein Konsistenz-Theorem unter geeigneten Modellan
 Für $n \to \infty$ sei die Signalstärke $\norm{v_1}^2 \to \rho$ asymptotisch stabil und $n^{-1}\log(\max \{n,p\}) \to 0$. Bezeichne mit $v_i^{(r)}$ den $r$-größten Eintrag von $v_i$. Unter der Annahme, dass die Einträge der Hauptachsen für alle $n$ schnell abfallen, d.h.
 $$|v_1^{(r)}| \leq Cr^{\frac{-1}{q}} \quad \text{für } q \in (0,2) \text{ und } c < \infty$$
 ist die dünnbesetzte Hauptkomponentenanalyse fast sicher konsistent
-$$\mathbb{P}\left[\lim_{n \to \infty} \operatorname{angle}(\hat{v}_1^I, v_1) = 0\right] = 1.$$ 
+$$\mathbb{P}\left[\lim_{n \to \infty} \operatorname{angle}(\widehat{v}_1^I, v_1) = 0\right] = 1.$$ 
 \end{thm}
 
 In einer \textit{high dimension low sample size (HDLSS)} Situation zeigen Shen et al. mithilfe eines spiked covariance models die Konsistenz einer ähnlichen Variante von Sparse PCA \cite{shen}. Der einzige Unterschied zu dem Ansatz von Zou et al. ist, dass die Hauptachsen dort sequentiell statt simultan berechnet werden. Für Details bezüglich der speziellen Bedingungen für eine Konsistenz verweisen wir auf \cite{shen_consistency}.
