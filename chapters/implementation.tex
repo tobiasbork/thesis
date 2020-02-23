@@ -70,7 +70,7 @@ Durch die Vorarbeit im vorangegangenem Abschnitt können wir einen effizienten A
     \caption{Sparse Principal Component Analysis}
     \label{spca_algorithm}
     \begin{algorithmic}[1]
-        \Procedure{SPCA}{$\mat A, \mat B, \lambda_2, \lambda_{1,j}$}
+        \Procedure{SPCA}{$\mat A, \mat B, k, \lambda_2, \lambda_{1,j}$}
         	\State $\mat A \gets \mat V[,1 \colon k]$, die ersten $k$ Hauptachsen
             \While{nicht konvergiert}
                 \State Gegeben festes $\mat A = [\alpha_1, \ldots, \alpha_k]$, löse das elastic net Problem
