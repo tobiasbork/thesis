@@ -28,16 +28,16 @@ Vor der Anwendung der dünnbesetzten Hauptkomponentenanalyse haben wir einige Vo
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{figures/Signal_5_fft_example_new.jpg}
-\caption{Signal 5 fft example}
+\caption{Ergebnis einer Fouriertransformation für einen Beschleunigungssensor.}
 \label{fft_example}
 \end{figure}
 
-Es wird sich zeigen, dass der Algorithmus für die dünnbesetzte Hauptkomponentenanalyse sehr rechenintensiv sein kann. Daher haben wir uns entschieden, nur einen Teil der ursprünglichen Zeitreihe zu verwenden. Mithilfe eines Blicks auf das Spektrogramm in Abbildung \ref{spectrogram} erkennen wir, dass sich die Frequenzen über den Messzeitraum kaum verändern. Dies ist darauf zurückzuführen, dass der Maschine konstant Material zugeführt wird. Daher können wir die Dimension um einen Faktor $100$ reduzieren ohne wichtige Informationen zu verlieren. Des Weiteren wurden Teile der Frequenzen, welche außerhalb des Frequenzbereichs des jeweiligen Sensors liegen, abgeschnitten. Somit verbleiben wir mit $p \approx 15,000$ Variablen. Um die Varianzen der Frequenzen vergleichbarer zu machen, haben wir die Daten ähnlich wie bei der klassischen Hauptkomponentenanalyse zentriert.
+Es wird sich zeigen, dass der Algorithmus für die dünnbesetzte Hauptkomponentenanalyse sehr rechenintensiv sein kann. Daher haben wir uns entschieden, nur einen Teil der ursprünglichen Zeitreihe zu verwenden. Mithilfe eines Blicks auf das Spektrogramm in Abbildung \ref{spectrogram} erkennen wir anhand der horizontalen Linien, dass sich die Frequenzen über den Messzeitraum kaum verändern. Dies ist darauf zurückzuführen, dass der Maschine konstant Material zugeführt wird. Daher können wir die Dimension um einen Faktor $100$ reduzieren ohne wichtige Informationen zu verlieren. Des Weiteren wurden Teile der Frequenzen, welche außerhalb des Frequenzbereichs des jeweiligen Sensors liegen, abgeschnitten. Somit verbleiben wir mit $p \approx 15,000$ Variablen. Um die Varianzen der Frequenzen vergleichbarer zu machen, haben wir die Daten ähnlich wie bei der klassischen Hauptkomponentenanalyse zentriert.
 
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{figures/Signal_5_time_frequency_change.jpg}
-\caption{Signal 5 time frequency change}
+\caption{Zeitlicher Verlauf der beobachteten Frequenzen.}
 \label{spectrogram}
 \end{figure}
 
@@ -87,38 +87,41 @@ Zuletzt betrachtet man Abbildung \ref{sparse_pca_classical_analysis_scree_plot},
 \begin{subfigure}{0.45\textwidth}
 \centering
 \includegraphics[width = 0.9\textwidth]{figures/Signal_5_pc_graph.jpg}
-\caption{Signal 5 PC Graph}
+\caption{Ergebnis einer klassische Hauptkomponentenanalyse.}
 \label{sparse_pca_classical_analysis_pc_graph}
 \end{subfigure}
+\vspace{0.5cm}
 %
 \begin{subfigure}{0.45\textwidth}
 \centering
 \includegraphics[width = 0.9\textwidth]{figures/Signal_5_sparse_pc_graph.jpg}
-\caption{Signal 5 Sparse PC Graph}
+\caption{Ergebnis einer dünnbesetzten Hauptkomponentenanalyse.}
 \label{sparse_pca_classical_analysis_sparse_pc_graph}
 \end{subfigure}
+\vspace{0.5cm}
 %
 \begin{subfigure}{0.9\textwidth}
 \centering
 \includegraphics[width=\textwidth]{figures/Signal_5_principal_axis.jpg}
-\caption{Signal 5 principal axis}
+\caption{Die Abbildung zeigt die Koeffizienten der ersten Hauptachse.}
 \label{sparse_pca_classical_analysis_principal_axis}
 \end{subfigure}
+\vspace{0.5cm}
 %
 \begin{subfigure}{0.9\textwidth}
 \centering
 \includegraphics[width=\textwidth]{figures/Signal_5_sparse_principal_axis.jpg}
-\caption{Signal 5 sparse principal axis}
+\caption{Die Abbildung zeigt die Koeffizienten der ersten dünnbesetzten Hauptachse.}
 \label{sparse_pca_classical_analysis_sparse_principal_axis}
 \end{subfigure}
 %
 \begin{subfigure}{0.9\textwidth}
 \centering
 \includegraphics[width = \textwidth]{figures/Signal_5_scree_plot_10.jpg}
-\caption{Signal 5 Scree Plot}
+\caption{Scree Plot für $k=10$ Hauptkomponenten.}
 \label{sparse_pca_classical_analysis_scree_plot}
 \end{subfigure}
-\caption{Vergleich der klassischen mit der dünnbesetzten Hauptkomponentenanalyse für $\lambda=10^{-4}$ und $\alpha = 0.95$.}
+\caption{Vergleich der klassischen Hauptkomponentenanalyse mit der dünnbesetzten Variante für $\lambda=10^{-4}$ und $\alpha = 0.95$.}
 \label{sparse_pca_classical_analysis}
 \end{figure}
 
@@ -142,22 +145,25 @@ Um eine automatisierte Wahl von $\lambda$ und $\alpha$ zu ermöglichen, haben wi
 \centering
 \begin{subfigure}{0.9\textwidth}
 \includegraphics[width=\textwidth]{figures/Signal_0_degrees_of_freedom.jpg}
-\caption{Anzahl Freiheitsgrade in Abhängigkeit von $\lambda$.}
+\caption{Anzahl freier Parameter in Abhängigkeit von $\lambda$.}
 \label{results_parameter_benchmark_degrees_of_freedom}
+\vspace{0.5cm}
 \end{subfigure}
+\vspace{0.5cm}
 %
 \begin{subfigure}{0.9\textwidth}
 \includegraphics[width=\textwidth]{figures/Signal_0_explained_variances.jpg}
 \caption{Erklärte Varianz des Datensatzes in Abhängigkeit von $\lambda$.}
 \label{results_parameter_benchmark_explained_variance}
 \end{subfigure}
+\vspace{0.5cm}
 %
 \begin{subfigure}{0.9\textwidth}
 \includegraphics[width=\textwidth]{figures/Signal_0_bic.jpg}
-\caption{Wahl der Hyperparameter mithilfe eines minimalen BIC-Kriteriums.}
+\caption{Wert des BIC-Kriteriums in Abhängigkeit von $\lambda$.}
 \label{results_parameter_benchmark_bic}
 \end{subfigure}
-\caption{Die Abbildung zeigt wie sich eine Wahl der Hyperparameter $\alpha$ und $\lambda$ mithilfe eines BIC-Kriterium gestalten kann. Um Erkenntnisse über die Entstehung der BIC-Abbildung zu gewinnen, werden zusätzlich die beiden Komponenten Anzahl Freiheitsgrade und erklärte Varianz gezeigt. Zu beachten ist die logarithmische Skala für $\lambda$.}
+\caption{Die Abbildung zeigt wie sich eine Wahl der Hyperparameter $\alpha$ und $\lambda$ mithilfe eines BIC-Kriteriums gestalten kann. Während $\lambda$ auf der x-Achse aufgetragen ist, sind die unterschiedlichen Werte für $\alpha$ farblich markiert. Zu beachten ist die logarithmische Skala für $\lambda$.}
 \label{results_parameter_benchmark}
 \end{figure}
 
@@ -232,6 +238,6 @@ Bezüglich der Notation haben wir uns an Abschnitt \ref{adjustment_of_variances}
 \begin{figure}
 \centering
 \includegraphics[width = 0.9\textwidth]{figures/total_variance_validation.png}
-\caption{Zu sehen sind die Ergebnisse der unterschiedlichen Vorgehensweise bei der Berechnung der Hauptkomponenten und erklärter Varianzen. Nur die von Camacho et al. vorgeschlagene Variante TotZB* errechnet diese korrekt. Jeder Punkt entspricht eines unserer Experimente wie in Abschnitt \ref{application_frequency_data} beschrieben.}
+\caption{Zu sehen sind die Ergebnisse der unterschiedlichen Vorgehensweise bei der Berechnung der Hauptkomponenten und der erklärten Varianz. Nur die von Camacho et al. vorgeschlagene Variante TotZB* errechnet diese korrekt. Jeder Punkt entspricht eines unserer Experimente aus Abschnitt \ref{application_frequency_data}.}
 \label{total_variance_validation}
 \end{figure}
