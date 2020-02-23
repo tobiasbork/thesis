@@ -452,22 +452,22 @@ wobei $(\cdot)_+ = max(\cdot, 0)$ ist. Der Beweis kann in \cite{murphy} nachgele
 \end{align}
 definiert wird. Dieser steht im Gegensatz zum hard-thresholding Operator und wird in Abbildung \ref{thresholding_figure} dargestellt. Durch den soft-thresholding Operator werden Koeffizienten in $\hat{\beta}^{\text{OLS}}$ entweder auf Null gesetzt oder um $\frac{\lambda_1}{2}$ geschrumpft. Nun sind wir auch in der Lage zu verstehen, warum Tibshirani \cite{tibshirani_lasso} den Begriff Lasso eingeführt hat, welcher für \textit{Least absolute selection and shrinkage operator} steht. 
 
-Für den allgemeinen Fall wird (\ref{lasso_formulation}) mithilfe von Näherungsverfahren gelöst. Da $\norm{\beta}_1$ nicht differenzierbar ist wenn $\beta_j = 0$, sind wir mit einem nicht glattem Optimierungsproblem konfrontiert. Seit der Problemformulierung wurde eine Vielzahl an Algorithmen entwickelt bzw. adaptiert, die eine numerische Lösung liefern. Dazu gehören Least-angle Regression (LARS) \cite{efron_lars}, Koordinaten-Abstiegsverfahren \cite{friedman}, Subdifferential-Methoden und  Näherungs-Gradientenverfahren \cite{yang, vandenberghe}. Letztere sind eine natürliche Erweiterung von Gradientenverfahren falls die Zielfunktion nicht differenzierbar ist. In Abschnitt \ref{elastic_net} werden wir auf ein Koordinatenabstiegsverfahren weiter eingehen.
+Für den allgemeinen Fall wird (\ref{lasso_formulation}) mithilfe von Näherungsverfahren gelöst. Da $\norm{\beta}_1$ nicht differenzierbar ist wenn $\beta_j = 0$, sind wir mit einem nicht glattem Optimierungsproblem konfrontiert. Seit der Problemformulierung wurde eine Vielzahl an Algorithmen entwickelt bzw. adaptiert, die eine numerische Lösung liefern. Dazu gehören Least-angle Regression (LARS) \cite{efron_lars}, Koordinaten-Abstiegsverfahren \cite{friedman}, Subdifferential-Methoden und  Näherungs-Gradientenverfahren \cite{yang, vandenberghe}. Letztere sind eine natürliche Erweiterung von Gradientenverfahren falls die Zielfunktion nicht differenzierbar ist. In Abschnitt \ref{elastic_net} werden wir auf ein Koordinaten-Abstiegsverfahren weiter eingehen.
 
 \begin{figure}
 \centering
 	\begin{subfigure}{0.4\textwidth}
 	\centering
-	\includegraphics[width = \textwidth]{figures/soft_thresholding.png}
+	\includegraphics[width = \textwidth]{figures/soft_thresholding.jpg}
 	\label{hard_thresholding}
 	\end{subfigure}\hspace{1cm}
 	%	
 	\begin{subfigure}{0.4\textwidth}
 	\centering
-	\includegraphics[width = \textwidth]{figures/hard_thresholding.png}
+	\includegraphics[width = \textwidth]{figures/hard_thresholding.jpg}
 	\label{soft_thresholding}
 	\end{subfigure}
-\caption{Die Abbildung zeigt die beiden Operationen soft (links) und hard (rechts) thresholding.}
+\caption{Die Abbildung zeigt die beiden Operationen soft-thresholding $\operatorname{soft}_{\delta}(x)$ (links) und hard-thresholding $\operatorname{hard}_{\delta}(x)$ (rechts).}
 \label{thresholding_figure}
 \end{figure}
 
@@ -489,7 +489,7 @@ Damit im Fall $p > n$ mehr als $n$ Variablen für das Modell selektiert werden k
 \end{align}
 Wie zuvor wird durch den $\ell_1$-Strafterm ein dünnbesetztes Modell generiert. Dagegen fördert der $\ell_2$-Strafterm den Gruppeneffekt, stabilisiert den Regularisierungspfad und lässt eine beliebige Anzahl zu selektierender Variablen zu. Um eine doppelte Schrumpfung der Koeffizienten zu vermeiden, kann das Elastic Net mit dem Faktor $(1 + \lambda_2)$ korrigiert werden. 
 
-Ähnlich wie bei der Lasso Regression kann nur dann eine explizite Lösung von (\ref{elastic_net_formulation}) angegeben werden, wenn die Spalten von $\mat X$ orthonormal sind. Für eine allgemeine numerische Lösung wurden zum Beispiel LARS-EN \cite{zou_elasticnet}, welches auf dem LARS Algorithmus für das Lasso basiert, und ein Koordinatenabstiegsverfahren \cite{friedman} vorgeschlagen. Die Implementierung des Elastic Nets in scikit-learn \cite{scikit_learn} beruht auf letzterem Verfahren mit einer leicht abgeänderten mathematischen Formulierung
+Ähnlich wie bei der Lasso Regression kann nur dann eine explizite Lösung von (\ref{elastic_net_formulation}) angegeben werden, wenn die Spalten von $\mat X$ orthonormal sind. Für eine allgemeine numerische Lösung wurden zum Beispiel LARS-EN \cite{zou_elasticnet}, welches auf dem LARS Algorithmus für das Lasso basiert, und ein Koordinaten-Abstiegsverfahren \cite{friedman} vorgeschlagen. Die Implementierung des Elastic Nets in scikit-learn \cite{scikit_learn} beruht auf letzterem Verfahren mit einer leicht abgeänderten mathematischen Formulierung
 \begin{align}
 \label{elastic_net_python}
 \argmin_{\beta} R_{\lambda}(\beta) = \argmin_{\beta} \frac{1}{2n}  \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda \alpha \norm{\beta}_{1} + \frac{\lambda}{2}(1-\alpha) \norm{\beta}_{2}^2,
@@ -500,7 +500,7 @@ wobei $\alpha \in [0,1]$ das Verhältnis zwischen $\ell_1$- und $\ell_2$-Norm is
 \end{align}
 entspricht (\ref{elastic_net_python}) unser ursprünglich formulierten Problem. Durch die Reparametrisierung können wir das Verhältnis der Bestrafungen flexibel anpassen. Mit $\alpha = 0$ reduziert sich (\ref{elastic_net_python}) auf Ridge und für $\alpha = 1$ auf die Lasso Regression.
 
-Oft ist es schwer, alle Koeffizienten gleichzeitig zu optimieren. Daher nutzt man bei einem Koordinatenabstiegsverfahren aus, dass eine partielle Optimierung über den $j$-ten Koeffizienten einfach zu berechnen ist, wenn alle anderen fixiert sind. Mithilfe der bisherigen Schätzer $\tilde{\beta}_0$ und $\tilde{\beta}_l$ für $l \neq j$, löst man also
+Oft ist es schwer, alle Koeffizienten gleichzeitig zu optimieren. Daher nutzt man bei einem Koordinaten-Abstiegsverfahren aus, dass eine partielle Optimierung über den $j$-ten Koeffizienten einfach zu berechnen ist, wenn alle anderen fixiert sind. Mithilfe der bisherigen Schätzer $\tilde{\beta}_0$ und $\tilde{\beta}_l$ für $l \neq j$, löst man also
 \begin{align}
 \label{coordinate_enet_problem}
 \tilde{\beta}_j = \argmin_{\beta_j} R_{\lambda}(\tilde{\beta}_0, \ldots, \tilde{\beta}_{j-1}, \beta_j, \tilde{\beta}_{j+1}, \ldots, \tilde{\beta}_p).
@@ -514,12 +514,12 @@ gegeben. Dabei ist $y_i - (\tilde{\beta}_0 + \sum_{l \neq j} x_{il}\tilde{\beta}
 \label{cd_fast_explaination}
 \frac{1}{n}\sum_{i=1}^n x_{ij}(y_i - (\tilde{\beta}_0 + \sum_{l \neq j} x_{il}\tilde{\beta}_l)) = \frac{1}{n}\sum_{i=1}^n x_{ij}r_i + \tilde{\beta}_j
 \end{align}
-wobei $r_i$ das aktuelle Residuum der $i$-ten Beobachtung ist. Anhand von (\ref{cd_fast_explaination}) können wir erkennen, warum das Koordinatenabstiegsverfahren effizient ist. Viele der Koeffizienten, die zuvor Null waren, bleiben nach der soft-thresholding Operation Null, wenn die Residuen bezüglich $\beta_j$ nicht zu groß sind. Daher muss $\beta_j$ in vielen Fällen nicht aktualisiert werden.
+wobei $r_i$ das aktuelle Residuum der $i$-ten Beobachtung ist. Anhand von (\ref{cd_fast_explaination}) können wir erkennen, warum das Koordinaten-Abstiegsverfahren effizient ist. Viele der Koeffizienten, die zuvor Null waren, bleiben nach der soft-thresholding Operation Null, wenn die Residuen bezüglich $\beta_j$ nicht zu groß sind. Daher muss $\beta_j$ in vielen Fällen nicht aktualisiert werden.
 
-Für die Wahl des Koeffizienten, welcher als nächstes minimiert werden soll, gibt es verschiedene Möglichkeiten. Man kann zyklisch, zufällig oder in die Richtung des steilsten Abstiegs entlang der Koordinaten vorgehen. In Algorithmus \ref{enet_algorithm} haben wir das zyklische Koordinatenabstiegsverfahren zusammengefasst.
+Für die Wahl des Koeffizienten, welcher als nächstes minimiert werden soll, gibt es verschiedene Möglichkeiten. Man kann zyklisch, zufällig oder in die Richtung des steilsten Abstiegs entlang der Koordinaten vorgehen. In Algorithmus \ref{enet_algorithm} haben wir das zyklische Koordinaten-Abstiegsverfahren zusammengefasst.
 
 \begin{algorithm}[tbh]
-    \caption{Koordinatenabstiegsverfahren für das Elastic Net}
+    \caption{Koordinaten-Abstiegsverfahren für das Elastic Net}
     \label{enet_algorithm}
     \begin{algorithmic}[1]
         \Procedure{elasticnet}{$\mat X, y, \lambda, \alpha$}
@@ -534,7 +534,7 @@ Für die Wahl des Koeffizienten, welcher als nächstes minimiert werden soll, gi
     \end{algorithmic}
 \end{algorithm} 
 
-Auch wenn klassische Kriterien für die Konvergenz von Koordinatenabstiegsverfahren aufgrund der fehlenden Differenzierbarkeit nicht zutreffen, besitzt (\ref{elastic_net_python}) eine andere charakterisierende Eigenschaft, für welche das Verfahren konvergiert \cite{tseng}.
+Auch wenn klassische Kriterien für die Konvergenz von Koordinaten-Abstiegsverfahren aufgrund der fehlenden Differenzierbarkeit nicht zutreffen, besitzt (\ref{elastic_net_python}) eine andere charakterisierende Eigenschaft, für welche das Verfahren konvergiert \cite{tseng}.
 
 
 %----------------------------------------------------------------------------------------
@@ -571,27 +571,27 @@ Um ein geeignetes Modell zu erhalten, müssen die Parameter $\lambda_1$, $\lambd
 
 \begin{figure}
 \centering
-	\begin{subfigure}{0.9\textwidth}
+	\begin{subfigure}{0.85\textwidth}
 	\centering
-	\includegraphics[width = \textwidth]{figures/ridge_regression_coefficients_cv.png}
+	\includegraphics[width = \textwidth]{figures/ridge_regression_coefficients_cv.jpg}
 	\label{ridge_regression_coefficients}
 	\vspace{-0.5cm}
 	\caption{Verhalten der Ridge Regression bei Veränderung von $\lambda_2$.}
 	\vspace{0.5cm}
 	\end{subfigure}
 	%	
-	\begin{subfigure}{0.9\textwidth}
+	\begin{subfigure}{0.85\textwidth}
 	\centering
-	\includegraphics[width = \textwidth]{figures/lasso_regression_coefficients_cv.png}
+	\includegraphics[width = \textwidth]{figures/lasso_regression_coefficients_cv.jpg}
 	\label{lasso_regression_coefficients}
 	\vspace{-0.5cm}
 	\caption{Verhalten der Lasso Regression bei Veränderung von $\lambda_1$.}
 	\vspace{0.5cm}
 	\end{subfigure}
 	%
-	\begin{subfigure}{0.9\textwidth}
+	\begin{subfigure}{0.85\textwidth}
 	\centering
-	\includegraphics[width = \textwidth]{figures/elastic_net_coefficients_cv.png}
+	\includegraphics[width = \textwidth]{figures/elastic_net_coefficients_cv.jpg}
 	\label{elastic_net_coefficients}
 	\vspace{-0.5cm}
 	\caption{Verhalten der Ridge Regression bei Veränderung von $\lambda$ mit $\alpha = 0.99$ fest.}

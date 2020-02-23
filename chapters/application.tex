@@ -27,7 +27,7 @@ Vor der Anwendung der dünnbesetzten Hauptkomponentenanalyse haben wir einige Vo
 
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth]{figures/Signal_5_fft_example.png}
+\includegraphics[width=\textwidth]{figures/Signal_5_fft_example_new.jpg}
 \caption{Signal 5 fft example}
 \label{fft_example}
 \end{figure}
@@ -36,7 +36,7 @@ Es wird sich zeigen, dass der Algorithmus für die dünnbesetzte Hauptkomponente
 
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth]{figures/Signal_5_time_frequency_change.png}
+\includegraphics[width=\textwidth]{figures/Signal_5_time_frequency_change.jpg}
 \caption{Signal 5 time frequency change}
 \label{spectrogram}
 \end{figure}
@@ -86,35 +86,35 @@ Zuletzt betrachtet man Abbildung \ref{sparse_pca_classical_analysis_scree_plot},
 \centering
 \begin{subfigure}{0.45\textwidth}
 \centering
-\includegraphics[width = \textwidth]{figures/Signal_5_pc_graph.png}
+\includegraphics[width = 0.9\textwidth]{figures/Signal_5_pc_graph.jpg}
 \caption{Signal 5 PC Graph}
 \label{sparse_pca_classical_analysis_pc_graph}
 \end{subfigure}
 %
 \begin{subfigure}{0.45\textwidth}
 \centering
-\includegraphics[width = \textwidth]{figures/Signal_5_sparse_pc_graph.png}
+\includegraphics[width = 0.9\textwidth]{figures/Signal_5_sparse_pc_graph.jpg}
 \caption{Signal 5 Sparse PC Graph}
 \label{sparse_pca_classical_analysis_sparse_pc_graph}
 \end{subfigure}
 %
 \begin{subfigure}{0.9\textwidth}
 \centering
-\includegraphics[width=\textwidth]{figures/Signal_5_principal_axis.png}
+\includegraphics[width=\textwidth]{figures/Signal_5_principal_axis.jpg}
 \caption{Signal 5 principal axis}
 \label{sparse_pca_classical_analysis_principal_axis}
 \end{subfigure}
 %
 \begin{subfigure}{0.9\textwidth}
 \centering
-\includegraphics[width=\textwidth]{figures/Signal_5_sparse_principal_axis.png}
+\includegraphics[width=\textwidth]{figures/Signal_5_sparse_principal_axis.jpg}
 \caption{Signal 5 sparse principal axis}
 \label{sparse_pca_classical_analysis_sparse_principal_axis}
 \end{subfigure}
 %
 \begin{subfigure}{0.9\textwidth}
 \centering
-\includegraphics[width = \textwidth]{figures/Signal_5_scree_plot_10.png}
+\includegraphics[width = \textwidth]{figures/Signal_5_scree_plot_10.jpg}
 \caption{Signal 5 Scree Plot}
 \label{sparse_pca_classical_analysis_scree_plot}
 \end{subfigure}
@@ -141,19 +141,19 @@ Um eine automatisierte Wahl von $\lambda$ und $\alpha$ zu ermöglichen, haben wi
 \begin{figure}
 \centering
 \begin{subfigure}{0.9\textwidth}
-\includegraphics[width=\textwidth]{figures/Signal_0_degrees_of_freedom.png}
+\includegraphics[width=\textwidth]{figures/Signal_0_degrees_of_freedom.jpg}
 \caption{Anzahl Freiheitsgrade in Abhängigkeit von $\lambda$.}
 \label{results_parameter_benchmark_degrees_of_freedom}
 \end{subfigure}
 %
 \begin{subfigure}{0.9\textwidth}
-\includegraphics[width=\textwidth]{figures/Signal_0_explained_variances.png}
+\includegraphics[width=\textwidth]{figures/Signal_0_explained_variances.jpg}
 \caption{Erklärte Varianz des Datensatzes in Abhängigkeit von $\lambda$.}
 \label{results_parameter_benchmark_explained_variance}
 \end{subfigure}
 %
 \begin{subfigure}{0.9\textwidth}
-\includegraphics[width=\textwidth]{figures/Signal_0_bic.png}
+\includegraphics[width=\textwidth]{figures/Signal_0_bic.jpg}
 \caption{Wahl der Hyperparameter mithilfe eines minimalen BIC-Kriteriums.}
 \label{results_parameter_benchmark_bic}
 \end{subfigure}
@@ -209,7 +209,7 @@ Da wir eine maximale Anzahl von $500$ Iterationen festgelegt haben, kommt es bei
 
 \begin{figure}
 \centering
-\includegraphics[width = 0.9\textwidth]{figures/run_time_per_iteration.png}
+\includegraphics[width = 0.9\textwidth]{figures/run_time_per_iteration.jpg}
 \caption{In dieser Abbildung ist die Laufzeit pro Iteration bei Veränderung des Hyperparameters $\lambda$ auf einer logarithmischen Skala zu sehen. Da auch $\alpha$ in unseren Experimenten variiert worden ist und mehrere Sensoren betrachtet werden, sehen wir mehrere Punkte je $\lambda$. Im Mittel klar zu erkennen ist ein Anstieg der Laufzeit bei Verringerung der Stärke der Bestrafung $\lambda$.}
 \label{run_time_per_iteration}
 \end{figure}
