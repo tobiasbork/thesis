@@ -8,7 +8,7 @@
 ``We are drowning in information but starved for knowledge.''
 \end{chapquote}
 
-Wir befinden uns in einem Zeitalter, in welchem Tag für Tag mehr Daten generiert werden. Im Jahr 2019 werden pro Minute mehr als 500,000 Tweets auf Twitter gesendet, mehr als 250,000 Stories auf Instagram gepostet und ungefähr 4.5 Millionen Suchanfragen bei Google ausgeführt \cite{domo}. Ein Rückgang dieser Entwicklung ist dabei nicht in Sicht. Eher im Gegenteil wurden mehr als 90\% der Daten auf der Welt in den letzten zwei Jahren (Stand: 2017) erzeugt \cite{ibm}. Das exponentielle Datenwachstum erfordert die Entwicklung und Analyse von modernen Verfahren, welche mit dieser Masse an Daten umgehen kann. \textit{Big Data} ist ohne solcher Methoden nutzlos. 
+Wir befinden uns in einem Zeitalter, in welchem Tag für Tag mehr Daten generiert werden. Im Jahr 2019 wurden pro Minute mehr als 500,000 Tweets auf Twitter gesendet, mehr als 250,000 Stories auf Instagram gepostet und ungefähr 4.5 Millionen Suchanfragen bei Google ausgeführt \cite{domo}. Ein Rückgang dieser Entwicklung ist dabei nicht in Sicht. Eher im Gegenteil wurden mehr als 90\% der Daten auf der Welt in den letzten zwei Jahren (Stand: 2017) erzeugt \cite{ibm}. Das exponentielle Datenwachstum erfordert die Entwicklung und Analyse von modernen Verfahren, welche mit dieser Masse an Daten umgehen können. \textit{Big Data} ist ohne solcher Methoden nutzlos. 
 (Zeitgleich wächst die Begierde nach Wissen, um Bezug auf Zitat zu nehmen?)
  
  
@@ -17,13 +17,13 @@ Wir befinden uns in einem Zeitalter, in welchem Tag für Tag mehr Daten generier
 %----------------------------------------------------------------------------------------
 
 
-\section{Motivation}
+\subsubsection{Motivation}
 
 Oft ist das Objekt von Interesse in riesigen Datensätzen verborgen bzw. nur von Teilen davon abhängig. In diesem Zusammenhang können Computer helfen, relevante Informationen zu extrahieren. Dies verlangt eine Identifizierung der signifikanten Variablen und das Verständnis deren Zusammenspiels. Im Bereich des maschinellen Lernens ergeben sich häufig zwei Ziele. Einerseits möchte man einen bestehenden Trainingsdatensatz genauer verstehen, strukturieren und vereinfachen. Andererseits interessiert man sich dafür, die erlernten Gesetzmäßigkeiten des Datensatzes auf neue, ungesehene Testdaten zu verallgemeinern. 
 
-Für dieser Art Aufgaben sind bereits viele effiziente Algorithmen entwickelt worden. Hochdimensionale Datensätze, in welche eine Vielzahl an Variablen einfließen, können solche Methoden aber häufig vor Probleme stellen. Diese Phänomen ist unter dem dem sog. \textit{Fluch der Dimensionen} bekannt, welcher sich in vielen verschiedenen Facetten niederschlägt \cite{bellman}. Ein offensichtliches Problem ist die Visualisierung von Datensätzen mit mehr als drei Dimensionen. Wir Menschen können Zusammenhänge in einem anschaulichen Kontext viel besser verstehen, als in einer Tabelle voller Zahlen. Viele Eigenschaften des zwei- oder dreidimensionalen Raums lassen sich nicht auf höherdimensionale Räume übertragen. Im Zuge einer explorativen Datenanalyse kann sich eine Projektion in niedrigdimensionale Räume daher als nützlich erweisen.
+Für dieser Art Aufgaben sind bereits viele effiziente Algorithmen entwickelt worden. Hochdimensionale Datensätze, in welche eine Vielzahl an Variablen einfließen, können solche Methoden aber häufig vor Probleme stellen. Dieses Phänomen ist unter dem dem sog. \textit{Fluch der Dimensionen} bekannt, welcher sich in vielen verschiedenen Facetten niederschlägt \cite{bellman}. Ein offensichtliches Problem ist die Visualisierung von Datensätzen mit mehr als drei Dimensionen. Wir Menschen können Zusammenhänge in einem anschaulichen Kontext viel besser verstehen als in einer Tabelle voller Zahlen. Viele Eigenschaften des zwei- oder dreidimensionalen Raums lassen sich nicht auf höherdimensionale Räume übertragen. Im Zuge einer explorativen Datenanalyse kann sich die Projektion in niedrigdimensionale Räume daher als nützlich erweisen.
 
-Ein weiterer Gesichtspunkt bezieht sich auf eine Verallgemeinerung des Modells auf neue Daten. Ohne vereinfachende Annahmen muss die Anzahl an Beobachtungen exponentiell im Vergleich zu der Anzahl an Dimensionen wachsen, um weiterhin akkurate Vorhersagen zu treffen. In vielen Situationen verfügen wir zwar über eine Vielzahl an Variablen, aber nicht über genügend Beobachtungen, da die Beschaffung unter Umständen große Kosten verursachen kann. 
+Ein weiterer Gesichtspunkt bezieht sich auf eine Verallgemeinerung des Modells auf neue Daten. Ohne vereinfachende Annahmen muss die Anzahl an Beobachtungen exponentiell im Vergleich zu der Anzahl an Dimensionen wachsen, um weiterhin akkurate Vorhersagen zu treffen. In vielen Situationen verfügen wir zwar über eine Vielzahl an Variablen, aber nicht über genügend Beobachtungen, da die Beschaffung unter Umständen hohe Kosten verursachen kann. 
 
 
 %----------------------------------------------------------------------------------------
@@ -31,23 +31,31 @@ Ein weiterer Gesichtspunkt bezieht sich auf eine Verallgemeinerung des Modells a
 %----------------------------------------------------------------------------------------
 
 
-\section{Dimensionsreduktionsverfahren}
+\subsubsection{Dimensionsreduktionsverfahren}
 
-Um den Fluch der Dimensionen zu umgehen, können Dimensionsreduktionsverfahren hilfreich sein. Sie zielen darauf ab, beobachtete Daten in eine einfachere Repräsentation zu übersetzen, welche die Struktur trotz drastischer Reduktion möglichst genau wiedergibt. Dadurch können hochdimensionale Datensätze veranschaulicht und für weitere Analysezwecke verwendet werden. Anwendung finden Dimensionsreduktionsverfahren vor allem in der Bildverarbeitung, der Biologie und der Ingenieurwissenschaft. Einige interessante Beispiele beinhalten die Klassifizierung handgeschriebener Zahlen \cite{hastie_elements}, die Gesichtserkennung \cite{hancock} oder die Genexpressionsanalyse \cite{alter}.
+Um den Fluch der Dimensionen zu umgehen, können Dimensionsreduktionsverfahren hilfreich sein. Sie zielen darauf ab, Daten in eine einfachere Repräsentation zu übersetzen, welche die Struktur trotz drastischer Reduktion möglichst genau wiedergibt. Dadurch können hochdimensionale Datensätze veranschaulicht und für weitere Analysezwecke verwendet werden. Anwendung finden Dimensionsreduktionsverfahren vor allem in der Bildverarbeitung, der Biologie und der Ingenieurwissenschaft. Einige interessante Beispiele beinhalten die Klassifizierung handgeschriebener Zahlen \cite{hastie_elements}, die Gesichtserkennung \cite{hancock} oder die Genexpressionsanalyse \cite{alter}.
 
-Allgemein fallen Dimensionsreduktionsverfahren in zwei verschiedene Klassen, \textit{feature selection} und \textit{feature extraction}. Erstere erreichen eine Reduktion vor allem durch eine Filterung nach relevanten Variablen. Anstatt unwichtige Variablen zu vernachlässigen, beabsichtigen feature extraction Verfahren die Ausgangsvariablen zu kombinieren und zusammenzufassen. Sowohl die klassische Hauptkomponentenanalyse als auch die dünnbesetzte Variante, mit welcher wir uns in dieser Arbeit beschäftigen, fallen unter diese Kategorie.
+Allgemein fallen Dimensionsreduktionsverfahren in zwei verschiedene Klassen, \textit{feature selection} und \textit{feature extraction}. Erstere erreichen eine Reduktion vor allem durch eine Filterung nach relevanten Variablen. Anstatt unwichtige Variablen zu vernachlässigen, beabsichtigen feature extraction Verfahren die Ausgangsvariablen zu kombinieren und zusammenzufassen. Sowohl die klassische Hauptkomponentenanalyse als auch die dünnbesetzte Variante, welche im Fokus dieser Arbeit steht, fallen unter diese Kategorie.
 
 
 %----------------------------------------------------------------------------------------
-%	Interpretierbarkeit
+%	Transparenz des Modells
 %----------------------------------------------------------------------------------------
 
 
-\section{Interpretierbarkeit}
+\subsubsection{Transparenz des Modells}
 
-Modelle der künstlichen Intelligenz können trainiert werden, weitreichende und komplexe Aufgaben auszuführen. Jedoch handelt es sich dabei häufig um einen \textit{Black-Box-Ansatz}, d.h. der Nutzer hat wenig bis keine Einsicht darin, wie Entscheidungen mithilfe dieses Modells getroffen werden. Besonders in sicherheitskritischen Anwendungen können wir aber nicht blind auf gute Ergebnisse vertrauen, sondern müssen in der Lage sein, gefällte Entscheidungen im Detail nachzuvollziehen. Wirklich wertvoll werden Modelle erst dann, wenn wir sie verstehen und erklären können.
+Modelle der künstlichen Intelligenz können trainiert werden, weitreichende und komplexe Aufgaben auszuführen. Jedoch handelt es sich dabei häufig um einen \textit{Black-Box-Ansatz}, d.h. der Nutzer hat wenig bis keine Einsicht darin, wie Entscheidungen mithilfe dieses Modells getroffen werden. Besonders in sicherheitskritischen Anwendungen sollte man aber nicht blind auf gute Ergebnisse vertrauen, sondern in der Lage sein, gefällte Entscheidungen im Detail nachzuvollziehen. Wirklich wertvoll werden Modelle erst dann, wenn wir sie verstehen und erklären können.
 
 Im Laufe dieser Arbeit werden wir feststellen, dass die klassische Hauptkomponentenanalyse ein solches Verständnis nicht ermöglicht. Häufig ist es unklar, was die neu kombinierten Variablen im Kontext repräsentieren. Die Möglichkeit einer Interpretation des Modells war von wesentlicher Bedeutung bei der Verwendung der dünnbesetzten Hauptkomponentenanalyse für den uns zur Verfügung stehenden Datensatz. Wir werden uns in Kapitel \ref{application} genauer mit Frequenzdaten auseinandersetzen.
+
+
+%----------------------------------------------------------------------------------------
+%	Aufbau der Arbeit
+%----------------------------------------------------------------------------------------
+
+
+\subsubsection{Aufbau der Arbeit}
 
 
 %----------------------------------------------------------------------------------------
@@ -55,16 +63,14 @@ Im Laufe dieser Arbeit werden wir feststellen, dass die klassische Hauptkomponen
 %----------------------------------------------------------------------------------------
 
 
-\section{Eigene Beiträge}
+\subsubsection{Eigene Beiträge}
 
 Ein Großteil der Arbeit zur dünnbesetzten Hauptkomponentenanalyse beruht auf dem von Zou und Haste in \cite{zou_sparsepca} eingeführten Ansatz. Er ist in der Literatur der wohl weitverbreiteste und hat den Grundstein für eine Verwendung der Methode in der Praxis gelegt. Wir möchten an dieser Stelle darauf hinweisen, dass während der Entstehung dieser Arbeit einige Kritikpunkte durch eine Veröffentlichung von Camacho et al. aufgezeigt wurden. Wir haben Änderungen wie Korrekturen eingearbeitet und werden Unterschiede im Folgendem deutlich machen. Insgesamt haben wir in dieser Arbeit folgende Eigenbeiträge geleistet.
 \begin{itemize}
 \item Detaillierte Aufarbeitung der mathematischen Grundlagen für die dünnbesetzte Hauptkomponentenanalyse
 \item Erläuterung der Konstruktion und Einarbeitung von theoretischen Resultaten
-\item Eigene, verschnellerte Implementierung des Algorithmus in Python
+\item Eigene, beschleunigte Implementierung des Algorithmus in Python
 \item Anwendung des Verfahrens auf Frequenzdaten
-\item Empirische Validierung der von Camacho et al. gewonnenen Kenntnissen
+\item Empirische Validierung der von Camacho et al. gewonnenen Kenntnisse
 \item Vergleich mit anderen Ansätzen sowie Ausblick für mögliche Verbesserungen
 \end{itemize}
-
-\subsubsection{Aufbau der Arbeit}
