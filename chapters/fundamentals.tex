@@ -196,10 +196,10 @@ $$\widehat{\mat A} = \mat U \mat V^{\top}$$
 das Approximationsproblem
 \begin{align}
 \label{procrustes_rotation}
-\begin{split}
+\begin{gathered}
 \widehat{\mat A} = \argmin_{\mat A} \norm{\mat M - \mat N \mat A^{\top}}_F^2\\
-\text{unter der Nebenbedingung, dass } \mat A^{\top} \mat A = \mat I_{k \times k}.
-\end{split}
+\text{unter der Nebenbedingung, dass } \mat A^{\top} \mat A = \mat{\mathbb{1}}_{k \times k}.
+\end{gathered}
 \end{align}
 \end{thm}
 
@@ -346,7 +346,7 @@ Falls $\mat X$ vollen Rang hat zeigt man leicht, dass (\ref{least_squares}) die 
 \begin{align}
 \hat{\beta}^{\text{OLS}} = (\mat X^{\top}\mat X)^{-1}\mat X^{\top} y
 \end{align}
-besitzt. Die Zielgröße $y$ ergibt sich dann durch
+besitzt. Die Zielgröße $\hat{y}$ ergibt sich dann durch
 \begin{align}
 \hat{y} = \mat X \hat{\beta}^{\text{OLS}} = \mat X (\mat X^{\top}\mat X)^{-1}\mat X^{\top} y
 \end{align}
@@ -373,7 +373,7 @@ Zu diesem Zweck kann die \textit{Tikhonov Regularisierung}, die auch unter dem N
 \end{align}
 wobei $\lambda_2 \geq 0$ ein Hyperparameter ist, der die Stärke der Schrumpfung der Regressionskoeffizienten kontrolliert. Hyperparameter werden zur Steuerung des Trainingsalgorithmus verwendet und müssen vorab festgelegt werden. Je größer $\lambda_2$, desto stärker ist die Schrumpfung der $\beta_j$. Durch die Einführung des $\ell_2$-Strafterms garantiert (\ref{ridge_regression}) auch für $p > n$ eine eindeutige Lösung, da $\norm{\cdot}_{2}^{2}$ streng konvex ist. Da $\beta_0$ nicht im Strafterm vorkommt, schätzen wir zunächst $\beta_0 = \bar{y} = \frac{1}{n}\sum_{i=1}^{n} y_i$ und zentrieren die Eingaben $x_{ij} = x_{ij} - \bar{x}_j$. Die eindeutige Lösung der zentrierten Version von (\ref{ridge_regression}) ist dann durch
 \begin{align}
-\hat{\beta}^{\text{ridge}}  = (\mat X^{\top} \mat X + \lambda_2\mat{I})^{-1}\mat{X}^{\top}y
+\hat{\beta}^{\text{ridge}}  = (\mat X^{\top} \mat X + \lambda_2\mat{\mathbb{1}})^{-1}\mat{X}^{\top}y
 \end{align}
 gegeben, wobei $\beta = (\beta_1, \ldots, \beta_p)$ und $\mat{X} \in \mathbb{R}^{n \times p}$ die Matrix der $x_i$. Die durch die Ridge Regression erzeugten Koeffizienten sind also um den Faktor $\frac{1}{1+\lambda_2}$ gegenüber denen der klassischen linearen Regression skaliert. Eine Dünnbesetzung der Koeffizienten wird erst für $\lambda_2 \to \infty$ erreicht.
 
@@ -522,7 +522,7 @@ Für die Wahl des Koeffizienten, welcher als nächstes minimiert werden soll, gi
     \label{enet_algorithm}
     \begin{algorithmic}[1]
         \Procedure{elasticnet}{$\mat X, y, \lambda, \alpha$}
-        	\State Initialisiere $\beta = (\mat X^T\mat X + \lambda\mat I)^{-1}\mat X^Ty$
+        	\State Initialisiere $\beta = (\mat X^T\mat X + \lambda\mat{\mathbb{1}})^{-1}\mat X^{\top}y$
             \While {nicht konvergiert}
                 \For {$j = 1, \ldots, p$}
                 	\State $c_j \gets \frac{1}{n}\sum_{i=1}^n x_{ij}(y_i - (\beta_0 + \sum_{l \neq j} x_{il}\beta_l))$

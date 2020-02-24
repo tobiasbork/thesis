@@ -18,10 +18,10 @@ In diesem Kapitel werden wir einen Algorithmus beschreiben, der das Sparse PCA K
 Für eine einfache Übersicht werden wir das Sparse PCA Kriterium hier wiederholen.
 \begin{align}
 \label{spca_criterion_restatement}
-\begin{split}
-(\widehat{\mat{A}}, \widehat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}_2^2 + \lambda_2 \sum_{j=1}^{k}\norm{\beta_j}_2^2 + \sum_{j=1}^k \lambda_{1,j} \norm{\beta_j}_1\\
-\text{unter der Nebenbedingung, dass } \mat{A}^T\mat{A} = I_{k \times k}.
-\end{split}
+\begin{gathered}
+(\widehat{\mat{A}}, \widehat{\mat{B}}) = \argmin_{\mat{A}, \mat{B}} \sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^{\top}x_i}_2^2 + \lambda_2 \sum_{j=1}^{k}\norm{\beta_j}_2^2 + \sum_{j=1}^k \lambda_{1,j} \norm{\beta_j}_1\\
+\text{unter der Nebenbedingung, dass } \mat{A}^{\top}\mat{A} = \mat{\mathbb{1}}_{k \times k}.
+\end{gathered}
 \end{align}
 Wie im Einstieg erwähnt handelt es sich bei (\ref{spca_criterion_restatement}) um ein bikonvexes Optimierungsproblem. Daher liegt es nahe einen alternierenden Ansatz zu wählen, um das Problem numerisch zu lösen. Somit fixieren wir im Folgenden eine der beiden Matrizen.
 
@@ -30,7 +30,7 @@ Wie im Einstieg erwähnt handelt es sich bei (\ref{spca_criterion_restatement}) 
 Wir wenden uns zunächst der Verlustfunktion zu. Hierfür sei $\mat A_{\perp} \in \mathbb{R}^{p \times (p-k)}$ eine orthonormale Matrix, so dass $[\mat A ; \mat A_{\perp}]$ $p \times p$ orthonormal ist. Dann gilt
 
 \begin{align*}
-\sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^Tx_i}_2^2 & = \norm{\mat X - \mat X \mat B \mat A^T}_F^{2}\\
+\sum_{i=1}^{n} \norm{x_i - \mat{A}\mat{B}^{\top}x_i}_2^2 & = \norm{\mat X - \mat X \mat B \mat A^{\top}}_F^{2}\\
 & = \norm{\mat X \mat A_{\perp}}_F^2 + \norm{\mat X \mat A - \mat X \mat B}_F^2\\
 & = \norm{\mat X \mat A_{\perp}}_F^2 + \sum_{j=1}^{k}\norm{\mat X \alpha_j - \mat X\beta_j}_2^2.
 \end{align*}
@@ -43,17 +43,17 @@ wobei $Y_j^* = \mat X \alpha_j$ für alle $1 \leq j \leq k$. In Abschnitt \ref{e
 
 \subsubsection{$\mat A$ gegeben $\mat B$:}
 
-Fixieren wir die Matrix $\mat B$, können wir uns auf das Minimieren der Verlustfunktion $\norm{\mat X - \mat X \mat B \mat A^T}_F^{2}$ beschränken, da die Bedingungen an $\beta_j$ nicht von Relevanz beim Optimieren über $\mat A$ sind. Somit reduziert sich (\ref{spca_criterion_restatement}) für fixes $\mat B$ auf das Lösen von
+Fixieren wir die Matrix $\mat B$, können wir uns auf das Minimieren der Verlustfunktion $\norm{\mat X - \mat X \mat B \mat A^{\top}}_F^{2}$ beschränken, da die Bedingungen an $\beta_j$ nicht von Relevanz beim Optimieren über $\mat A$ sind. Somit reduziert sich (\ref{spca_criterion_restatement}) für fixes $\mat B$ auf das Lösen von
 \begin{align}
 \label{sub_problem_procrustes}
-\begin{split}
-\widehat{\mat A} = \argmin_{\mat A}\norm{\mat X - \mat X \mat B \mat A^T}_F^2\\
-\text{unter der Nebenbedingung, dass } \mat A \mat A^T = \mat I_{k \times k}.
-\end{split}
+\begin{gathered}
+\widehat{\mat A} = \argmin_{\mat A}\norm{\mat X - \mat X \mat B \mat A^{\top}}_F^2\\
+\text{unter der Nebenbedingung, dass } \mat A^{\top} \mat A = \mat{\mathbb{1}}_{k \times k}.
+\end{gathered}
 \end{align}
-Für dieses Optimierungsproblem lässt sich eine explizite Lösung angeben. Es ist eine Form von Procrustes Rotationsproblem, welches wir ebenfalls in Kapitel \ref{fundamentals} beschrieben haben. Die Matrix $\mat X \mat B$ soll durch Multiplikation mit einer orthogonalen Matrix $\mat A$ in $\mat X$ überführt werden. Berechnen wir eine Singulärwertzerlegung von $(\mat X^T \mat X) \mat B = \mat U \mat D \mat V^T,$ ist die Lösung für (\ref{sub_problem_procrustes}) gegeben durch
+Für dieses Optimierungsproblem lässt sich eine explizite Lösung angeben. Es ist eine Form von Procrustes Rotationsproblem, welches wir ebenfalls in Kapitel \ref{fundamentals} beschrieben haben. Die Matrix $\mat X \mat B$ soll durch Multiplikation mit einer orthogonalen Matrix $\mat A$ in $\mat X$ überführt werden. Berechnen wir eine Singulärwertzerlegung von $(\mat X^{\top} \mat X) \mat B = \mat U \mat D \mat V^{\top},$ ist die Lösung für (\ref{sub_problem_procrustes}) gegeben durch
 \begin{align}
-\widehat{\mat A} = \mat U \mat V^T.
+\widehat{\mat A} = \mat U \mat V^{\top}.
 \end{align}
 
 
@@ -75,8 +75,8 @@ Durch die Vorarbeit im vorangegangenem Abschnitt können wir einen effizienten A
             \While{nicht konvergiert}
                 \State Gegeben festes $\mat A = [\alpha_1, \ldots, \alpha_k]$, löse das elastic net Problem
                 $$\widehat{\beta}_j = \argmin_{\beta_j} \norm{\mat X \alpha_j - \mat X \beta_j}^{2} + \lambda_2 \norm{\beta_j}^2 + \lambda_{1,j}\norm{\beta_j}_{1} \quad \text{für } j = 1, \ldots, k$$
-                \State Gegeben festes $\mat B = [\beta_1, \ldots, \beta_k]$, berechne die Singulärwerzerlegung von $$\mat X^T \mat X \mat B = \mat U \mat D \mat V^T$$
-                $$\mat A \gets \mat U \mat V^T$$
+                \State Gegeben festes $\mat B = [\beta_1, \ldots, \beta_k]$, berechne die Singulärwerzerlegung von $$\mat X^{\top} \mat X \mat B = \mat U \mat D \mat V^{\top}$$
+                $$\mat A \gets \mat U \mat V^{\top}$$
             \EndWhile
             \State $\widehat{V}_j \gets \frac{\beta_j}{\norm{\beta_j}}$ for $j = 1, \ldots, k$
         \EndProcedure
@@ -104,21 +104,21 @@ In diesem Fall lässt sich ein Trick für die Berechnung von (\ref{sub_problem_e
 \begin{align}
 \label{sub_problem_enet_covariance}
 \widehat{\beta}_j & = \argmin_{\beta_j} \norm{Y_j^* - \mat X \beta_j}_2^2 + \lambda_2 \norm{\beta_j}_2^2 + \lambda_{1,j}\norm{\beta_j}_1 \nonumber\\
-& = \argmin_{\beta_j} (\alpha_j - \beta_j)^T \mat X^T \mat X (\alpha_j - \beta_j) + \lambda_2 \norm{\beta_j}_2^2 + \lambda_{1,j}\norm{\beta_j}_1
+& = \argmin_{\beta_j} (\alpha_j - \beta_j)^{\top} \mat X^{\top} \mat X (\alpha_j - \beta_j) + \lambda_2 \norm{\beta_j}_2^2 + \lambda_{1,j}\norm{\beta_j}_1
 \end{align}
-umformen, hängen beide Subprobleme (\ref{sub_problem_enet}) und (\ref{sub_problem_procrustes}) nur von der Kovarianzmatrix $\mat X^T \mat X$ ab. Daher ist es sinnvoll, diese vorab zu berechnen, um die Anzahl an Multiplikationen je Iteration zu verringern. Allerdings ist (\ref{sub_problem_enet_covariance}) mit $\mat X^T \mat X$ nicht direkt ein Elastic Net Problem. Definieren wir $Y^{**} = (\mat{X}^T\mat X)^{\frac{1}{2}} \alpha_j$ und $\mat X^{**} = (\mat{X}^T\mat X)^{\frac{1}{2}}$ können wir (\ref{sub_problem_enet_covariance}) aber in ein Elastic Net Problem transformieren
+umformen, hängen beide Subprobleme (\ref{sub_problem_enet}) und (\ref{sub_problem_procrustes}) nur von der Kovarianzmatrix $\mat X^{\top} \mat X$ ab. Daher ist es sinnvoll, diese vorab zu berechnen, um die Anzahl an Multiplikationen je Iteration zu verringern. Allerdings ist (\ref{sub_problem_enet_covariance}) mit $\mat X^{\top} \mat X$ nicht direkt ein Elastic Net Problem. Definieren wir $Y^{**} = (\mat{X}^{\top}\mat X)^{\frac{1}{2}} \alpha_j$ und $\mat X^{**} = (\mat{X}^{\top}\mat X)^{\frac{1}{2}}$ können wir (\ref{sub_problem_enet_covariance}) aber in ein Elastic Net Problem transformieren
 $$\widehat{\beta}_j = \argmin_{\beta} \norm{Y^{**} - \mat X^{**} \beta}_2^2 + \lambda_2 \norm{\beta}_2^2 + \lambda_{1,j}\norm{\beta}_1.$$
-Um die Laufzeit des Algorithmus zu bestimmen, wenden wir uns Tabelle \ref{complexity_calculation} zu, welche die verschiedenen Berechnungsschritte zeigt. Die Initialisierung von $\mat A$ durch die ersten $k$ gewöhnlichen Hauptachsen wird durch eine abgeschnittene Singulärwertzerlegung von $\mat X$ berechnet. Zudem berechnen wir vorab die Kovarianzmatrix $\mat X^T \mat X$. Pro Iteration lösen wir $k$ Elastic Net Probleme und ein Procrustes Rotationsproblem. Insgesamt ergibt sich aufgrund $k < \min \{n,p\}$ und $j < p$ eine Laufzeit von $np^2 + mk\mathcal{O}(p^3)$, wobei $m$ die Anzahl der Iterationen ist.
+Um die Laufzeit des Algorithmus zu bestimmen, wenden wir uns Tabelle \ref{complexity_calculation} zu, welche die verschiedenen Berechnungsschritte zeigt. Die Initialisierung von $\mat A$ durch die ersten $k$ gewöhnlichen Hauptachsen wird durch eine abgeschnittene Singulärwertzerlegung von $\mat X$ berechnet. Zudem berechnen wir vorab die Kovarianzmatrix $\mat X^{\top} \mat X$. Pro Iteration lösen wir $k$ Elastic Net Probleme und ein Procrustes Rotationsproblem. Insgesamt ergibt sich aufgrund $k < \min \{n,p\}$ und $j < p$ eine Laufzeit von $np^2 + mk\mathcal{O}(p^3)$, wobei $m$ die Anzahl der Iterationen ist.
 
 \begin{table}
 \centering
 \begin{tabular}{ll}
 Berechnung & Komplexität\\\hline\addlinespace
 Singulärwertzerlegung von $\mat X$ & $\mathcal{O}(npk)$\\
-$\mat X^T\mat X$ & $\mathcal{O}(np^2)$\\
-$(\mat X^T\mat X) \mat B$ & $\mathcal{O}(p^2k)$\\
-$\mat X^T (\mat X \mat B)$ & $\mathcal{O}(npk)$\\
-Singulärwertzerlegung von $\mat X^T\mat X \mat B$ & $\mathcal{O}(pk^2)$\\
+$\mat X^{\top}\mat X$ & $\mathcal{O}(np^2)$\\
+$(\mat X^{\top}\mat X) \mat B$ & $\mathcal{O}(p^2k)$\\
+$\mat X^{\top} (\mat X \mat B)$ & $\mathcal{O}(npk)$\\
+Singulärwertzerlegung von $\mat X^{\top}\mat X \mat B$ & $\mathcal{O}(pk^2)$\\
 Elastic Net Problem & $\mathcal{O}(pnj + j^3)$
 \end{tabular}
 \caption{Die Tabelle zeigt die Komplexität für die in Algorithmus \ref{spca_algorithm} vorkommenden Berechnungen. Dabei ist $j$ die Anzahl von Null verschiedener Koeffizienten.}
@@ -127,7 +127,7 @@ Elastic Net Problem & $\mathcal{O}(pnj + j^3)$
 
 \subsubsection{Fall: $\mathbf{p \gg n}$}
 
-Für diesen Fall ist eine Berechnung der Kovarianzmatrix $\mat X^T\mat X$ nicht mehr sinnvoll, da dies eine $p \times p$-Matrix ist. Daher werden wir $\mat X^T(\mat X \mat B)$ in jeder Iteration naiv berechnen. Die Laufzeit des Algorithmus wird in diesem Fall von der Lösung der $k$ Elastic Nets dominiert, besonders wenn wir viele von Null verschiedene Einträge zulassen. Insgesamt ergibt sich die Komplexität $mk\mathcal{O}(pnj + j^3)$. Für große $j$ bzw. $p$ können die Berechnungskosten somit sehr hoch sein, weshalb wir im folgenden Abschnitt einen speziellen Sparse PCA Algorithmus kennenlernen werden.
+Für diesen Fall ist eine Berechnung der Kovarianzmatrix $\mat X^{\top}\mat X$ nicht mehr sinnvoll, da dies eine $p \times p$-Matrix ist. Daher werden wir $\mat X^{\top}(\mat X \mat B)$ in jeder Iteration naiv berechnen. Die Laufzeit des Algorithmus wird in diesem Fall von der Lösung der $k$ Elastic Nets dominiert, besonders wenn wir viele von Null verschiedene Einträge zulassen. Insgesamt ergibt sich die Komplexität $mk\mathcal{O}(pnj + j^3)$. Für große $j$ bzw. $p$ können die Berechnungskosten somit sehr hoch sein, weshalb wir im folgenden Abschnitt einen speziellen Sparse PCA Algorithmus kennenlernen werden.
 
 
 %----------------------------------------------------------------------------------------
@@ -145,10 +145,10 @@ Seien $\frac{\widehat{\beta}_j(\lambda_2)}{\norm{\widehat{\beta}_j(\lambda_2)}}$
 und $(\tilde{\mat A}, \tilde{\mat B})$ die Lösung des Optimierungsproblems
 \begin{align}
 \label{spca_p_greater_n_problem}
-\begin{split}
-(\tilde{\mat A}, \tilde{\mat B}) = \argmin_{\mat A, \mat B} -2\spur{\mat A^T\mat X^T\mat X \mat B} + \sum_{j=1}^k \norm{\beta_j}_2^2 + \sum_{j=1}^k \lambda_{1,j}\norm{\beta_j}_1\\
-\text{unter der Nebenbedingung, dass } \mat A^T \mat A = \mat I_{k \times k}.
-\end{split}
+\begin{gathered}
+(\tilde{\mat A}, \tilde{\mat B}) = \argmin_{\mat A, \mat B} -2\spur{\mat A^{\top}\mat X^{\top}\mat X \mat B} + \sum_{j=1}^k \norm{\beta_j}_2^2 + \sum_{j=1}^k \lambda_{1,j}\norm{\beta_j}_1\\
+\text{unter der Nebenbedingung, dass } \mat A^{\top} \mat A = \mat{\mathbb{1}}_{k \times k}.
+\end{gathered}
 \end{align}
 Für $\lambda_2 \to \infty$ konvergieren die dünnbesetzten Hauptachsen $\frac{\widehat{\beta}_j(\lambda_2)}{\norm{\widehat{\beta}_j(\lambda_2)}} \to \frac{\tilde{\beta}_j}{\norm{\tilde{\beta}_j}}$ gegen die Lösung von (\label{spca_p_greater_n_problem}). 
 \end{thm}
@@ -156,12 +156,12 @@ Für $\lambda_2 \to \infty$ konvergieren die dünnbesetzten Hauptachsen $\frac{\
 Daher können wir das vereinfachte Optimierungsproblem (\ref{spca_p_greater_n_problem}) benutzen, um das Sparse PCA Kriterium für den Spezialfall $\lambda_2 = \infty$ zu lösen. Fixieren wir wie in Algorithmus \ref{spca_algorithm} die Matrix $\mat A$, verbleiben wir mit dem Problem
 \begin{align}
 \label{spca_p_greater_n_problem_fixed_A}
-\widehat{\beta}_j = \argmin_{\beta_j} -2 \alpha_j^T(\mat X^T\mat X)\beta_j + \norm{\beta_j}_{2}^{2} + \lambda_{1,j}\norm{\beta_j}_1.
+\widehat{\beta}_j = \argmin_{\beta_j} -2 \alpha_j^{\top}(\mat X^{\top}\mat X)\beta_j + \norm{\beta_j}_{2}^{2} + \lambda_{1,j}\norm{\beta_j}_1.
 \end{align}
 Für (\ref{spca_p_greater_n_problem_fixed_A}) können wir aufgrund des Wegfalls von $\lambda_2$ eine explizite Lösung angeben
 \begin{align}
 \label{spca_p_greater_n_solution}
-\widehat{\beta}_j = \operatorname{soft}_{\frac{\lambda_{1,j}}{2}}(\alpha_j^T\mat X^T\mat X) = \left(|\alpha_j^T\mat X^T\mat X| - \frac{\lambda_{1,j}}{2}\right)_+ \operatorname{Sign}(\alpha_j^T\mat X^T\mat X).
+\widehat{\beta}_j = \operatorname{soft}_{\frac{\lambda_{1,j}}{2}}(\alpha_j^{\top}\mat X^{\top}\mat X) = \left(|\alpha_j^{\top}\mat X^{\top}\mat X| - \frac{\lambda_{1,j}}{2}\right)_+ \operatorname{Sign}(\alpha_j^{\top}\mat X^{\top}\mat X).
 \end{align}
 Daher ersetzen wir die Berechnung in Schritt 4 von Algorithmus \ref{spca_algorithm} durch (\ref{spca_p_greater_n_solution}) falls $p \gg n$. Für den hochdimensionalen Fall kann durch das Wegfallen der Berechnung von $k$ Elastic Net Problemen somit ein effizientes Verfahren gewährleistet werden.
 
@@ -178,7 +178,7 @@ centroids classifier (Tibshirani et al., 2002), and have shown good empirical pe
 
 Momentan existieren Implementierungen der dünnbesetzten Hauptkomponentenanalyse in R und Python. Zou et al. stellen das elasticnet package mit einer spca-Funktion, welche auf ihrem Ansatz beruht, in der Programmiersprache R zur Verfügung. Für die Lösung des Subproblems (\ref{sub_problem_enet}) wird der LARS-EN Algorithmus gewählt, welche eine Erweiterung des LARS-Algorithmus für das Elastic Net ist \cite{zou_elasticnet}. Dagegen bietet scikit-learn eine Sparse PCA-Variante in Python, welche auf \cite{jenatton} zurückgeht und einen anderen Ansatz verfolgt.
 
-Um ein genaues Verständnis der Ergebnisse zu garantieren, haben wir uns dazu entschieden, eine eigene Implementierung in Python vorzunehmen, die auf dem Ansatz von Zou et al. beruht. Es wurde kritisch überprüft, dass der von uns implementierte Code korrekte Ergebnisse erzielt. Dazu haben  wir den Pitprops Datensatz aus \cite{zou_sparsepca}, welcher oft als Benchmark genutzt wird, und zusätzlich den eigenen Datensatz, welchen wir in Kapitel \ref{application} beschreiben, verwendet. Gegenüber der Implementierung im elasticnet package haben wir zwei entscheidende Änderungen vorgenommen, welche die Laufzeit in der Praxis verkürzen. Statt das Subproblem (\ref{sub_problem_enet}) mit LARS-EN zu lösen, wählen wir ein randomisiertes Koordinaten-Abstiegsverfahren, welches wir in Abschnitt \ref{elastic_net} beschrieben haben. Des Weiteren wird in der Implementierung von Zou et al. die Gram-Matrix $\mat X^T \mat X$ immer vorab berechnet, um für das Subproblem (\ref{sub_problem_procrustes}) nur eine Multiplikation pro Iteration $(\mat X^T \mat X) \mat B$ durchführen zu müssen. Da die Gram-Matrix aber in $\mathbb{R}^{p \times p}$ liegt, ist es für den Fall $p \gg n$ sinnvoller, $\mat X^T (\mat X \mat B)$ in jeder Iteration naiv zu berechnen, damit keine $p \times p$-Matrix zwischengespeichert werden muss. Dies ermöglicht für unseren hochdimensionalen Datensatz eine Laufzeit, die etwa um den Faktor $4$ besser ist.
+Um ein genaues Verständnis der Ergebnisse zu garantieren, haben wir uns dazu entschieden, eine eigene Implementierung in Python vorzunehmen, die auf dem Ansatz von Zou et al. beruht. Es wurde kritisch überprüft, dass der von uns implementierte Code korrekte Ergebnisse erzielt. Dazu haben  wir den Pitprops Datensatz aus \cite{zou_sparsepca}, welcher oft als Benchmark genutzt wird, und zusätzlich den eigenen Datensatz, welchen wir in Kapitel \ref{application} beschreiben, verwendet. Gegenüber der Implementierung im elasticnet package haben wir zwei entscheidende Änderungen vorgenommen, welche die Laufzeit in der Praxis verkürzen. Statt das Subproblem (\ref{sub_problem_enet}) mit LARS-EN zu lösen, wählen wir ein randomisiertes Koordinaten-Abstiegsverfahren, welches wir in Abschnitt \ref{elastic_net} beschrieben haben. Des Weiteren wird in der Implementierung von Zou et al. die Gram-Matrix $\mat X^{\top} \mat X$ immer vorab berechnet, um für das Subproblem (\ref{sub_problem_procrustes}) nur eine Multiplikation pro Iteration $(\mat X^{\top} \mat X) \mat B$ durchführen zu müssen. Da die Gram-Matrix aber in $\mathbb{R}^{p \times p}$ liegt, ist es für den Fall $p \gg n$ sinnvoller, $\mat X^{\top} (\mat X \mat B)$ in jeder Iteration naiv zu berechnen, damit keine $p \times p$-Matrix zwischengespeichert werden muss. Dies ermöglicht für unseren hochdimensionalen Datensatz eine Laufzeit, die etwa um den Faktor $4$ besser ist.
 
 Bezüglich der Aufrufstruktur der Methode haben wir eine Reparametrisierung vorgenommen, um die Notation mit der ElasticNet-Klasse in scikit-learn zu vereinheitlichen. Ähnlich wie in Abschnitt \ref{comparison_linear_models} definieren wir
 \begin{align}
