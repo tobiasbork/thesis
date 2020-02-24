@@ -6,7 +6,7 @@
 
 Ein wesentlicher Nachteil der Hauptkomponentenanalyse besteht darin, dass sich die neuen Variablen aus einer Linearkombination \textit{aller} bestehenden Variablen zusammensetzt. Dies erschwert besonders für hochdimensionale Daten eine Interpretation der Hauptachsen. Während zuvor jede Variable eine Bedeutung hatte, sind wir nach der Transformation meist nicht in der Lage den Hauptachsen eine Bedeutung im Kontext zuzuweisen. Um zu verstehen, was die Hauptachsen im Modell repräsentieren kann es besonders hilfreich sein, wenn diese \textit{dünnbesetzt} sind, sich also nur aus wenigen Variablen zusammensetzen. Daher sind wir oft bereit, einen Teil der Varianz für eine vereinfachte Interpretation einzutauschen.
 
-Zu Anfang dieses Kapitels werden wir eine naheliegende mathematische Formulierung des Problems beschreiben. Leider wird sich diese als NP-vollständig herausstellen, weshalb wir in Abschnitt \ref{relaxation} verschiedene Wege aufzeigen, dass Problem zu relaxieren. In \ref{sparse_pca_construction} möchten wir uns dem von Zou und Hastie in \cite{zou_sparsepca} eingeführten Ansatz intensiv beschäftigen. Dieser gilt sicherlich zu den meistverbreiteten Varianten der dünnbesetzten Hauptkomponentenanalyse. In einem erst vor Kurzem erschienen wissenschaftlichen Artikel werden einige Probleme des Ansatzes deutlich. Darum erläutern wir in Abschnitt \ref{adjustment_of_variances} Neuerungen und Korrekturen der Methode durch Camacho et al. \cite{camacho}. Zu Schluss dieses Kapitels werden wir Möglichkeiten für eine automatisierte Wahl der Modellparameter präsentieren und die Konsistenz in hochdimensionalen Fällen darlegen.
+Zu Anfang dieses Kapitels werden wir eine naheliegende mathematische Formulierung des Problems beschreiben. Leider wird sich diese als NP-vollständig herausstellen, weshalb wir in Abschnitt \ref{relaxation} verschiedene Wege aufzeigen, dass Problem zu relaxieren. In \ref{sparse_pca_construction} möchten wir uns dem von Zou und Hastie in \cite{zou_sparsepca} eingeführten Ansatz intensiv beschäftigen. Dieser gilt sicherlich zu den meistverbreitesten Varianten der dünnbesetzten Hauptkomponentenanalyse. In einem erst vor Kurzem erschienenen wissenschaftlichen Artikel werden einige Probleme des Ansatzes deutlich. Darum erläutern wir in Abschnitt \ref{adjustment_of_variances} Neuerungen und Korrekturen der Methode durch Camacho et al. \cite{camacho}. Zum Schluss dieses Kapitels werden wir Möglichkeiten für eine automatisierte Wahl der Modellparameter präsentieren und die Konsistenz in hochdimensionalen Fällen darlegen.
 
 
 %----------------------------------------------------------------------------------------
@@ -17,7 +17,7 @@ Zu Anfang dieses Kapitels werden wir eine naheliegende mathematische Formulierun
 \section{Problemformulierung}
 \label{problem_formulation}
 
-Wir möchten nun Hauptachsen eines gegebenen Datensatzes identifizieren mit der Zusatzbedingung, dass diese dünnbesetzt sind. Die wohl einfachste Vorgehensweise ist, eine Schwellenwertmethode auf die durch die klassische Hauptkomponentenanalyse entstandenen Hauptachsen anzuwenden. Hierbei vernachlässigt man alle Koeffizienten, die kleiner als ein bestimmter Schwellenwert sind, indem man sie auf 0 setzt. Eine solche Prozedur kann aber in vielen Fällen irreführend sein, unter welcher die Qualität der Ergebnisse leidet \cite{cadima}. Die Wichtigkeit einer Variable in den Hauptachsen wird nicht allein durch den Koeffizient bestimmt. Zu berücksichtigen sind unter anderem sowohl die Standardabweichung als auch die Korrelationen mit anderen Variablen. Bei einer Schwellenwertmethode werden diese Faktoren nicht beachtet, weshalb den Ergebnissen im Allgemeinen nicht vertraut werden darf.
+Wir möchten nun Hauptachsen eines gegebenen Datensatzes identifizieren mit der Zusatzbedingung, dass diese dünnbesetzt sind. Die wohl einfachste Vorgehensweise ist, eine Schwellenwertmethode auf die durch die klassische Hauptkomponentenanalyse entstandenen Hauptachsen anzuwenden. Hierbei vernachlässigt man alle Koeffizienten, die kleiner als ein bestimmter Schwellenwert sind, indem man sie auf 0 setzt. Eine solche Prozedur kann aber in vielen Fällen irreführend sein, unter welcher die Qualität der Ergebnisse leidet \cite{cadima}. Die Wichtigkeit einer Variable in den Hauptachsen wird nicht allein durch den Koeffizienten bestimmt. Zu berücksichtigen sind unter anderem sowohl die Standardabweichung als auch die Korrelationen mit anderen Variablen. Bei einer Schwellenwertmethode werden diese Faktoren nicht beachtet, weshalb den Ergebnissen im Allgemeinen nicht vertraut werden darf.
 
 Anstelle eines zweischrittigen Ansatzes kann die Dünnbesetzung direkt in die Problemformulierung mit eingebaut werden. Gegeben sei dazu wieder eine Datenmatrix $\mat X \in \rnp$, wobei $n$ die Anzahl an Beobachtungen und $p$ die Anzahl an Variablen ist. Des Weiteren gehen wir davon aus, dass die Matrix $\mat X$ zuvor spaltenweise zentriert wurde. Dann kann die dünnbesetzte Hauptkomponentenanalyse als sukzessives Maximierungsproblem formuliert werden:
 \begin{gather}
@@ -52,7 +52,7 @@ v_{k} = \argmax_{\norm{v}_2 = 1} v^{T}\mat{\Sigma} v\\
 \text{und } \norm{v_{k}}_1 \leq t 
 \end{split}
 \end{gather}
-Wie in (\ref{sparse_pca_np}) hat man mit der Wahl der Parameters $t$ Einfluss auf die Dünnbesetzung der Hauptachsen. Aufgrund der hohen Berechnungskosten ist SCoTLASS allerdings für hochdimensionale Daten ungeeignet. Diese sind vor allem darauf zurückzuführen, dass (\ref{scotlass}) kein konvexes Optimierungsproblem ist. Des Weiteren ergeben sich Schwierigkeiten bei der Wahl des Hyperparameters $t$. Auch wenn eine passende Wahl eine gewünschte Dünnbesetzung hervorruft, gibt es kaum Orientierungshilfen. Zusätzlich hat ScoTLASS dasselbe grundlegende Problem wie das Lasso. Die Anzahl von null verschiedener Einträge ist durch die Anzahl Beobachtungen im Datensatz limitiert, welches die Brauchbarkeit des Modells deutlich einschränkt. Zusammen mit den hohen Berechnungskosten ist dieser Ansatz in der Praxis daher meist impraktikabel.
+Wie in (\ref{sparse_pca_np}) hat man mit dem Hyperparameter $t$ Einfluss auf die Dünnbesetzung der Hauptachsen. Aufgrund der hohen Berechnungskosten ist SCoTLASS allerdings für hochdimensionale Daten ungeeignet. Diese sind vor allem darauf zurückzuführen, dass (\ref{scotlass}) kein konvexes Optimierungsproblem ist. Des Weiteren ergeben sich Schwierigkeiten bei der Wahl des Hyperparameters $t$. Auch wenn eine passende Wahl eine gewünschte Dünnbesetzung hervorruft, gibt es kaum Orientierungshilfen. Zusätzlich hat ScoTLASS dasselbe grundlegende Problem wie das Lasso. Die Anzahl von null verschiedener Einträge ist durch die Anzahl Beobachtungen im Datensatz limitiert, welches die Brauchbarkeit des Modells deutlich einschränkt. Zusammen mit den hohen Berechnungskosten ist dieser Ansatz in der Praxis daher meist impraktikabel.
 
 %\subsubsection{Semidefinite Programmierung}
 %
@@ -106,7 +106,7 @@ Wie in (\ref{sparse_pca_np}) hat man mit der Wahl der Parameters $t$ Einfluss au
 
 \subsubsection{Weitere Relaxationsideen}
 
-Weitere Ideen zur Relaxation von (\ref{sparse_pca_np}) beruhen auf den unterschiedlichen Formulierungen der Hauptkomponentenanalyse. Durch die Einbettung von Straftermen sind die verschiedenen Sichtweisen bei der dünnbesetzten Variante aber nicht mehr äquivalent. Daher haben wir eine selektive Übersicht der verschiedenen Ansätze erstellt. Ein interessierter Lesen sei auf die folgenden Quellen verwiesen.
+Weitere Ideen zur Relaxation von (\ref{sparse_pca_np}) beruhen auf den unterschiedlichen Formulierungen der Hauptkomponentenanalyse. Durch die Einbettung von Straftermen sind die verschiedenen Sichtweisen bei der dünnbesetzten Variante aber nicht mehr äquivalent. Daher haben wir eine selektive Übersicht der verschiedenen Ansätze erstellt. Ein interessierter Leser sei auf die folgenden Quellen verwiesen.
 \begin{itemize}
 \item eine iterative Schwellenwertmethode \cite{shen, witten}
 \item eine verallgemeinerte Potenzmethode \cite{journee}
@@ -146,8 +146,7 @@ Um dünnbesetzte Hauptachsen zu erhalten, können wir einen $\ell_1$-Strafterm i
 \end{align}
 Die normierten Spalten von $\mat B$ nennen wir die \textit{dünnbesetzten Hauptachsen}. Um die Dünnbesetzung für jede Hauptachse unterschiedlich wählen zu können, erlauben wir unterschiedliche Bestrafungen $\lambda_{1,j}$. Im Gegensatz dazu lassen wir für den Ridge-Strafterm keine differenzierte Behandlung zu, der für die Reduktion von (\ref{spca_criterion}) auf (\ref{pca_regression_formulation}) benötigt wird falls $\lambda_{1,j} = 0$. Allerdings hat die $\ell_2$-Bestrafung noch einen weiteren Vorteil, welcher in der Praxis relevant ist. Es bewältigt das Lasso-Defizit, so dass auch mehr als $n$ Variablen im Fall $p>n$ ausgewählt werden können.
 
-Wir möchten darauf hinweisen, dass im Gegensatz zu manch anderen Varianten der dünnbesetzten Hauptkomponentenanalyse (\ref{spca_criterion}) eine zeitgleiche anstatt einer sequentiellen Berechnung der Hauptachsen ermöglicht. Dies wird im folgendem Abschnitt von entscheidender Bedeutung sein.
-
+Wir möchten darauf hinweisen, dass durch (\ref{spca_criterion}) im Gegensatz zu manch anderen Varianten der dünnbesetzten Hauptkomponentenanalyse eine zeitgleiche anstatt einer sequentiellen Berechnung der Hauptachsen erfolgt. Dies wird im folgendem Abschnitt von entscheidender Bedeutung sein.
 
 
 %----------------------------------------------------------------------------------------
@@ -170,7 +169,7 @@ Der Erfolg der Hauptkomponentenanalyse beruht vor allem darauf, dass die Hauptko
 
 Camacho et al. zeigen, dass viele der Varianten der dünnbesetzten Hauptkomponentenanalyse bezüglich dieser Aspekte Probleme aufweisen. Insbesondere wurde die Berechnung der Hauptkomponenten, Residuen und der erklärten Varianz bislang falsch durchgeführt. Wir möchten an dieser Stelle die Unterschiede detailliert erklären.
 
-Typischerweise wurden die Hauptkomponenten $\widehat{\mat Z}$ bislang wie bei der klassischen Hauptkomponentenanalyse berechnet, indem man $\widehat{\mat Z} = \mat X \widehat{\mat B}$ setzt \cite{zou_sparsepca}. Allerdings vernachlässigt man in diesem Fall, dass die Hauptachsen nicht orthogonal zueinander sind. Dies wird deutlich, wenn wir die Hauptkomponentenanalyse wie in (\ref{pca_minimize_reconstruction_error}) als eine bestmögliche Rekonstruktion der Datenmatrix $\mat X$ auffassen.
+Typischerweise wurden die Hauptkomponenten $\widehat{\mat Z}$ bislang wie bei der klassischen Hauptkomponentenanalyse berechnet, indem man $\widehat{\mat Z} = \mat X \widehat{\mat B}$ setzt \cite{zou_sparsepca}. Allerdings vernachlässigt man in diesem Fall, dass die Hauptachsen nicht orthogonal zueinander sind. Dies wird deutlich, wenn wir die Hauptkomponentenanalyse wie in (\ref{pca_minimize_reconstruction_error}) als eine bestmögliche Rekonstruktion der Datenmatrix $\mat X$ auffassen
 \begin{align}
 \label{pca_scores_loadings_model}
 \mat X = \widehat{\mat Z} \widehat{\mat B}^T + \widehat{\mat E},
@@ -213,9 +212,9 @@ Damit kann die Varianz eines Datensatzes in Rekonstruktion und Residuum aufgetei
 \section{Wahl der Hyperparameter}
 \label{choice_of_tuning_parameters}
 
-Bei der dünnbesetzten Hauptkomponentenanalyse sind mehrere Hyperparameter zu wählen. Dazu gehören die Anzahl an Hauptkomponenten $k$ und die Regularisierungsparameter $\lambda_{1,j}$ und $\lambda_2$. Im Folgenden möchten wir verschiedene Vorgehensweise näher erläutern und eine Übersicht über mögliche Verfahren geben. Bevor man die Regularisierungsparameter festlegt, ist es sinnvoll zunächst die Anzahl an Hauptkomponenten für das Modell zu bestimmen, da sich bei einer Änderung von $k$ alle Hauptkomponenten verändern können. Hierbei kann man analog zur klassischen Variante wie in Abschnitt \ref{selection_principal_components} vorgehen. Aufgrund der Recheneffizienz bestimmen wir $k$ aber meist durch das Ergebnis der klassischen Variante.
+Bei der dünnbesetzten Hauptkomponentenanalyse sind mehrere Hyperparameter zu wählen. Dazu gehören die Anzahl an Hauptkomponenten $k$ und die Regularisierungsparameter $\lambda_{1,j}$ und $\lambda_2$. Im Folgenden möchten wir verschiedene Vorgehensweisen näher erläutern und eine Übersicht über mögliche Verfahren geben. Bevor man die Regularisierungsparameter festlegt, ist es sinnvoll zunächst die Anzahl an Hauptkomponenten für das Modell zu bestimmen, da sich bei einer Änderung von $k$ alle Hauptkomponenten verändern können. Hierbei kann man analog zur klassischen Variante wie in Abschnitt \ref{selection_principal_components} vorgehen. Aufgrund der Recheneffizienz bestimmen wir $k$ aber meist durch das Ergebnis der klassischen Variante.
 
-Empirische Studien zeigen, dass sich die Ergebnisse bei Veränderung von $\lambda_2$ kaum ändern. Ist $n > p$ für unseren Datensatz, können wir den Parameter auf Null setzen, da das Lasso-Defizit in diesem Fall nicht auftritt. In der Praxis wird $\lambda_2$ auf eine kleine positive Zahl in der Größenordnung $10^{-6}$ gesetzt, um mögliche Kollinearitätsprobleme zu vermeiden \cite{zou_sparsepca}. Falls $p \gg n$ werden wir eine spezielle Wahl von $\lambda_2$ in Kapitel \ref{implementation} treffen.
+Empirische Studien zeigen, dass sich die Ergebnisse bei Veränderung von $\lambda_2$ kaum ändern. Ist $n > p$ für unseren Datensatz, können wir den Hyperparameter auf Null setzen, da das Lasso-Defizit in diesem Fall nicht auftritt. In der Praxis wird $\lambda_2$ auf eine kleine positive Zahl in der Größenordnung $10^{-6}$ gesetzt, um mögliche Kollinearitätsprobleme zu vermeiden \cite{zou_sparsepca}. Falls $p \gg n$ werden wir eine spezielle Wahl von $\lambda_2$ in Kapitel \ref{implementation} treffen.
 
 Komplizierter gestaltet sich eine Wahl von $\lambda_{1,j}$, welche die Modellkomplexität wesentlich beeinflusst. Im Prinzip könnte man die $\lambda_{1,j}$ durch ein Kreuzvalidierungsverfahren bestimmen. Je nach Größe des Datensatzes kann dies aber sehr rechenintensiv sein, weshalb wir hier einen alternativen Ansatz beschreiben möchten. In der Literatur wird meist ein Bayes-Informationskriterium (BIC) angegeben, welches aber je nach Anwendung und Generalisierung verschieden formuliert wird. Folgende Variante beruht auf \cite{hubert, allen}
 \begin{align}
@@ -224,14 +223,14 @@ Komplizierter gestaltet sich eine Wahl von $\lambda_{1,j}$, welche die Modellkom
 \end{align}
 wobei $\operatorname{df}(\lambda_{1,j}) = \norm{\beta_j}_0$ die Anzahl von null verschiedener Einträge sind. Dabei steht $\operatorname{df}$ für \textit{degrees of freedom}, welches die Anzahl freier Parameter darstellt \cite{hastie_elements}. Klar erkennbar in (\ref{bic_reconstruction}) ist der Kompromiss zwischen Rekonstruktionsfehler der $j$-ten Hauptkomponente und der Dünnbesetzung durch $\operatorname{df}(\lambda_{1,j})$. Mit steigendem $\lambda_{1,j}$ wird der Rekonstruktionsfehler größer und die Anzahl freier Parameter geringer. Wir sind angehalten $\lambda_{1,j}$ zu finden, welche eine Balance zwischen den beiden Termen ermöglichen.
 
-Um nicht über $k$ Parameter optimieren zu müssen, kann man $\lambda_{1,j} = \lambda_1$ für alle $1 \leq j \leq k$ setzen. Eine weitere Möglichkeit wird in \cite{croux} beschrieben. Für $j>1$ sei $\mat{\widehat{B}}_{j-1}^{\perp}$ die Matrix, deren Spalten eine orthonormale Basis für das orthogonale Komplement für den durch $\widehat{\beta}_1, \ldots, \widehat{\beta}_{j-1}$ aufgespannten Raum sind. Wir berechnen $x_i^{(j-1)} = (\mat{\widehat{B}}_{j-1}^{\perp})^T x_i$ für $i = 1, \ldots, n$ und setzen $\lambda_{1,j} = \lambda_1\operatorname{Var}[\mat X^{(j)}]$, wobei $\mat X^{(j)}$ aus den auf das orthogonale Komplement der ersten $j-1$ Hauptachsen projizierten Daten $x_i^{(j-1)}$ besteht. Mithilfe dieses Ansatzes können wir eine vergleichbare Dünnbesetzung für alle Hauptachsen erreichen. Nun muss lediglich $\lambda_1$ gewählt werden. Hierfür wird von \cite{croux, guo} ein ähnliches BIC-Kriterium vorgeschlagen
+Um nicht über $k$ Hyperparameter optimieren zu müssen, kann man $\lambda_{1,j} = \lambda_1$ für alle $1 \leq j \leq k$ setzen. Eine weitere Möglichkeit wird in \cite{croux} beschrieben. Für $j>1$ sei $\mat{\widehat{B}}_{j-1}^{\perp}$ die Matrix, deren Spalten eine orthonormale Basis für das orthogonale Komplement für den durch $\widehat{\beta}_1, \ldots, \widehat{\beta}_{j-1}$ aufgespannten Raum sind. Wir berechnen $x_i^{(j-1)} = (\mat{\widehat{B}}_{j-1}^{\perp})^T x_i$ für $i = 1, \ldots, n$ und setzen $\lambda_{1,j} = \lambda_1\operatorname{Var}[\mat X^{(j)}]$, wobei $\mat X^{(j)}$ aus den auf das orthogonale Komplement der ersten $j-1$ Hauptachsen projizierten Daten $x_i^{(j-1)}$ besteht. Mithilfe dieses Ansatzes können wir eine vergleichbare Dünnbesetzung für alle Hauptachsen erreichen. Nun muss lediglich $\lambda_1$ gewählt werden. Hierfür wird von \cite{croux, guo} ein ähnliches BIC-Kriterium vorgeschlagen
 \begin{align}
 \label{bic_ratio}
 \operatorname{BIC}(\lambda_1) = \frac{\norm{\mat X - \mat X \widehat{\mat{B}} \widehat{\mat A}^T}_{F}^{2}}{\norm{\mat X - \mat X \widehat{\mat V} \widehat{\mat V}^T}_{F}^{2}} + \operatorname{df}(\lambda_1) \frac{\log(n)}{n}.
 \end{align}
-Für die log-likelihood-Funktion wird in (\ref{bic_ratio}) das Verhältnis des Rekonstruktionsfehler zwischen dünnbesetzter und der klassischer Hauptkomponentenanalyse gewählt. Welche der beiden BIC-Kriterien genutzt werden sollte, kommt auf den Anwendungsfall an.
+Für die log-likelihood-Funktion wird in (\ref{bic_ratio}) das Verhältnis des Rekonstruktionsfehlers zwischen dünnbesetzter und der klassischer Hauptkomponentenanalyse gewählt. Welche der beiden BIC-Kriterien genutzt werden sollte, kommt auf den Anwendungsfall an.
 
-Typischerweise wird für die Minimierung der BIC-Kriterien eine Rastersuche für $\lambda_1$ im Wertebereich $[0, \lambda_1^{max}]$ durchgeführt, wobei eine Wahl von $\lambda_1^{max}$ in Hauptachsen mit nur einem von Null verschiedenem Eintrag resultieren. Andere Suchverfahren wie die Zufallssuche, Bayessche oder gradienbasierte Optimierung sind an dieser Stelle denkbar. 
+Typischerweise wird für die Minimierung der BIC-Kriterien eine Rastersuche für $\lambda_1$ im Wertebereich $[0, \lambda_1^{max}]$ durchgeführt, wobei eine Wahl von $\lambda_1^{max}$ in Hauptachsen mit nur einem von Null verschiedenem Eintrag resultieren. Andere Suchverfahren wie die Zufallssuche, Bayessche oder gradientenbasierte Optimierung sind an dieser Stelle denkbar. 
 
 
 %----------------------------------------------------------------------------------------
@@ -243,27 +242,25 @@ Typischerweise wird für die Minimierung der BIC-Kriterien eine Rastersuche für
 \label{spca_theorems}
 
 
-Zu Abschluss dieses Kapitels möchten wir uns mit theoretischen Aussagen zur dünnbesetzten Hauptkomponentenanalyse auseinandersetzen. Von wesentlicher Bedeutung ist die Konsistenz der Methode im Vergleich zur klassischen Variante für hochdimensionale Datensätze.
+Zum Abschluss dieses Kapitels möchten wir uns mit theoretischen Aussagen zur dünnbesetzten Hauptkomponentenanalyse auseinandersetzen. Von wesentlicher Bedeutung ist die Konsistenz der Methode im Vergleich zur klassischen Variante für hochdimensionale Datensätze.
 
-In Kapitel \ref{implementation} werden wir sehen, dass das Sparse PCA Kriterium nur von der Kovarianzmatrix abhängt. Um eine Populationsversion der dünnbesetzen Hauptkomponete zu erhalten, ersetzen wir wie zuvor $\mat X^T \mat X$ durch die Kovarianzmatrix $\mat \Sigma$. Wir wenden uns nun wieder einem \textit{single component model} zu
+In Kapitel \ref{implementation} werden wir sehen, dass das Sparse PCA Kriterium nur von der Kovarianzmatrix abhängt. Um eine Populationsversion der dünnbesetzen Hauptkomponete zu erhalten, ersetzen wir wie zuvor $\mat X^T \mat X$ durch die Kovarianzmatrix $\mat \Sigma$. Weil eine Betrachtung einer \textit{high dimension low sample size (HDLSS)} Situation die Einführung zu vieler neuer Prinzipien erfordern würde, präsentieren wir ein Konsistenz-Resultat von Johnstone und Lu \cite{johnstone}, falls die Hauptkomponentenanalyse auf eine Teilmenge der Variablen angewendet wird. Dies liefert eine theoretische Rechtfertigung der dünnbesetzten Variante. Dazu wenden wir uns wieder einem \textit{single component model} zu
 \begin{align}
 \label{single_component_model_spca}
 x_i = l_j v_1 + \sigma r_i \quad i = 1, \ldots n,
 \end{align}
-in welchem $v_1 \in \mathbb{R}^p$ der zu schätzende Eigenvektor ist. Dabei sind $l_i \sim N(0,1)$ unabhängig gleichverteilte Gaußsche Zufallseffekte und $r_i \sim N_p(0, \mat I)$ unabhängige Rauschvektoren. Johnstone und Lu \cite{johnstone} zeigen ein Resultat für die Konsistenz der Hauptkomponentenanalyse, falls diese auf eine Teilmenge der Variablen angewendet wird. Dies liefert eine theoretische Rechtfertigung der dünnbesetzten Variante.
-
-Wir bezeichnen mit $\widehat{I} = \{j \, \colon \, \widehat{\sigma}_j^2 \geq \sigma^2 (1 + \alpha_n)\}$ die Indexmenge der zu selektierenden Variablen, wobei $\widehat{\sigma}_j^2$ die Stichprobenvarianz der $j$-ten Variable und $\alpha_n = \alpha (n^{-1}\log(\max \{n,p\}))^{\frac{1}{2}}$ für ein hinreichend großes $\alpha$ ist. Da die großen Einträge von $\widehat{v}_1$ mit Variablen großer Varianz korrespondieren, wählen wir 
+in welchem $v_1 \in \mathbb{R}^p$ der zu schätzende Eigenvektor ist. Dabei sind $l_i \sim N(0,1)$ unabhängig gleichverteilte Gaußsche Zufallseffekte und $r_i \sim N_p(0, \mat I)$ unabhängige Rauschvektoren. Wir bezeichnen mit $\widehat{I} = \{j \, \colon \, \widehat{\sigma}_j^2 \geq \sigma^2 (1 + \alpha_n)\}$ die Indexmenge der zu selektierenden Variablen, wobei $\widehat{\sigma}_j^2$ die Stichprobenvarianz der $j$-ten Variable und $\alpha_n = \alpha (n^{-1}\log(\max \{n,p\}))^{\frac{1}{2}}$ für ein hinreichend großes $\alpha$ ist. Da die großen Einträge von $\widehat{v}_1$ mit Variablen großer Varianz korrespondieren, wählen wir 
 $$\widehat{v}_{1j}^I = \begin{cases} 
       \widehat{v}_{1j} & j \in \widehat{I}\\
       0 & j \not\in \widehat{I}
-   \end{cases}$$
-Mit dieser Auswahl erhalten wir ein Konsistenz-Theorem unter geeigneten Modellannahmen.
+   \end{cases}$$.
+Mit dieser Selektion der Variablen erhalten wir die Konsistenz für hochdimensionale Fälle unter geeigneten Modellannahmen.
 
-\begin{thm}[Konsistenz der dünnbesetzten Hauptkomponentenanalyse bei konstantem asymptotischem Verhältnis von $n$ und $p$ \cite{johnstone}]
+\begin{thm}[Konsistenz der dünnbesetzten Hauptkomponentenanalyse \cite{johnstone}]
 Für $n \to \infty$ sei die Signalstärke $\norm{v_1}^2 \to \rho$ asymptotisch stabil und $n^{-1}\log(\max \{n,p\}) \to 0$. Bezeichne mit $v_i^{(r)}$ den $r$-größten Eintrag von $v_i$. Unter der Annahme, dass die Einträge der Hauptachsen für alle $n$ schnell abfallen, d.h.
 $$|v_1^{(r)}| \leq Cr^{\frac{-1}{q}} \quad \text{für } q \in (0,2) \text{ und } c < \infty$$
 ist die dünnbesetzte Hauptkomponentenanalyse fast sicher konsistent
 $$\mathbb{P}\left[\lim_{n \to \infty} \operatorname{angle}(\widehat{v}_1^I, v_1) = 0\right] = 1.$$ 
 \end{thm}
 
-In einer \textit{high dimension low sample size (HDLSS)} Situation zeigen Shen et al. mithilfe eines spiked covariance models die Konsistenz einer ähnlichen Variante von Sparse PCA \cite{shen}. Der einzige Unterschied zu dem Ansatz von Zou et al. ist, dass die Hauptachsen dort sequentiell statt simultan berechnet werden. Für Details bezüglich der speziellen Bedingungen für eine Konsistenz verweisen wir auf \cite{shen_consistency}.
+In einer HDLSS-Situation zeigen Shen et al. die Konsistenz einer ähnlichen Variante von Sparse PCA mithilfe eines \textit{spiked covariance models} \cite{shen}. Der einzige Unterschied zu dem Ansatz von Zou et al. ist, dass die Hauptachsen dort sequentiell statt simultan berechnet werden. Für Details bezüglich der speziellen Bedingungen für eine Konsistenz verweisen wir auf \cite{shen_consistency}.

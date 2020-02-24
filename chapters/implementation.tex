@@ -4,7 +4,7 @@
 % Chapter label
 \label{implementation}
 
-In diesem Kapitel werden wir einen Algorithmus beschreiben, der das Sparse PCA Kriterium (\ref{spca_criterion}) minimiert. Dabei sehen wir uns mit einem nicht-konvexem Optimierungsproblem konfrontiert. Allerdings können wir ausnutzen, dass (\ref{spca_criterion}) konvex bezüglich $\widehat{\mat A}$ bzw. $\widehat{\mat B}$ ist, falls wir eine der beiden Matrizen fixieren. Im Folgenden werden wir zunächst eine allgemeine numerische Lösung präsentieren und die Komplexität des assoziierten Algorithmus bestimmen. In einer HDLSS-Situation werden wir diesen in \ref{numerical_solution_p_greater_n} leicht abändern, um eine effiziente Berechnung zu garantieren. Zu Schluss dieses Kapitels diskutieren wir Details einer eigenen Implementierung in Python.
+In diesem Kapitel werden wir einen Algorithmus beschreiben, der das Sparse PCA Kriterium (\ref{spca_criterion}) minimiert. Dabei sehen wir uns mit einem nicht-konvexem Optimierungsproblem konfrontiert. Allerdings können wir ausnutzen, dass (\ref{spca_criterion}) konvex bezüglich $\widehat{\mat A}$ bzw. $\widehat{\mat B}$ ist, falls wir eine der beiden Matrizen fixieren. Im Folgenden werden wir zunächst eine allgemeine numerische Lösung präsentieren und die Komplexität des assoziierten Algorithmus bestimmen. In einer HDLSS-Situation werden wir diesen in \ref{numerical_solution_p_greater_n} leicht abändern, um eine effiziente Berechnung zu garantieren. Zum Schluss dieses Kapitels diskutieren wir Details einer eigenen Implementierung in Python.
 
 
 %----------------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ Für eine einfache Übersicht werden wir das Sparse PCA Kriterium hier wiederhol
 \text{unter der Nebenbedingung, dass } \mat{A}^T\mat{A} = I_{k \times k}.
 \end{split}
 \end{align}
-Wie beschrieben handelt es sich bei (\ref{spca_criterion_restatement}) um ein bikonvexes Optimierungsproblem. Daher liegt es nahe einen alternierenden Ansatz zu wählen, um das Problem numerisch zu lösen. Somit fixieren wir im Folgenden eine der beiden Matrizen.
+Wie im Einstieg erwähnt handelt es sich bei (\ref{spca_criterion_restatement}) um ein bikonvexes Optimierungsproblem. Daher liegt es nahe einen alternierenden Ansatz zu wählen, um das Problem numerisch zu lösen. Somit fixieren wir im Folgenden eine der beiden Matrizen.
 
 \subsubsection{$\mat B$ gegeben $\mat A$:}
 
@@ -39,7 +39,7 @@ Somit reduziert sich (\ref{spca_criterion_restatement}) für fixes $\mat A$ auf 
 \label{sub_problem_enet}
 \widehat{\beta}_j = \argmin_{\beta_j} \norm{Y_j^* - \mat X \beta_j}_2^2 + \lambda_2 \norm{\beta_j}_2^2 + \lambda_{1,j}\norm{\beta_j}_1,
 \end{align}
-wobei $Y_j^* = \mat X \alpha_j$ für alle $1 \leq j \leq k$. In Kapitel \ref{fundamentals} haben wir uns ausführlich mit Elastic Nets beschäftigt und ein effizientes Koordinaten-Abstiegsverfahren zur Lösung dieser präsentiert.
+wobei $Y_j^* = \mat X \alpha_j$ für alle $1 \leq j \leq k$. In Abschnitt \ref{elastic_net} haben wir uns ausführlich mit Elastic Nets beschäftigt und ein effizientes Koordinaten-Abstiegsverfahren zur Lösung dieser präsentiert.
 
 \subsubsection{$\mat A$ gegeben $\mat B$:}
 
@@ -64,7 +64,7 @@ Für dieses Optimierungsproblem lässt sich eine explizite Lösung angeben. Es i
 
 \section{Algorithmus}
 
-Durch die Vorarbeit im vorangegangenem Abschnitt können wir einen effizienten Algorithmus zur Lösung des Sparse PCA Kriteriums angeben. Zuerst initialisieren wir $\mat A$ mit den ersten $k$ Hauptachsen. Anschließend minimieren wir abwechselnd über die Matrizen $\mat A$ und $\mat B$ bis ein geeignetes Konvergenzkriterium erfüllt ist oder wir eine maximale Anzahl an Iterationen erreicht haben. Durch abschließende Normalisierung der Spalten von $\mat B$ erhalten wir die dünnbesetzten Hauptachsen. Eine Übersicht haben wir in Algorithmus \ref{spca_algorithm} erstellt.
+Durch die Vorarbeit im vorangegangenem Abschnitt können wir einen effizienten Algorithmus zur Lösung des Sparse PCA Kriteriums angeben. Zuerst initialisieren wir $\mat A$ mit den ersten $k$ gewöhnlichen Hauptachsen. Anschließend minimieren wir abwechselnd über die Matrizen $\mat A$ und $\mat B$ bis ein geeignetes Konvergenzkriterium erfüllt ist oder wir eine maximale Anzahl an Iterationen erreicht haben. Durch abschließende Normalisierung der Spalten von $\mat B$ erhalten wir die dünnbesetzten Hauptachsen. Eine Übersicht haben wir in Algorithmus \ref{spca_algorithm} erstellt.
 
 \begin{algorithm}[tbh]
     \caption{Sparse Principal Component Analysis}
@@ -108,7 +108,7 @@ In diesem Fall lässt sich ein Trick für die Berechnung von (\ref{sub_problem_e
 \end{align}
 umformen, hängen beide Subprobleme (\ref{sub_problem_enet}) und (\ref{sub_problem_procrustes}) nur von der Kovarianzmatrix $\mat X^T \mat X$ ab. Daher ist es sinnvoll, diese vorab zu berechnen, um die Anzahl an Multiplikationen je Iteration zu verringern. Allerdings ist (\ref{sub_problem_enet_covariance}) mit $\mat X^T \mat X$ nicht direkt ein Elastic Net Problem. Definieren wir $Y^{**} = (\mat{X}^T\mat X)^{\frac{1}{2}} \alpha_j$ und $\mat X^{**} = (\mat{X}^T\mat X)^{\frac{1}{2}}$ können wir (\ref{sub_problem_enet_covariance}) aber in ein Elastic Net Problem transformieren
 $$\widehat{\beta}_j = \argmin_{\beta} \norm{Y^{**} - \mat X^{**} \beta}_2^2 + \lambda_2 \norm{\beta}_2^2 + \lambda_{1,j}\norm{\beta}_1.$$
-Um die Laufzeit des Algorithmus zu bestimmen, wenden wir uns Tabelle \ref{complexity_calculation} zu, welche die verschiedenen Berechnungsschritte zeigt. Die Initialisierung von $\mat A$ durch die ersten $k$ Hauptachsen wird durch eine abgeschnittene Singulärwertzerlegung von $\mat X$ berechnet. Zudem berechnen wir vorab die Kovarianzmatrix $\mat X^T \mat X$. Pro Iteration lösen wir $k$ Elastic Net Probleme und ein Procrustes Rotationsproblem. Insgesamt ergibt sich aufgrund $k < \min \{n,p\}$ und $j < p$ eine Laufzeit von $np^2 + mk\mathcal{O}(p^3)$, wobei $m$ die Anzahl der Iterationen ist.
+Um die Laufzeit des Algorithmus zu bestimmen, wenden wir uns Tabelle \ref{complexity_calculation} zu, welche die verschiedenen Berechnungsschritte zeigt. Die Initialisierung von $\mat A$ durch die ersten $k$ gewöhnlichen Hauptachsen wird durch eine abgeschnittene Singulärwertzerlegung von $\mat X$ berechnet. Zudem berechnen wir vorab die Kovarianzmatrix $\mat X^T \mat X$. Pro Iteration lösen wir $k$ Elastic Net Probleme und ein Procrustes Rotationsproblem. Insgesamt ergibt sich aufgrund $k < \min \{n,p\}$ und $j < p$ eine Laufzeit von $np^2 + mk\mathcal{O}(p^3)$, wobei $m$ die Anzahl der Iterationen ist.
 
 \begin{table}
 \centering
@@ -141,7 +141,7 @@ Für viele Anwendungen kann die Anzahl an Variablen die Anzahl an Beobachtungen 
 
 Dazu beobachten wir, dass Theorem \ref{pca_regression_formulation_ridge} für alle $\lambda_2 > 0$ gilt. Für $\lambda_2 \to \infty$ erhalten wir eine interessante Charakterisierung.
 \begin{thm} \label{spca_p_greater_n}
-Seien $\frac{\widehat{\beta}_j(\lambda_2)}{\norm{\widehat{\beta}_j(\lambda_2)}}$ die dünnbesetzten Hauptachsen aus (\ref{spca_criterion})
+Seien $\frac{\widehat{\beta}_j(\lambda_2)}{\norm{\widehat{\beta}_j(\lambda_2)}}$ die dünnbesetzten Hauptachsen aus (\ref{spca_criterion}) in Abhängigkeit von $\lambda_2$
 und $(\tilde{\mat A}, \tilde{\mat B})$ die Lösung des Optimierungsproblems
 \begin{align}
 \label{spca_p_greater_n_problem}
@@ -150,10 +150,10 @@ und $(\tilde{\mat A}, \tilde{\mat B})$ die Lösung des Optimierungsproblems
 \text{unter der Nebenbedingung, dass } \mat A^T \mat A = \mat I_{k \times k}.
 \end{split}
 \end{align}
-Für $\lambda_2 \to \infty$ konvergieren die dünnbesetzten Hauptachsen $\frac{\widehat{\beta}_j(\lambda_2)}{\norm{\widehat{\beta}_j(\lambda_2)}} \to \frac{\tilde{\beta}_j}{\norm{\tilde{\beta}_j}}.$
+Für $\lambda_2 \to \infty$ konvergieren die dünnbesetzten Hauptachsen $\frac{\widehat{\beta}_j(\lambda_2)}{\norm{\widehat{\beta}_j(\lambda_2)}} \to \frac{\tilde{\beta}_j}{\norm{\tilde{\beta}_j}}$ gegen die Lösung von (\label{spca_p_greater_n_problem}). 
 \end{thm}
 
-Daher können wir das vereinfachte Optimierungsproblem (\ref{spca_p_greater_n_problem}) benutzen, um die Elastic Net Probleme für den Spezialfall $\lambda_2 = \infty$ zu lösen. Fixieren wir wie in Algorithmus \ref{spca_algorithm} die Matrix $\mat A$, verbleiben wir mit dem Problem
+Daher können wir das vereinfachte Optimierungsproblem (\ref{spca_p_greater_n_problem}) benutzen, um das Sparse PCA Kriterium für den Spezialfall $\lambda_2 = \infty$ zu lösen. Fixieren wir wie in Algorithmus \ref{spca_algorithm} die Matrix $\mat A$, verbleiben wir mit dem Problem
 \begin{align}
 \label{spca_p_greater_n_problem_fixed_A}
 \widehat{\beta}_j = \argmin_{\beta_j} -2 \alpha_j^T(\mat X^T\mat X)\beta_j + \norm{\beta_j}_{2}^{2} + \lambda_{1,j}\norm{\beta_j}_1.
@@ -163,7 +163,7 @@ Für (\ref{spca_p_greater_n_problem_fixed_A}) können wir aufgrund des Wegfalls 
 \label{spca_p_greater_n_solution}
 \widehat{\beta}_j = \operatorname{soft}_{\frac{\lambda_{1,j}}{2}}(\alpha_j^T\mat X^T\mat X) = \left(|\alpha_j^T\mat X^T\mat X| - \frac{\lambda_{1,j}}{2}\right)_+ \operatorname{Sign}(\alpha_j^T\mat X^T\mat X).
 \end{align}
-Daher ersetzen wir die Berechnung in Schritt 4 von Algorithmus \ref{spca_algorithm} durch (\ref{spca_p_greater_n_solution}) falls $p \gg n$. Für den hochdimensionalen Fall kann somit ein effizientes Verfahren gewährleistet werden.
+Daher ersetzen wir die Berechnung in Schritt 4 von Algorithmus \ref{spca_algorithm} durch (\ref{spca_p_greater_n_solution}) falls $p \gg n$. Für den hochdimensionalen Fall kann durch das Wegfallen der Berechnung von $k$ Elastic Net Problemen somit ein effizientes Verfahren gewährleistet werden.
 
 UST totally ignores the dependence between predictors and treats them as independent variables. Although this may be considered illegitimate, UST and its variants are used in other methods such as significance analysis of microarrays (Tusher et al., 2001) and the nearest shrunken
 centroids classifier (Tibshirani et al., 2002), and have shown good empirical performance

@@ -4,7 +4,7 @@
 % Chapter label
 \label{fundamentals}
 
-In diesem Kapitel werden wir die wichtigsten mathematischen Grundlagen, die wir für die Formulierung der dünnbesetzten Hauptkomponentenanalyse benötigen, einführen. Dazu beschäftigen wir uns zunächst mit Grundbegriffen aus des linearen Algebra, Matrixzerlegungen und ausgewählten Approximationsproblemen in Abschnitt \ref{linear_algebra}. Ein Großteil dieses Kapitel ist verallgemeinerten linearen Regressionsmodellen gewidmet. Ab Abschnitt \ref{ridge_regression} werden wir die Modelle zu Zwecken der Regularisierung mit Straftermen versehen, um verschiedene Effekte zu erzielen. Anhand eines Beispiel-Datensatzes werden wir in der Lage sein, diese Effekte visuell nachzuvollziehen. Für den weiteren Verlauf dieser Arbeit ist das Verständnis der Strafterme von entscheidender Bedeutung.
+In diesem Kapitel werden wir die wichtigsten mathematischen Grundlagen, die wir für die Formulierung der dünnbesetzten Hauptkomponentenanalyse benötigen, einführen. Dazu beschäftigen wir uns zunächst mit Grundbegriffen aus des linearen Algebra, Matrixzerlegungen und ausgewählten Approximationsproblemen in Abschnitt \ref{linear_algebra}. Ein Großteil dieses Kapitels ist verallgemeinerten linearen Regressionsmodellen gewidmet. Ab Abschnitt \ref{ridge_regression} werden wir die Modelle zu Zwecken der Regularisierung mit Straftermen versehen, um verschiedene Effekte zu erzielen. Anhand eines Beispiel-Datensatzes werden wir in der Lage sein, diese Effekte visuell nachzuvollziehen. Für den weiteren Verlauf dieser Arbeit ist das Verständnis der Strafterme von entscheidender Bedeutung.
 
 
 
@@ -69,7 +69,7 @@ Gilt zusätzlich $\inner{v_i}{v_i} = 1$ für alle $1 \leq i \leq n$, so spricht 
 
 \begin{defn}[Orthogonale Matrix \cite{anton}]
 Eine Matrix $\mat A \in \mathbb{R}^{n \times n}$ heißt 		\textit{orthogonal}, falls deren Zeilen- und Spaltenvektoren paarweise orthonormal bezüglich des Standardskalarprodukts sind, d.h.
-$$\mat A^{\top} \mat A = \mathbb{1}_n$$
+$$\mat A^{\top} \mat A = \mathbb{1}_n.$$
 \end{defn}
 
 \begin{defn}[Orthogonalprojektion \cite{anton}]
@@ -85,15 +85,15 @@ Mithilfe einer Orthogonalbasis für $U$ lässt sich aus dieser Definition eine e
 
 \begin{thm}[\cite{anton}]
 \label{orthogonal_projection_theorem}
-Ist $(u_1, \ldots, u_n)$ eine Orthogonalbasis von $U$, so gilt für alle $v \in V$
-$$P_{U}(v) = \sum_{i=1}^n \frac{\langle v, u_i \rangle}{\langle u_i, u_i \rangle} u_i$$
+Ist $(u_1, \ldots, u_r)$ eine Orthogonalbasis von $U$, so gilt für alle $v \in V$
+$$P_{U}(v) = \sum_{i=1}^r \frac{\langle v, u_i \rangle}{\langle u_i, u_i \rangle} u_i.$$
 \end{thm}
 
-Später werden wir die Orthogonalprojektion in einer anderen Form nutzen. Wir können die Projektion als Matrix-Vektor-Produkt auffassen. Verwenden wir das Standardskalarprodukt gilt mit einer Orthogonalbasis $(u_1, \ldots, u_n)$ von $U$
+Später werden wir die Orthogonalprojektion in einer anderen Form nutzen. Wir können die Projektion als Matrix-Vektor-Produkt auffassen. Verwenden wir das Standardskalarprodukt gilt mit einer Orthogonalbasis $(u_1, \ldots, u_r)$ von $U$
 \begin{align}
-P_U(v) = \sum_{i=1}^n \frac{v^{\top} u_i}{u_i^{\top} u_i} u_i = \sum_{i=1}^n \frac{u_i u_i^{\top}}{u_i^{\top} u_i}v = \mat A \mat A^{\top} v,
+P_U(v) = \sum_{i=1}^r \frac{v^{\top} u_i}{u_i^{\top} u_i} u_i = \sum_{i=1}^r \frac{u_i u_i^{\top}}{u_i^{\top} u_i}v = \mat A \mat A^{\top} v,
 \end{align}
-wobei $\mat A = \begin{bmatrix} \frac{u_1}{\norm{u_1}} & \cdots & \frac{u_n}{\norm{u_n}} \end{bmatrix}$. Die Orthogonalitätsbedingung in Theorem \ref{orthogonal_projection_theorem} kann auch weggelassen werden. Ist $(u_{1},\ldots ,u_{n})$ eine beliebige Basis von $U$, so gilt
+wobei $\mat A = \begin{bmatrix} \frac{u_1}{\norm{u_1}} & \cdots & \frac{u_r}{\norm{u_r}} \end{bmatrix} \in \mathbb{R}^{n \times r}$. Die Orthogonalitätsbedingung in Theorem \ref{orthogonal_projection_theorem} kann auch weggelassen werden. Ist $(u_{1},\ldots ,u_{r})$ eine beliebige Basis von $U$, so gilt
 \begin{align}
 P_U(v) = \mat A (\mat A^\top \mat A)^{-1} \mat A^\top v.
 \end{align}
@@ -115,7 +115,7 @@ $$\mat{A}x = \lambda x$$
 für einen Skalar $\lambda \in \mathbb{R}$. Die Zahl $\lambda$ heißt \textit{Eigenwert} von $\mat{A}$.
 \end{defn}
 
-\begin{defn}[Diagonalisierbar \cite{anton}]
+\begin{defn}[Diagonalisierbarkeit \cite{anton}]
 Eine quadratische Matrix $\mat A \in \rnn$ heißt \textit{diagonalisierbar}, falls eine invertierbare Matrix $\mat V$ existiert, so dass $\mat{\Lambda} = \mat{V}^{-1}\mat{A}\mat{V}$ Diagonalgestalt hat.
 \end{defn}
 
@@ -149,7 +149,7 @@ mit orthogonalen Matrizen $\mat U \in \mathbb{R}^{m \times m}$ und $\mat V \in \
 Die positiven Diagonaleinträge $\sigma_{i} > 0$ von $\mat D$ werden \textit{Singulärwerte} genannt.
 \end{defn}
 
-Singulärwerte einer Matrix $\mat A$ sind eindeutig bestimmt und stehen durch $\sigma_i = \sqrt{\lambda_i}$ in einer engen Beziehung mit den Eigenwerten $\lambda_i$. Konventionell werden die Singulärwerte von $\mat D$ absteigend sortiert, d.h. $\sigma _{1} \geq \cdots \geq \sigma _{r}$. Geometrisch bedeutet diese Zerlegung, dass sich die Matrix $\mat A$ in zwei Drehungen $\mat U, \mat V$ und eine Streckung unterteilen lässt. Dabei korrespondieren die Streckungsfaktoren mit den Einträgen der Diagonalmatrix $\mat D$.
+Singulärwerte einer Matrix $\mat A$ sind eindeutig bestimmt und stehen durch $\sigma_i = \sqrt{\lambda_i}$ in einer engen Beziehung mit den Eigenwerten $\lambda_i$ von $\mat A^T\mat A$. Konventionell werden die Singulärwerte von $\mat D$ absteigend sortiert, d.h. $\sigma _{1} \geq \cdots \geq \sigma _{r}$. Geometrisch bedeutet diese Zerlegung, dass sich die Matrix $\mat A$ in zwei Drehungen $\mat U, \mat V$ und eine Streckung unterteilen lässt. Dabei korrespondieren die Streckungsfaktoren mit den Einträgen der Diagonalmatrix $\mat D$.
 
 
 \subsection{Matrix Approximation}
@@ -169,7 +169,7 @@ Eine weitere wichtige Eigenschaft von Matrizen ist der \textit{Rang}.
 Die Dimension des Zeilen- und des Spaltenraumes einer Matrix $\mat A$ heißt \textit{Rang} von $\mat A$ und wird mit $\rang{\mat A}$ bezeichnet.
 \end{defn}
 
-Wir möchten nun eine Matrix $\mat A$ durch eine andere, simplere Matrix $\widehat{\mat A}$ mit niedrigerem Rang approximieren. Dieses Problem fällt unter die Kategorie \textit{low rank approximation}, welche eine enge Verbindung zur Hauptkomponentenanalyse aufweist. In Anwendung korrespondiert die Rang-Bedingung an die Matrix mit der Komplexität eines Modells. Mithilfe der Singulärwertzerlegung können wir eine explizite Lösung angeben.
+Wir möchten nun eine Matrix $\mat A$ durch eine andere, simplere Matrix $\widehat{\mat A}$ mit niedrigerem Rang approximieren. Dieses Problem fällt unter die Kategorie \textit{low rank approximation}, welche eine enge Verbindung zur Hauptkomponentenanalyse aufweist. Mithilfe der Singulärwertzerlegung können wir eine explizite Lösung angeben.
 
 \begin{thm}[Eckart-Young-Mirsky-Theorem \cite{eckart}]
 Sei $\mat A \in \rmn$ mit $m \leq n$ und 
@@ -186,7 +186,7 @@ das Approximationsproblem
 wobei $\sigma_i$ die Singulärwerte von $\mat A$ sind. Der Minimierer $\widehat{\mat{A}}^*$ ist genau dann eindeutig, wenn $\sigma_{r+1} \neq \sigma_{r}$.
 \end{thm}
 
-Das Eckart-Young-Mirsky-Theorem wird es uns in Abschnitt \ref{pca_theorems} ermöglichen, eine wertvolle Eigenschaft der Hauptkomponentenanalyse zu zeigen sowie den Rekonstruktionsfehler des Modells explizit anzugeben.
+Das Eckart-Young-Mirsky-Theorem wird es uns in Abschnitt \ref{pca_theorems} ermöglichen, eine wertvolle Eigenschaft der Hauptkomponentenanalyse zu zeigen. In Anwendung korrespondieren die Singulärwerte mit dem Rekonstruktionsfehler und die Rang-Bedingung an $\widehat{\mat A}$ mit der Komplexität des Modells.
 
 Ein anderes Approximationsproblem für Matrizen ist das \textit{orthogonale Procrustes Rotationsproblem}. Hierbei sind uns zwei Matrizen $\mat M$ und $\mat N$ gegeben, welche durch eine orthogonale Transformation ineinander überführt werden sollen. Wieder hilft uns die Singulärwertzerlegung bei der Findung einer Lösung.
 
@@ -230,7 +230,7 @@ $$(\mat D)_{ij}^{+} = \begin{cases} \frac{1}{\sigma_{i}} \quad \text{falls } i =
 \section{Generalisierte lineare Modelle}
 \label{generalized_linear_models}
 
-Es existiert eine sehr enge Verbindung zwischen der Hauptkomponentenanalyse, die wir in Kapitel \ref{pca} näher kennenlernen werden, und der Regressionsanalyse. Viele der Ideen und Ansätze im folgendem Abschnitt werden wir später gebrauchen und spielen eine maßgebliche Rolle bei der Formulierung der dünnbesetzten Hauptkomponentenanalyse.
+Es existiert eine sehr enge Verbindung zwischen der Hauptkomponentenanalyse, die wir in Kapitel \ref{pca} näher kennenlernen werden, und der Regressionsanalyse. Viele der Ideen und Ansätze im folgendem Abschnitt werden wir später gebrauchen und spielen eine maßgebliche Rolle bei der Formulierung der dünnbesetzten Hauptkomponentenanalyse. Für die Einführung generalisierter linearer Modelle richten wir uns vor allem nach \cite{hastie_elements}.
 
 \subsection{Norm}
 
@@ -261,9 +261,8 @@ $$\norm{x}_{0} \defeq \left|\{i \colon \enspace x_i \neq 0 , \quad 1 \leq i \leq
 \end{defn}
 
 Die übliche Schreibweise $\norm{x}_0$ - die Notation $\norm{x}_{0}^{0}$ wäre angemessener - entspringt der Beobachtung, dass 
-$$\norm{x}_{q}^{q} = \sum_{i=1}^{n} \abs{x_i}^q \quad \underset{q \rightarrow 0}{\longrightarrow} \quad \sum_{i=1}^{n} \mathbb{1}_{\{x_i = 0\}} = \left|\{i \colon \enspace x_i \neq 0\, , \quad 1 \leq i \leq n\}\right|$$
+$$\norm{x}_{q}^{q} = \sum_{i=1}^{n} \abs{x_i}^q \quad \underset{q \rightarrow 0}{\longrightarrow} \quad \sum_{i=1}^{n} \mathbf{1}_{\{x_i \neq 0\}} = \left|\{i \colon \enspace x_i \neq 0\, , \quad 1 \leq i \leq n\}\right|$$
 Wir wollen betonen, dass die $\ell_0$-\q{Norm} keine wirkliche Norm ist, da die Abbildung nicht homogen ist. Trotzdem ist diese \q{Norm} in der Theorie der komprimierten Erfassung sehr nützlich. Des Weiteren werden wir die Notation $\norm{\cdot}_q$ gemäß der Definition in \ref{lp_norm} auch für Werte $0 < q < 1$ verwenden, obwohl durch diese Abbildung ebenfalls keine Norm gegeben ist.
-
 
 \subsection{Grundlagen aus der Statistik}
 
@@ -273,9 +272,9 @@ $$s_{x,y} = \frac{1}{n-1} \sum_{i=1}^n (x_i - \bar{x}_n)(y_i - \bar{y}_n)$$
 gegeben, wobei $\bar{x}_n = \frac{1}{n}\sum _{i=1}^{n}x_{i}$ das Strichprobenmittel bezeichnet.
 \end{defn}
 
-Der Faktor $\frac{1}{n-1}$ wird als \textit{Bessel-Korrektur} bezeichnet und stellt die Erwartungstreue des Schätzers sicher. Im Folgenden werden diesen Faktor allerdings ignorieren, da er für die von uns betrachteten Optimierungsprobleme in Kapitel \ref{pca} und \ref{sparse_pca} irrelevant ist. Für einen Datensatz $\mat X \in \rnp$ mit $p$ zentrierten Variablen werden wir häufig von der Stichprobenkovarianzmatrix $\mat{\Sigma}$ sprechen, welche nach obiger Definition bis auf die Bessel-Korrektur durch $\mat X^T\mat X$ gegeben ist.
+Der Faktor $\frac{1}{n-1}$ wird als \textit{Bessel-Korrektur} bezeichnet und stellt die Erwartungstreue des Schätzers sicher. Im Folgenden werden diesen Faktor allerdings ignorieren, da er für die von uns betrachteten Optimierungsprobleme in Kapitel \ref{pca} und \ref{sparse_pca} aufgrund der Normierung irrelevant ist. Für einen Datensatz $\mat X \in \rnp$ mit $p$ zentrierten Variablen werden wir häufig von der Stichprobenkovarianzmatrix $\mat{\Sigma}$ sprechen, welche nach obiger Definition bis auf die Bessel-Korrektur durch $\mat X^T\mat X$ gegeben ist.
 
-Sei $g\colon \Theta \to \mathbb {R}$ eine zu schätzende reelle Parameterfunktion in einem statistischem Modell $(X,{\mathcal {A}},\mathcal{P})$ wobei $\mathcal{P} = \{P_{\vartheta } \colon \vartheta \in \Theta \}$. Wir werden nun einige wichtige Grundbegriffe für einen Schätzer $d \colon (X, \mathcal{A}) \rightarrow (\mathbb{R}, \mathcal{B}(\mathbb{R}))$ in $\mathcal{L}^1(\mathcal{P})$ einführen.
+Sei $g\colon \Theta \to \mathbb {R}$ eine zu schätzende reelle Parameterfunktion in einem statistischem Modell $(\mathcal{X},\mathcal {A},\mathcal{P})$, wobei $\Theta \subset \mathbb{R}$ eine Parametermenge und $\mathcal{P} = \{P_{\vartheta } \colon \vartheta \in \Theta \}$ ist. Wir werden nun einige wichtige Grundbegriffe für einen Schätzer $d \colon (\mathcal{X}, \mathcal{A}) \rightarrow (\mathbb{R}, \mathcal{B}(\mathbb{R}))$ in $\mathcal{L}^1(\mathcal{P})$ einführen.
 
 \begin{defn}[Verzerrung \cite{rueschendorf}]
 Die \textit{Verzerrung} (Englisch: \textit{Bias}) des Schätzers $d$ bei $\vartheta$ ist definiert durch
@@ -308,7 +307,7 @@ Die Frage nach einem günstigen Modell liegt also in der Modellkomplexität und 
 \begin{figure}
 \centering
 \includegraphics[width = 0.9\textwidth]{figures/bias_variance_tradeoff_labeled.jpg}
-\caption{Verzerrung-Varianz-Dilemma}
+\caption{Das Verzerrung-Varianz-Dilemma beschreibt den Kompromiss zwischen Unter- und Überanpassung an den Trainingsdatensatz, welchen man für ein robustes Modell eingehen muss.}
 \label{bias_variance_tradeoff}
 \end{figure}
 
@@ -328,7 +327,7 @@ f(X) = \beta_0 + \sum_{j=1}^p X_j\beta_j
 \end{align}
 wobei $\beta_j$ die Regressionskoeffizienten sind. Bei der Verwendung dieses Modells nehmen wir an, dass die Regressionsfunktion $\text{E}(Y|X)$ linear ist bzw. ein lineares Modell eine geeignete Approximation ist \cite{hastie_elements}.
 
-Typischerweise verfügen wir über eine Menge von Trainingsdaten $(x_1, y_1), \ldots, (x_n, y_n)$. Jedes $x_i = (x_{i1}, \ldots, x_{ip})^{\top}$ stellt eine Beobachtung dar, die wir für die Schätzung der Parameter $\beta_j$ benutzen. Die bekannteste Methode für diesen Zweck ist sicherlich die \textit{Methode der kleinsten Quadraten} (Englisch: \textit{(Ordinary) Least Squares}), in welcher wir $\beta = (\beta_0, \ldots, \beta_p)^{\top}$ wählen, dass die Summe der Residuenquadrate (Englisch: \textit{Residual Sum of Squares (RSS)} minimiert wird. Wir definieren
+Typischerweise verfügen wir über eine Menge von Trainingsdaten $(x_1, y_1), \ldots, (x_n, y_n)$. Jedes $x_i = (x_{i1}, \ldots, x_{ip})^{\top}$ stellt eine Beobachtung dar, die wir für die Schätzung der Parameter $\beta_j$ benutzen. Die bekannteste Methode für diesen Zweck ist sicherlich die \textit{Methode der kleinsten Quadraten} (Englisch: \textit{(Ordinary) Least Squares}), in welcher wir $\beta = (\beta_0, \ldots, \beta_p)^{\top}$ wählen, dass die Summe der Residuenquadrate (Englisch: \textit{Residual Sum of Squares (RSS)}) minimiert wird. Wir definieren
 \begin{align}
 \label{RSS}
 \text{RSS}(\beta) & = \sum_{i=1}^{n}(y_i - f(x_i))^2\\
@@ -372,7 +371,7 @@ Zu diesem Zweck kann die \textit{Tikhonov Regularisierung}, die auch unter dem N
 \label{ridge_regression}
 \hat{\beta}^{\text{ridge}} = \argmin_{\beta} \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda_2\sum_{j=1}^p \beta_j^2,
 \end{align}
-wobei $\lambda_2 \geq 0$ ein Parameter ist, der die Stärke der Schrumpfung der Regressionskoeffizienten kontrolliert. Je größer $\lambda_2$, desto stärker ist die Schrumpfung der $\beta_j$. Durch die Einführung des $\ell_2$-Strafterms garantiert (\ref{ridge_regression}) auch für $p > n$ eine eindeutige Lösung. Da $\beta_0$ nicht im Strafterm vorkommt, schätzen wir zunächst $\beta_0 = \bar{y} = \frac{1}{n}\sum_{i=1}^{n} y_i$ und zentrieren die Eingaben $x_{ij} = x_{ij} - \bar{x}_j$. Die eindeutige Lösung der zentrierten Version von (\ref{ridge_regression}) ist dann durch
+wobei $\lambda_2 \geq 0$ ein Hyperparameter ist, der die Stärke der Schrumpfung der Regressionskoeffizienten kontrolliert. Hyperparameter werden zur Steuerung des Trainingsalgorithmus verwendet und müssen vorab festgelegt werden. Je größer $\lambda_2$, desto stärker ist die Schrumpfung der $\beta_j$. Durch die Einführung des $\ell_2$-Strafterms garantiert (\ref{ridge_regression}) auch für $p > n$ eine eindeutige Lösung, da $\norm{\cdot}_{2}^{2}$ streng konvex ist. Da $\beta_0$ nicht im Strafterm vorkommt, schätzen wir zunächst $\beta_0 = \bar{y} = \frac{1}{n}\sum_{i=1}^{n} y_i$ und zentrieren die Eingaben $x_{ij} = x_{ij} - \bar{x}_j$. Die eindeutige Lösung der zentrierten Version von (\ref{ridge_regression}) ist dann durch
 \begin{align}
 \hat{\beta}^{\text{ridge}}  = (\mat X^{\top} \mat X + \lambda_2\mat{I})^{-1}\mat{X}^{\top}y
 \end{align}
@@ -450,7 +449,7 @@ wobei $(\cdot)_+ = max(\cdot, 0)$ ist. Der Beweis kann in \cite{murphy} nachgele
 \begin{align}
 \text{soft}_{\delta}(x) = \text{sign}(x)(|x| - \delta)_+
 \end{align}
-definiert wird. Dieser steht im Gegensatz zum hard-thresholding Operator und wird in Abbildung \ref{thresholding_figure} dargestellt. Durch den soft-thresholding Operator werden Koeffizienten in $\hat{\beta}^{\text{OLS}}$ entweder auf Null gesetzt oder um $\frac{\lambda_1}{2}$ geschrumpft. Nun sind wir auch in der Lage zu verstehen, warum Tibshirani \cite{tibshirani_lasso} den Begriff Lasso eingeführt hat, welcher für \textit{Least absolute selection and shrinkage operator} steht. 
+mithilfe eines Schwellwerts $\delta$ definiert wird. Dieser steht im Gegensatz zum hard-thresholding Operator und wird in Abbildung \ref{thresholding_figure} dargestellt. Durch den soft-thresholding Operator werden Koeffizienten in $\hat{\beta}^{\text{OLS}}$ entweder auf Null gesetzt oder um $\frac{\lambda_1}{2}$ geschrumpft. Nun sind wir auch in der Lage zu verstehen, warum Tibshirani \cite{tibshirani_lasso} den Begriff Lasso eingeführt hat, welcher für \textit{Least absolute selection and shrinkage operator} steht. 
 
 Für den allgemeinen Fall wird (\ref{lasso_formulation}) mithilfe von Näherungsverfahren gelöst. Da $\norm{\beta}_1$ nicht differenzierbar ist wenn $\beta_j = 0$, sind wir mit einem nicht glattem Optimierungsproblem konfrontiert. Seit der Problemformulierung wurde eine Vielzahl an Algorithmen entwickelt bzw. adaptiert, die eine numerische Lösung liefern. Dazu gehören Least-angle Regression (LARS) \cite{efron_lars}, Koordinaten-Abstiegsverfahren \cite{friedman}, Subdifferential-Methoden und  Näherungs-Gradientenverfahren \cite{yang, vandenberghe}. Letztere sind eine natürliche Erweiterung von Gradientenverfahren falls die Zielfunktion nicht differenzierbar ist. In Abschnitt \ref{elastic_net} werden wir auf ein Koordinaten-Abstiegsverfahren weiter eingehen.
 
@@ -467,7 +466,7 @@ Für den allgemeinen Fall wird (\ref{lasso_formulation}) mithilfe von Näherungs
 	\includegraphics[width = \textwidth]{figures/hard_thresholding.jpg}
 	\label{soft_thresholding}
 	\end{subfigure}
-\caption{Die Abbildung zeigt die beiden Operationen soft-thresholding $\operatorname{soft}_{\delta}(x)$ (links) und hard-thresholding $\operatorname{hard}_{\delta}(x)$ (rechts).}
+\caption{Gezeigt werden zwei verschiedene Methoden für ein Schwellenwertverfahren. Bei der soft-thresholding-Operation $\operatorname{soft}_{\delta}(x)$ (links) und hard-thresholding-Operation $\operatorname{hard}_{\delta}(x)$ (rechts) werden alle Einträge von $x$ kleiner als $\delta$ auf Null gesetzt. Der Unterschied besteht darin, dass $\operatorname{soft}_{\delta}(x)$ die verbliebenen Einträge um $|\delta|$ schrumpft.}
 \label{thresholding_figure}
 \end{figure}
 
@@ -487,7 +486,7 @@ Damit im Fall $p > n$ mehr als $n$ Variablen für das Modell selektiert werden k
 \label{elastic_net_formulation}
 \hat{\beta}^{\text{en}} = \argmin_{\beta} \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda_1\sum_{j=1}^p \left|\beta_j\right| + \lambda_2\sum_{j=1}^p \beta_j^2.
 \end{align}
-Wie zuvor wird durch den $\ell_1$-Strafterm ein dünnbesetztes Modell generiert. Dagegen fördert der $\ell_2$-Strafterm den Gruppeneffekt, stabilisiert den Regularisierungspfad und lässt eine beliebige Anzahl zu selektierender Variablen zu. Um eine doppelte Schrumpfung der Koeffizienten zu vermeiden, kann das Elastic Net mit dem Faktor $(1 + \lambda_2)$ korrigiert werden. 
+Wie zuvor wird durch den $\ell_1$-Strafterm ein dünnbesetztes Modell generiert. Dagegen fördert der $\ell_2$-Strafterm den Gruppeneffekt, stabilisiert den Regularisierungspfad und erlaubt eine beliebige Anzahl zu selektierender Variablen. Um eine doppelte Schrumpfung der Koeffizienten zu vermeiden, kann das Elastic Net mit dem Faktor $(1 + \lambda_2)$ korrigiert werden. 
 
 Ähnlich wie bei der Lasso Regression kann nur dann eine explizite Lösung von (\ref{elastic_net_formulation}) angegeben werden, wenn die Spalten von $\mat X$ orthonormal sind. Für eine allgemeine numerische Lösung wurden zum Beispiel LARS-EN \cite{zou_elasticnet}, welches auf dem LARS Algorithmus für das Lasso basiert, und ein Koordinaten-Abstiegsverfahren \cite{friedman} vorgeschlagen. Die Implementierung des Elastic Nets in scikit-learn \cite{scikit_learn} beruht auf letzterem Verfahren mit einer leicht abgeänderten mathematischen Formulierung
 \begin{align}
@@ -498,7 +497,7 @@ wobei $\alpha \in [0,1]$ das Verhältnis zwischen $\ell_1$- und $\ell_2$-Norm is
 \begin{align}
 \lambda = \frac{2\lambda_2 + \lambda_1}{2n} \quad \text{und} \quad \alpha = \frac{\lambda_1}{2\lambda_2 + \lambda_1}
 \end{align}
-entspricht (\ref{elastic_net_python}) unser ursprünglich formulierten Problem. Durch die Reparametrisierung können wir das Verhältnis der Bestrafungen flexibel anpassen. Mit $\alpha = 0$ reduziert sich (\ref{elastic_net_python}) auf Ridge und für $\alpha = 1$ auf die Lasso Regression.
+entspricht (\ref{elastic_net_python}) unserem ursprünglich formulierten Problem. Durch die Reparametrisierung können wir das Verhältnis der Bestrafungen flexibel anpassen. Mit $\alpha = 0$ reduziert sich (\ref{elastic_net_python}) auf Ridge und für $\alpha = 1$ auf die Lasso Regression.
 
 Oft ist es schwer, alle Koeffizienten gleichzeitig zu optimieren. Daher nutzt man bei einem Koordinaten-Abstiegsverfahren aus, dass eine partielle Optimierung über den $j$-ten Koeffizienten einfach zu berechnen ist, wenn alle anderen fixiert sind. Mithilfe der bisherigen Schätzer $\tilde{\beta}_0$ und $\tilde{\beta}_l$ für $l \neq j$, löst man also
 \begin{align}
@@ -545,7 +544,7 @@ Auch wenn klassische Kriterien für die Konvergenz von Koordinaten-Abstiegsverfa
 \subsection{Vergleich der Regressionsmethoden}
 \label{comparison_linear_models}
 
-Zur Veranschaulichung der oben eingeführten Methoden werden wir diese nun anwenden. Dabei greifen wir auf einen durch scikit-learn \cite{scikit_learn} bereitgestellten Datensatz, der erstmals durch \cite{efron_lars} öffentlich gemacht worden ist, zurück. In diesem wurden für $n = 442$ Diabetes Patienten $p=10$ verschiedene Variablen gemessen. Dazu gehören Alter (AGE), Geschlecht (SEX), Body Mass Index (BMI), Blutdruck (BP) und verschiedene Blutproben (S1, \ldots, S6). Die Zielgröße $y$ enthält Werte für den Krankheitsfortschritt ein Jahr nach Behandlungsbeginn. Ein Ausschnitt des Datensatzes befindet sich in Tabelle \ref{diabetes_data_set}.
+Zur Veranschaulichung der oben eingeführten Methoden werden wir diese nun anwenden. Dabei greifen wir auf einen durch scikit-learn \cite{scikit_learn} bereitgestellten Datensatz, der erstmals durch \cite{efron_lars} öffentlich gemacht worden ist, zurück. Ein Ausschnitt des Datensatzes befindet sich in Tabelle \ref{diabetes_data_set}.
 
 \begin{table}
 \centering
@@ -561,41 +560,41 @@ Zur Veranschaulichung der oben eingeführten Methoden werden wir diese nun anwen
 441 & 36 & 1 & 30.0 & 95 & 201 & 125.2 & 42 & 5 & 5.1 & 85 & 220\\
 442 & 36 & 1 & 19.6 & 71 & 250 & 133.2 & 97 & 3 & 4.6 & 92 & 57\\
 \end{tabular}
-\caption{Überblick über den Diabetes Datensatz aus \cite{diabetes_data}}
+\caption{Überblick über den Diabetes Datensatz aus \cite{diabetes_data}.  In diesem wurden für $n = 442$ Diabetes Patienten $p=10$ verschiedene Variablen gemessen. Dazu gehören Alter (AGE), Geschlecht (SEX), Body Mass Index (BMI), Blutdruck (BP) und verschiedene Blutproben (S1, \ldots, S6). Die Zielgröße $y$ enthält Werte für den Krankheitsfortschritt ein Jahr nach Behandlungsbeginn.}
 \label{diabetes_data_set}
 \end{table}
 
 In Abbildung \ref{regression_coefficients} sehen wir die Ergebnisse der verschiedenen Regressionsmethoden. Anhand von \ref{regression_coefficients} können wir die Schrumpfung der Regressionskoeffizienten mit Veränderung der Regularisierungsparameter $\lambda_1$, $\lambda_2$ bzw. $\lambda$ visuell nachvollziehen. Deutlich zu erkennen ist, dass bei der Ridge Regression eine kontinuierliche Schrumpfung der Koeffizienten stattfindet, d.h. sie werden erst für $\lambda_2 \to \infty$ auf Null gesetzt. Im Gegensatz dazu erkennt man bei der Lasso Regression, dass schon für kleine $\lambda_1$ einzelne Koeffizienten auf Null gesetzt werden und wir eine Dünnbesetzung erhalten. Das Elastic Net bildet eine natürliche Brücke zwischen Ridge und Lasso Regression. Einerseits können wir sehen, dass einzelne Koeffizienten auf Null gesetzt werden und andererseits eine Stabilisierung der Regularisierungspfade.
 
-Um ein geeignetes Modell zu erhalten, müssen die Parameter $\lambda_1$, $\lambda_2$ bzw. $\lambda$ geeignet gewählt werden. Zu diesem Zweck kann ein $k$-faches Kreuzvalidierungsverfahren eingesetzt werden. Hierbei wird der Datensatz in $k$ möglichst gleich große Teilmengen $T_1, \ldots, T_k$ zerlegt. Anschließend werden $k$ Durchläufe gestartet, wobei die jeweils $i$-te Teilmenge $T_{i}$ als Testmenge und die verbleibenden $k-1$ Teilmengen $\{T_{1},...,T_{k}\}\setminus \{T_{i}\}$ als Trainingsmenge verwendet werden. Mittelt man die mittleren quadratischen Fehler der Testmengen, erhält man ein Maß für dem Gesamtfehler. Man wählt dann den Regularisierungsparameter mit minimalem Gesamtfehler, welcher in Abbildung \ref{regression_coefficients} eingezeichnet ist.
+Um ein geeignetes Modell zu erhalten, müssen die Hyperparameter $\lambda_1$, $\lambda_2$ bzw. $\lambda$ geeignet gewählt werden. Zu diesem Zweck kann ein $k$-faches Kreuzvalidierungsverfahren eingesetzt werden. Hierbei wird der Datensatz in $k$ möglichst gleich große Teilmengen $T_1, \ldots, T_k$ zerlegt. Anschließend werden $k$ Durchläufe gestartet, wobei die jeweils $i$-te Teilmenge $T_{i}$ als Testmenge und die verbleibenden $k-1$ Teilmengen $\{T_{1},...,T_{k}\}\setminus \{T_{i}\}$ als Trainingsmenge verwendet werden. Mittelt man die mittleren quadratischen Fehler der Testmengen, erhält man ein Maß für dem Gesamtfehler. Man wählt dann den Regularisierungsparameter mit minimalem Gesamtfehler, welcher in Abbildung \ref{regression_coefficients} eingezeichnet ist.
 
 \begin{figure}
 \centering
-	\begin{subfigure}{0.85\textwidth}
+	\begin{subfigure}{0.875\textwidth}
 	\centering
 	\includegraphics[width = \textwidth]{figures/ridge_regression_coefficients_cv.jpg}
 	\label{ridge_regression_coefficients}
 	\vspace{-0.5cm}
-	\caption{Verhalten der Ridge Regression bei Veränderung von $\lambda_2$.}
+	\caption{Verhalten der Koeffizienten bei der Ridge Regression.}
 	\vspace{0.5cm}
 	\end{subfigure}
 	%	
-	\begin{subfigure}{0.85\textwidth}
+	\begin{subfigure}{0.875\textwidth}
 	\centering
 	\includegraphics[width = \textwidth]{figures/lasso_regression_coefficients_cv.jpg}
 	\label{lasso_regression_coefficients}
 	\vspace{-0.5cm}
-	\caption{Verhalten der Lasso Regression bei Veränderung von $\lambda_1$.}
+	\caption{Verhalten der Koeffizienten bei der Lasso Regression.}
 	\vspace{0.5cm}
 	\end{subfigure}
 	%
-	\begin{subfigure}{0.85\textwidth}
+	\begin{subfigure}{0.875\textwidth}
 	\centering
 	\includegraphics[width = \textwidth]{figures/elastic_net_coefficients_cv.jpg}
 	\label{elastic_net_coefficients}
 	\vspace{-0.5cm}
-	\caption{Verhalten der Ridge Regression bei Veränderung von $\lambda$ mit $\alpha = 0.99$ fest.}
+	\caption{Verhalten der Koeffizienten bei der Elastic Net Regression mit festem $\alpha = 0.99$.}
 	\end{subfigure}
-\caption{Jede Linie entspricht dem Wert des jeweiligen Regressionskoeffizienten in Abhängigkeit der Regularisierungsparameter $\lambda_2$, $\lambda_1$ bzw. $\lambda$ (x-Achse) dar. Zu sehen ist die unterschiedliche Art der Schrumpfung für die verschiedenen Strafterme. Die vertikalen Linien entsprechen dem Wert des jeweiligen Parameters, der durch ein 10-faches Kreuzvalidierungsverfahren bestimmt worden ist.}
+\caption{Jede Linie entspricht dem Wert (y-Achse) des jeweiligen Regressionskoeffizienten in Abhängigkeit der Regularisierungsparameter $\lambda_2$, $\lambda_1$ bzw. $\lambda$ (x-Achse). Zu sehen ist die unterschiedliche Art der Schrumpfung für die verschiedenen Strafterme. Die vertikalen Linien entsprechen dem Wert des jeweiligen Hyperparameters, der durch ein 10-faches Kreuzvalidierungsverfahren bestimmt worden ist.}
 \label{regression_coefficients}
 \end{figure}
