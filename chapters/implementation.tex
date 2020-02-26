@@ -4,7 +4,7 @@
 % Chapter label
 \label{implementation}
 
-In diesem Kapitel werden wir einen Algorithmus beschreiben, der das Sparse PCA Kriterium (\ref{spca_criterion}) minimiert. Dabei sehen wir uns mit einem nicht-konvexem Optimierungsproblem konfrontiert. Allerdings können wir ausnutzen, dass (\ref{spca_criterion}) konvex bezüglich $\widehat{\mat A}$ bzw. $\widehat{\mat B}$ ist, falls wir eine der beiden Matrizen fixieren. Im Folgenden werden wir zunächst eine allgemeine numerische Lösung präsentieren und die Komplexität des assoziierten Algorithmus bestimmen. In einer HDLSS-Situation werden wir diesen in \ref{numerical_solution_p_greater_n} leicht abändern, um eine effiziente Berechnung zu garantieren. Zum Schluss dieses Kapitels diskutieren wir Details einer eigenen Implementierung in Python.
+In diesem Kapitel werden wir einen Algorithmus beschreiben, der das Sparse PCA Kriterium (\ref{spca_criterion}) minimiert. Dabei sehen wir uns mit einem nicht-konvexem Optimierungsproblem konfrontiert. Allerdings können wir ausnutzen, dass (\ref{spca_criterion}) konvex bezüglich der beiden Matrizen $\mat A$ und $\mat B$ ist, falls wir die jeweils andere fixieren. Im Folgenden werden wir zunächst eine allgemeine numerische Lösung präsentieren und die Komplexität des assoziierten Algorithmus bestimmen. In einer HDLSS-Situation werden wir diesen in \ref{numerical_solution_p_greater_n} leicht abändern, um eine effiziente Berechnung zu garantieren. Zum Schluss dieses Kapitels diskutieren wir Details einer eigenen Implementierung in Python.
 
 
 %----------------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ In diesem Fall lässt sich ein Trick für die Berechnung von (\ref{sub_problem_e
 \end{align}
 umformen, hängen beide Subprobleme (\ref{sub_problem_enet}) und (\ref{sub_problem_procrustes}) nur von der Kovarianzmatrix $\mat X^{\top} \mat X$ ab. Daher ist es sinnvoll, diese vorab zu berechnen, um die Anzahl an Multiplikationen je Iteration zu verringern. Allerdings ist (\ref{sub_problem_enet_covariance}) mit $\mat X^{\top} \mat X$ nicht direkt ein Elastic Net Problem. Definieren wir $Y^{**} = (\mat{X}^{\top}\mat X)^{\frac{1}{2}} \alpha_j$ und $\mat X^{**} = (\mat{X}^{\top}\mat X)^{\frac{1}{2}}$ können wir (\ref{sub_problem_enet_covariance}) aber in ein Elastic Net Problem transformieren
 $$\widehat{\beta}_j = \argmin_{\beta} \norm{Y^{**} - \mat X^{**} \beta}_2^2 + \lambda_2 \norm{\beta}_2^2 + \lambda_{1,j}\norm{\beta}_1.$$
-Um die Laufzeit des Algorithmus zu bestimmen, wenden wir uns Tabelle \ref{complexity_calculation} zu, welche die verschiedenen Berechnungsschritte zeigt. Die Initialisierung von $\mat A$ durch die ersten $k$ gewöhnlichen Hauptachsen wird durch eine abgeschnittene Singulärwertzerlegung von $\mat X$ berechnet. Zudem berechnen wir vorab die Kovarianzmatrix $\mat X^{\top} \mat X$. Pro Iteration lösen wir $k$ Elastic Net Probleme und ein Procrustes Rotationsproblem. Insgesamt ergibt sich aufgrund $k < \min \{n,p\}$ und $j < p$ eine Laufzeit von $np^2 + mk\mathcal{O}(p^3)$, wobei $m$ die Anzahl der Iterationen ist.
+Um die Laufzeit des Algorithmus zu bestimmen, wenden wir uns Tabelle \ref{complexity_calculation} zu, welche den Rechenaufwand für die verschiedenen Berechnungsschritte zeigt. Die Initialisierung von $\mat A$ durch die ersten $k$ gewöhnlichen Hauptachsen wird durch eine abgeschnittene Singulärwertzerlegung von $\mat X$ berechnet. Zudem berechnen wir vorab die Kovarianzmatrix $\mat X^{\top} \mat X$. Pro Iteration lösen wir $k$ Elastic Net Probleme und ein Procrustes Rotationsproblem. Insgesamt ergibt sich daher aufgrund $k \leq \min \{n,p\}$ und $j \leq p$ eine Laufzeit von $np^2 + mk\cdot\mathcal{O}(p^3)$, wobei $m$ die Anzahl an Iterationen und $j$ die Anzahl von Null verschiedener Einträge ist.
 
 \begin{table}
 \centering
@@ -121,13 +121,13 @@ $\mat X^{\top} (\mat X \mat B)$ & $\mathcal{O}(npk)$\\
 Singulärwertzerlegung von $\mat X^{\top}\mat X \mat B$ & $\mathcal{O}(pk^2)$\\
 Elastic Net Problem & $\mathcal{O}(pnj + j^3)$
 \end{tabular}
-\caption{Die Tabelle zeigt die Komplexität für die in Algorithmus \ref{spca_algorithm} vorkommenden Berechnungen. Dabei ist $j$ die Anzahl von Null verschiedener Koeffizienten.}
+\caption{Die Tabelle zeigt die Komplexität für die in Algorithmus \ref{spca_algorithm} vorkommenden Berechnungsschritte. Dabei ist $j$ die Anzahl von Null verschiedener Koeffizienten.}
 \label{complexity_calculation}
 \end{table}
 
 \subsubsection{Fall: $\mathbf{p \gg n}$}
 
-Für diesen Fall ist eine Berechnung der Kovarianzmatrix $\mat X^{\top}\mat X$ nicht mehr sinnvoll, da dies eine $p \times p$-Matrix ist. Daher werden wir $\mat X^{\top}(\mat X \mat B)$ in jeder Iteration naiv berechnen. Die Laufzeit des Algorithmus wird in diesem Fall von der Lösung der $k$ Elastic Nets dominiert, besonders wenn wir viele von Null verschiedene Einträge zulassen. Insgesamt ergibt sich die Komplexität $mk\mathcal{O}(pnj + j^3)$. Für große $j$ bzw. $p$ können die Berechnungskosten somit sehr hoch sein, weshalb wir im folgenden Abschnitt einen speziellen Sparse PCA Algorithmus kennenlernen werden.
+Für diesen Fall ist eine Berechnung der Kovarianzmatrix $\mat X^{\top}\mat X$ nicht mehr sinnvoll, da dies eine $p \times p$-Matrix ist. Daher werden wir $\mat X^{\top}(\mat X \mat B)$ in jeder Iteration naiv berechnen. Die Laufzeit des Algorithmus wird in diesem Fall von der Lösung der $k$ Elastic Net Probleme dominiert, besonders wenn wir viele von Null verschiedene Einträge zulassen. Dies schlägt sich auch in der Komplexität des Algorithmus nieder, welche in diesem Fall durch $mk\cdot\mathcal{O}(pnj + j^3)$ gegeben ist. Für große $j$ bzw. $p$ sind die Berechnungskosten somit sehr hoch, weshalb wir im folgenden Abschnitt eine spezielle Form der dünnbesetzten Hauptkomponentenanalyse kennenlernen werden.
 
 
 %----------------------------------------------------------------------------------------
@@ -137,9 +137,7 @@ Für diesen Fall ist eine Berechnung der Kovarianzmatrix $\mat X^{\top}\mat X$ n
 \section{Numerische Lösung im Fall $\mathbf{p \gg n}$}
 \label{numerical_solution_p_greater_n}
 
-Für viele Anwendungen kann die Anzahl an Variablen die Anzahl an Beobachtungen deutlich übersteigen. Um auch in diesem Fall eine effiziente Berechnung zu ermöglichen, formulieren wir einen Spezialfall des Algorithmus \ref{spca_algorithm}.
-
-Dazu beobachten wir, dass Theorem \ref{pca_regression_formulation_ridge} für alle $\lambda_2 > 0$ gilt. Für $\lambda_2 \to \infty$ erhalten wir eine interessante Charakterisierung.
+Für viele Anwendungen kann die Menge an Variablen die Anzahl an Beobachtungen deutlich übersteigen. Um auch in diesem Fall eine effiziente Berechnung zu ermöglichen, formulieren wir einen Spezialfall von Algorithmus \ref{spca_algorithm}. Dazu beobachten wir, dass Theorem \ref{pca_regression_formulation_ridge} für alle $\lambda_2 > 0$ gilt. Für $\lambda_2 \to \infty$ erhalten wir eine interessante Charakterisierung.
 \begin{thm} \label{spca_p_greater_n}
 Seien $\frac{\widehat{\beta}_j(\lambda_2)}{\norm{\widehat{\beta}_j(\lambda_2)}}$ die dünnbesetzten Hauptachsen aus (\ref{spca_criterion}) in Abhängigkeit von $\lambda_2$
 und $(\tilde{\mat A}, \tilde{\mat B})$ die Lösung des Optimierungsproblems
@@ -152,8 +150,7 @@ und $(\tilde{\mat A}, \tilde{\mat B})$ die Lösung des Optimierungsproblems
 \end{align}
 Für $\lambda_2 \to \infty$ konvergieren die dünnbesetzten Hauptachsen $\frac{\widehat{\beta}_j(\lambda_2)}{\norm{\widehat{\beta}_j(\lambda_2)}} \to \frac{\tilde{\beta}_j}{\norm{\tilde{\beta}_j}}$ gegen die Lösung von (\ref{spca_p_greater_n_problem}). 
 \end{thm}
-
-Daher können wir das vereinfachte Optimierungsproblem (\ref{spca_p_greater_n_problem}) benutzen, um das Sparse PCA Kriterium für den Spezialfall $\lambda_2 = \infty$ zu lösen. Fixieren wir wie in Algorithmus \ref{spca_algorithm} die Matrix $\mat A$, verbleiben wir mit dem Problem
+Daher können wir das vereinfachte Optimierungsproblem (\ref{spca_p_greater_n_problem}) benutzen, um das Sparse PCA Kriterium für den Fall $\lambda_2 = \infty$ zu lösen. Fixieren wir wie in Algorithmus \ref{spca_algorithm} die Matrix $\mat A$, verbleiben wir mit dem Problem
 \begin{align}
 \label{spca_p_greater_n_problem_fixed_A}
 \widehat{\beta}_j = \argmin_{\beta_j} -2 \alpha_j^{\top}(\mat X^{\top}\mat X)\beta_j + \norm{\beta_j}_{2}^{2} + \lambda_{1,j}\norm{\beta_j}_1.
@@ -163,10 +160,9 @@ Für (\ref{spca_p_greater_n_problem_fixed_A}) können wir aufgrund des Wegfalls 
 \label{spca_p_greater_n_solution}
 \widehat{\beta}_j = \operatorname{soft}_{\frac{\lambda_{1,j}}{2}}(\alpha_j^{\top}\mat X^{\top}\mat X) = \left(|\alpha_j^{\top}\mat X^{\top}\mat X| - \frac{\lambda_{1,j}}{2}\right)_+ \operatorname{Sign}(\alpha_j^{\top}\mat X^{\top}\mat X).
 \end{align}
-Daher ersetzen wir die Berechnung in Schritt 4 von Algorithmus \ref{spca_algorithm} durch (\ref{spca_p_greater_n_solution}) falls $p \gg n$. Für den hochdimensionalen Fall kann durch das Wegfallen der Berechnung von $k$ Elastic Net Problemen somit ein effizientes Verfahren gewährleistet werden.
+Somit können wir die Berechnung in Schritt 4 von Algorithmus \ref{spca_algorithm} durch (\ref{spca_p_greater_n_solution}) ersetzen. Für den hochdimensionalen Fall kann durch das Wegfallen der Berechnung von $k$ Elastic Net Problemen ein effizientes Verfahren gewährleistet werden. Im Folgenden werden wir den modifizierten Algorithmus für $p \gg n$ mit \ref{spca_algorithm}$^*$ bezeichnen.
 
-UST totally ignores the dependence between predictors and treats them as independent variables. Although this may be considered illegitimate, UST and its variants are used in other methods such as significance analysis of microarrays (Tusher et al., 2001) and the nearest shrunken
-centroids classifier (Tibshirani et al., 2002), and have shown good empirical performance
+Bei dieser Ersetzung ist aber besondere Vorsicht zu genießen. Wir möchten kurz erklären, was dieser Spezialfall in Anwendung bewirkt. Durch die Ersetzung mit (\ref{spca_p_greater_n_solution}) wird im Wesentlichen der soft-thresholding-Operator auf die klassischen Hauptachsen angewendet. Alle Einträge in den Hauptachsen, welche im Betrag kleiner als $\frac{\lambda_{1,j}}{2}$ sind, werden dadurch auf Null gesetzt. Mit $\lambda_{1,j}$ kontrollieren wir also weiterhin den Grad der Dünnbesetzung. Allerdings werden Abhängigkeiten zwischen Variablen dabei völlig außer Acht gelassen und die Variablen als unabhängig angenommen. Auch wenn dies unzulässig scheinen mag, findet man ein derartiges Vorgehen auch in anderen Verfahren wieder \cite{tibshirani_diagnosis}. Eine Rechtfertigung dieses Ansatzes beruht allein auf guten empirischen Ergebnissen. Daher muss im Anwendungsfall entschieden werden, ob eine Verwendung von Algorithmus \ref{spca_algorithm}$^*$ sinnvoll ist.
 
 
 %----------------------------------------------------------------------------------------

@@ -4,7 +4,7 @@
 % Chapter Label
 \label{application}
 
-In diesem Kapitel beschäftigen wir uns mit der Anwendung der dünnbesetzten Hauptkomponentenanalyse auf Frequenzdaten einer Mühle. Dafür stehen uns Zeitreihen von Beschleunigungssensoren und Mikrofonen zur Verfügung, welche an der Maschine angebracht sind, um die Vibration bzw. die Akustik zu messen. Wir sind interessiert daran herauszufinden, ob sich mithilfe der Zeitreihen Aussagen über die Partikelgröße des Materials treffen lassen. Aufgrund der geringen Beobachtungszahl des Datensatzes sind viele überwachte Lernverfahren in diesem Zusammenhang unbrauchbar. Im Zuge einer explorativen Analyse kann daher eine Dimensionsreduktion sinnvoll sein. Dabei sind wir nicht unbedingt an der niedrigdimensionalen Repräsentation der Daten interessiert, sondern viel mehr an der Herausfilterung wichtiger Frequenzen. Idealerweise können wir die Frequenzen dem Material oder der Maschine zuordnen, so dass wir zwischen Material- und Maschineneigenschaften unterscheiden können. Die Möglichkeit der Interpretation und die Konsistenz in hochdimensionalen Fällen waren Anlass für die Verwendung der dünnbesetzten Hauptkomponentenanalyse in diesem Zusammenhang. 
+In diesem Kapitel beschäftigen wir uns mit der Anwendung der dünnbesetzten Hauptkomponentenanalyse auf Frequenzdaten einer Mühle. Dafür stehen uns Zeitreihen von Beschleunigungssensoren und Mikrofonen zur Verfügung, welche an der Maschine angebracht sind, um die Vibration bzw. die Akustik zu messen. Wir sind interessiert daran herauszufinden, ob sich mithilfe der Zeitreihen Aussagen über die Partikelgröße des Materials treffen lassen. Aufgrund der geringen Beobachtungszahl des Datensatzes sind viele überwachte Lernverfahren in diesem Zusammenhang unbrauchbar. Im Zuge einer explorativen Analyse kann daher eine Dimensionsreduktion sinnvoll sein. Dabei sind wir nicht unbedingt an der niedrigdimensionalen Repräsentation der Daten interessiert, sondern viel mehr an der Herausfilterung wichtiger Frequenzen. Idealerweise können wir Frequenzen dem Material oder der Maschine zuordnen, so dass wir zwischen Material- und Maschineneigenschaften unterscheiden können. Die Möglichkeit der Interpretation und die Konsistenz in hochdimensionalen Fällen waren Anlass für die Verwendung der dünnbesetzten Hauptkomponentenanalyse in diesem Zusammenhang. 
 
 Zunächst werden wir den Datensatz in Abschnitt \ref{data_set} näher beschreiben und Vorverarbeitungsschritte in \ref{preprocessing} erläutern. Nachdem wir in \ref{application_frequency_data} erklären, welche Experimente durchgeführt worden sind, werden wir uns den Ergebnissen in \ref{evaluation} zuwenden. Zu einer detaillierten Auswertung gehört sowohl ein Vergleich mit der klassischen Hauptkomponentenanalyse, als auch eine Analyse des Verhalten des Algorithmus. Dazu werden wir die Wahl der Hyperparameter, die Laufzeit und die Konvergenz thematisieren. Zum Abschluss dieses Kapitels werden wir die Korrektheit der von Camacho et al. \cite{camacho} berechneten Varianzen empirisch validieren. Ob eine derartige Methode für diesen Datensatz ein sinnvoller Ansatz war, diskutieren wir in Kapitel \ref{conclusion}.
 
@@ -32,7 +32,7 @@ Vor der Anwendung der dünnbesetzten Hauptkomponentenanalyse haben wir einige Vo
 \label{fft_example}
 \end{figure}
 
-Es wird sich zeigen, dass der Algorithmus für die dünnbesetzte Hauptkomponentenanalyse sehr rechenintensiv sein kann. Daher haben wir uns entschieden, nur einen Teil der ursprünglichen Zeitreihe zu verwenden. Mithilfe eines Blicks auf das Spektrogramm in Abbildung \ref{spectrogram} erkennen wir anhand der horizontalen Linien, dass sich die Frequenzen über den Messzeitraum kaum verändern. Dies ist darauf zurückzuführen, dass der Maschine konstant Material zugeführt wird. Daher können wir die Dimension um einen Faktor $100$ reduzieren ohne wichtige Informationen zu verlieren. Des Weiteren wurden Teile der Frequenzen, welche außerhalb des Frequenzbereichs des jeweiligen Sensors liegen, abgeschnitten. Somit verbleiben wir mit $p \approx 15,000$ Variablen. Um die Varianzen der Frequenzen vergleichbarer zu machen, haben wir die Daten ähnlich wie bei der klassischen Hauptkomponentenanalyse zentriert.
+Es wird sich zeigen, dass der Algorithmus für die dünnbesetzte Hauptkomponentenanalyse sehr rechenintensiv sein kann. Folglich haben wir uns entschieden, nur einen Teil der ursprünglichen Zeitreihe zu verwenden. Mithilfe eines Blicks auf das Spektrogramm in Abbildung \ref{spectrogram} erkennen wir anhand der horizontalen Linien, dass sich die Frequenzen über den Messzeitraum kaum verändern. Dies ist darauf zurückzuführen, dass der Maschine konstant Material zugeführt wird. Daher können wir die Dimension um einen Faktor $100$ reduzieren ohne wichtige Informationen zu verlieren. Des Weiteren wurden Teile der Frequenzen, welche außerhalb des Frequenzbereichs des jeweiligen Sensors liegen, abgeschnitten. Somit verbleiben wir mit $p \approx 15,000$ bzw. $p \approx 20,000$ Variablen für die verschiedenen Sensorarten. Um die Varianzen der Frequenzen vergleichbarer zu machen, haben wir die Daten ähnlich wie bei der klassischen Hauptkomponentenanalyse zentriert.
 
 \begin{figure}
 \centering
@@ -49,7 +49,10 @@ Es wird sich zeigen, dass der Algorithmus für die dünnbesetzte Hauptkomponente
 \section{Anwendung auf Frequenzdaten}
 \label{application_frequency_data}
 
-Unsere Implementierung ermöglicht eine Wahl verschiedener Parameter bezüglich des Modells bzw. des Algorithmus. Für eine Beschränkung der Laufzeit setzen wir eine maximale Anzahl an Iterationen von $500$ und eine Toleranz von $10^{-4}$. Falls nach $500$ Iterationen die vorgegebene Toleranz noch immer nicht erreicht ist, werden wir dies im Folgenden kenntlich machen. Ein Modellparameter, den es zu wählen gilt, ist die Anzahl zu berechnender Hauptkomponenten. Wie bereits in \ref{choice_of_tuning_parameters} beschrieben, wird dazu meist das Ergebnis einer klassischen Hauptkomponentenanalyse verwendet. Hierbei hat sich gezeigt, dass $2$ Hauptkomponenten für die meisten Sensoren ausreichen, um einen Großteil des Datensatzes zu erklären. Zu Analysezwecken haben wir uns entschieden einen Durchlauf mit $2$ und einen mit $10$ Hauptkomponenten zu starten. 
+In Abschnitt \ref{numerical_solution_p_greater_n} haben wir uns mit einem Spezialfall des Algorithmus für die dünnbesetzte Hauptkomponentenanalyse beschäftigt, welcher im Fall $p \gg n$ genutzt werden kann. Allerdings ist vorab unklar, ob er in diesem Zusammenhang Verwendung finden sollte, da Variablen als unabhängig angenommen werden. Für die uns nach \ref{preprocessing} vorliegenden Frequenzen gibt es diesbezüglich zwei Abhängigkeiten zu berücksichtigen. Einerseits, können Obertöne
+ist eine derartige Annahme aber nicht sinnvoll. Zwei Effekte sind von entscheidender Bedeutung. Andererseits, kommt es bei einer diskreten Fouriertransformation zum \textit{Leck-Effekt}, bei welcher Frequenzen lokal verschmieren \cite{kiencke}. Aufgrund eines endlich diskreten Beobachtungszeitraums ist ein derartiger Effekt zu erwarten. Folglich können Frequenz lokal stark korrelieren. Um ein generelles Bild der dünnbesetzten Hauptkomponentenanalyse zu vermitteln, haben wir uns im Rahmen dieser Arbeit dazu entschieden, den allgemeinen Algorithmus im Folgenden zu verwenden. In Abschnitt \ref{comparison_special_case} werden wir kurz darauf eingehen, wie die Ergebnisse sich unter Verwendung des Spezialfalls ändern.
+
+Unsere allgemeine Implementierung ermöglicht eine Wahl verschiedener Parameter bezüglich des Modells bzw. des Algorithmus. Für eine Beschränkung der Laufzeit setzen wir eine maximale Anzahl an Iterationen von $500$ und eine Toleranz von $10^{-4}$. Falls nach $500$ Iterationen die vorgegebene Toleranz noch immer nicht erreicht ist, werden wir dies im Folgenden kenntlich machen. Ein Modellparameter, den es zu wählen gilt, ist die Anzahl zu berechnender Hauptkomponenten. Wie bereits in \ref{choice_of_tuning_parameters} beschrieben, wird dazu meist das Ergebnis einer klassischen Hauptkomponentenanalyse verwendet. Hierbei hat sich gezeigt, dass $2$ Hauptkomponenten für die meisten Sensoren ausreichen, um einen Großteil des Datensatzes zu erklären. Zu Analysezwecken haben wir uns entschieden einen Durchlauf mit $2$ und einen mit $10$ Hauptkomponenten zu starten. 
 
 Interessanter ist die Wahl der Hyperparameter $\lambda$ und $\alpha$, welche wesentlichen Einfluss auf die Ergebnisse besitzen. Auch wenn prinzipiell die Möglichkeit besteht, differenzierte Bestrafungen je Hauptkomponente $\lambda_{1,j}$ auszuwählen, beschränken wir uns der Einfachheit halber auf eine einheitliche Bestrafung. Für die Wahl von $\lambda$ haben wir sowohl mehrere Werte ausprobiert, als auch eine Rastersuche bezüglich der in \ref{choice_of_tuning_parameters} beschriebenen BIC-Kriterien durchgeführt. Dafür verwenden wir auf einer log-Skala gleichverteilte Werte im Bereich zwischen $10^{-7}$ und $10^0$. Dagegen wählen wir für das Verhältnis zwischen Lasso und Ridge-Bestrafung die Werte $[0.1,\, 0.5,\, 0.7,\, 0.9,\, 0.95,\, 0.99,\, 1]$. Mithilfe des BIC-Kriteriums können wir zeitgleich über $\lambda$ und $\alpha$ optimieren. Es hat sich in den Anwendungen gezeigt, dass eine geeignete Liste für $\alpha$ mehr Werte nahe $1$ hat, da sich dort die größten Änderungen ergeben. Damit stärken wir den Lasso-Strafterm im Vergleich zum Ridge-Strafterm.
 
@@ -207,7 +210,6 @@ $5010$ & $0.412$ & $0.000$ & $0.942$ & validation.py:800(check\_random\_state)\\
 \caption{Die Tabelle zeigt die Ergebnisse eines Profilers für die eigene Implementierung mit $\lambda = 10^{-5}$ und $\alpha = 0.5$.\\Gerechnet wurde auf einem Intel Xeon Gold 6130F@2.10GHz.}
 \label{algorithm_analysis_profiler}
 \end{table}
-\setlength{\tabcolsep}{6pt}
 
 Logischerweise erhöht sich mit der Anzahl an Iterationen auch die Laufzeit des Algorithmus. Aus Tabelle \ref{algorithm_analysis_table} lässt sich aber nicht direkt erkennen, ob sich auch die Laufzeit pro Iteration mit $\lambda$ verändert. In Abbildung \ref{run_time_per_iteration} beobachten wir im Mittel eine Zunahme der Laufzeit pro Iteration bei Senkung von $\lambda$. Des Weiteren steigt die Laufzeit, wenn mehr Gewicht auf eine Lasso-Bestrafung gelegt wird, also $\alpha$ nahe 1 gewählt wird. Auch hier lässt sich das Verhalten auf die erhöhte Anzahl von Null verschiedener Einträge zurückführen.
 
@@ -219,6 +221,40 @@ Da wir eine maximale Anzahl von $500$ Iterationen festgelegt haben, kommt es bei
 \caption{In dieser Abbildung ist die Laufzeit pro Iteration bei Veränderung des Hyperparameters $\lambda$ auf einer logarithmischen Skala zu sehen. Da auch $\alpha$ in unseren Experimenten variiert worden ist und mehrere Sensoren betrachtet werden, sehen wir mehrere Punkte je $\lambda$. Im Mittel klar zu erkennen ist ein Anstieg der Laufzeit bei Verringerung der Stärke der Bestrafung $\lambda$.}
 \label{run_time_per_iteration}
 \end{figure}
+
+
+%----------------------------------------------------------------------------------------
+%	Veränderung des Ergebnisse für speziellen Algorithmus
+%----------------------------------------------------------------------------------------
+
+
+\subsection{Veränderung der Ergebnisse für speziellen Algorithmus}
+\label{comparison_special_case}
+
+Eine Reduktion der Laufzeit kann auch durch die Nutzung des in Abschnitt \ref{numerical_solution_p_greater_n} beschriebenen Vorgehens erreicht werden. Selbst unter Verwendung der gesamten Zeitreihe benötigt Algorithmus \ref{spca_algorithm}$^*$ meist unter einer Sekunde. Aufgrund der stark vereinfachenden Annahmen haben wir uns bisher ausschließlich mit der allgemeinen Variante auseinandergesetzt. An dieser Stelle möchten wir erwähnen, wie sich die Ergebnisse bei Verwendung von Algorithmus \ref{spca_algorithm}$^*$ verändern.
+
+In der Praxis haben sich für unseren Datensatz ähnliche Ergebnisse ergeben. Tabelle \ref{comparison_special_algorithm_results} zeigt, wie sich die erklärte Varianz bei gleichbleibendem Freiheitsgrad $\operatorname{df}$ zwischen den beiden Varianten verändert. Zu erkennen ist, dass die Resultate für alle Sensoren nur geringfügig schlechter sind. 
+
+\begin{table}
+\centering
+\begin{tabular}{c|rrr|rr}
+& \multicolumn{3}{c|}{\textbf{Sparse PCA}} & \multicolumn{2}{c}{\textbf{PCA}}\\
+\textbf{Sensor} & \textbf{df} & \textbf{ev} & \textbf{ev-special} & \textbf{df} & \textbf{ev}\\\hline\rule{0pt}{1.1\normalbaselineskip}
+$0$ & $3$ & $72.6$\% & $72.3$\% & $20000$ & $84.3$\%\\
+$1$ & $4$ & $45.1$\% & $42.6$\% & $20000$ & $62.54$\%\\
+$2$ & $50$ & $7.2$\% & $6.3$\% & $15000$ & $58.36$\%\\
+$3$ & $50$ & $7.6$\% & $5.3$\% & $15000$ & $57.83$\%\\
+$4$ & $50$ & $2.9$\% & $2.9$\% & $15000$ & $68.95$\%\\
+$5$ & $50$ & $3.9$\% & $3.8$\% & $15000$ & $69.46$\%\\
+\end{tabular}
+\caption{Für eine bessere Einordnung wird zusätzlich das Resultat einer klassischen Hauptkomponentenanalyse gegenübergestellt.}
+\label{comparison_special_algorithm_results}
+\end{table}
+\setlength{\tabcolsep}{6pt}
+
+In unserer Anwendung interessieren wir uns aber nicht nur für die erklärte Varianzen, sondern dafür, ob sich ebenfalls Frequenzen mit Bedeutung im Kontext herausfiltern lassen. Vergleichen wir die entstehenden dünnbesetzten Hauptachsen sind Ähnlichkeiten zu erkennen. In vielen Fällen
+Zusammenfassend können wir bestätigen, dass Algorithmus \ref{spca_algorithm}$^*$ trotz theoretischer Bedenken zufriedenstellende empirische Ergebnisse liefert. Die Aussagekraft des Modells ist allerdings kritisch zu hinterfragen und hängt vom Anwendungsfall ab. 
+
 
 
 %----------------------------------------------------------------------------------------
