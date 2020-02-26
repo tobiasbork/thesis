@@ -177,7 +177,7 @@ Typischerweise wurden die Hauptkomponenten $\widehat{\mat Z}$ bislang wie bei de
 wobei $\widehat{\mat E}$ die Matrix der Residuen ist. Ist uns eine volle Rang Approximation $\mat X = \widehat{\mat Z} \widehat{\mat B}^{\top}$ gegeben, können wir beide Seiten mit $\widehat{\mat B}$ multiplizieren, um die Hauptkomponenten zu erhalten $\mat X \widehat{\mat B} = \widehat{\mat Z} \widehat{\mat B}^{\top} \widehat{\mat B} = \widehat{\mat Z}$. Letzterer Schritt ist aber nur gültig, falls die Hauptachsen orthogonal zueinander sind. Daher muss bei der dünnbesetzten Variante mit der Moore-Penrose-Inversen $(\widehat{\mat B}^{\top} \widehat{\mat B})^+$ korrigiert werden. Demnach sollten die Hauptkomponenten durch
 \begin{align}
 \label{corrected_scores_sparse_pca}
-\widehat{\mat Z} = \mat X \widehat{\mat B} (\widehat{\mat B}^{\top} \widehat{\mat B})^+
+\widehat{\mat Z}^* = \mat X \widehat{\mat B} (\widehat{\mat B}^{\top} \widehat{\mat B})^+
 \end{align}
 berechnet werden. Wir möchten an dieser Stelle anmerken, dass durch (\ref{corrected_scores_sparse_pca}) keine sequentielle Berechnung der Hauptkomponenten mehr möglich ist. Es können also nicht ohne weiteres mehr Hauptkomponenten zum Modell hinzugefügt werden, da jede Hauptkomponente von allen Hauptachsen abhängt und somit eine Neuberechnung erfordert. Im Gegenzug zeigen Camacho et al. empirisch, dass die Korrelation zwischen den Hauptkomponenten durch (\ref{corrected_scores_sparse_pca}) deutlich sinkt, was für viele Anwendungen von Vorteil sein kann.
 
