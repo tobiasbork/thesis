@@ -194,9 +194,9 @@ welches im Wesentlichen nach einem starken Einbruch der Singulärwerte sucht. Mi
 \label{scree_plot}
 \end{figure}
 
-In der Literatur existieren weitere Heuristiken, auf die wir hier nicht näher eingehen werden. Bis vor Kurzem gab es keinerlei theoretische Resultate für die Modellwahl bei der Hauptkomponentenanalyse. Gavish und Donoho \cite{gavish} haben erstmals ein optimales Kriterium im asymptotischem Fall angeben können, welche der Singulärwerte beibehalten werden sollten. Unter der Annahme, dass das Signal-Rausch-Verhältnis konstant bleibt, zeigen sie, dass der asymptotische mittlere quadratische Fehler 
-$$\operatorname{AMSE} = \lim_{n \rightarrow \infty} \norm{\mat X - \widehat{\mat X}_k}_{F}^{2}$$
-für $n \times n$-Matrizen minimal wird, falls alle Singulärwerte kleiner als $\frac{4}{\sqrt{3}}\sqrt{n}\sigma \approx 2.309\omega$ auf Null gesetzt werden. Wenn die Stärke des Rauschens $\omega$ vorher nicht bekannt ist, ändert sich die Schranke zu $2.858\omega_{med}$, wobei $\omega_{med}$ der Stichprobenmedian der Singulärwerte ist. Für nicht quadratische $m \times n$-Matrizen ändern sich die Schwellenwerte abhängig von $m,n$. Auch wenn damit nur ein asymptotisches Resultat zur Verfügung steht, scheint diese Schranke in der Praxis hilfreich zu sein.
+%In der Literatur existieren weitere Heuristiken, auf die wir hier nicht näher eingehen werden. Bis vor Kurzem gab es keinerlei theoretische Resultate für die Modellwahl bei der Hauptkomponentenanalyse. Gavish und Donoho \cite{gavish} haben erstmals ein optimales Kriterium im asymptotischem Fall angeben können, welche der Singulärwerte beibehalten werden sollten. Unter der Annahme, dass das Signal-Rausch-Verhältnis konstant bleibt, zeigen sie, dass der asymptotische mittlere quadratische Fehler 
+%$$\operatorname{AMSE} = \lim_{n \rightarrow \infty} \norm{\mat X - \widehat{\mat X}_k}_{F}^{2}$$
+%für $n \times n$-Matrizen minimal wird, falls alle Singulärwerte kleiner als $\frac{4}{\sqrt{3}}\sqrt{n}\sigma \approx 2.309\omega$ auf Null gesetzt werden. Wenn die Stärke des Rauschens $\omega$ vorher nicht bekannt ist, ändert sich die Schranke zu $2.858\omega_{med}$, wobei $\omega_{med}$ der Stichprobenmedian der Singulärwerte ist. Für nicht quadratische $m \times n$-Matrizen ändern sich die Schwellenwerte abhängig von $m,n$. Auch wenn damit nur ein asymptotisches Resultat zur Verfügung steht, scheint diese Schranke in der Praxis hilfreich zu sein.
 
 
 %----------------------------------------------------------------------------------------
@@ -294,7 +294,7 @@ in welchem $v_1 \in \mathbb{R}^p$ der zu schätzende Eigenvektor ist. Dabei sind
 
 \begin{thm}[Inkonsistenz der Hauptkomponentenanalyse bei konstantem asymptotischem Verhältnis von $n$ und $p$ \cite{johnstone}]
 \label{pca_inconsistency_ratio}
-Sei $\sigma$ die Stärke des Rauschens im Modell (\ref{single_component_model}) und $\lim_{n \rightarrow \infty} \frac{\norm{v_1}^{2}}{\sigma^2} = \omega > 0$ das limitierende Signal-Rausch-Verhältnis. Weiterhin sei 
+Sei $\sigma$ die Stärke des Rauschens im Modell (\ref{single_component_model}) und $\omega$ das limitierende Signal-Rausch-Verhältnis $\omega = \lim_{n \rightarrow \infty} \frac{\norm{v_1}^{2}}{\sigma^2} > 0$. Weiterhin sei 
 $$R(\widehat{v}_1, v_1) = \inner{\frac{\widehat{v}_1}{\norm{\widehat{v}_1}}}{\frac{v_1}{\norm{v_1}}} = \cos{(\operatorname{angle}(\widehat{v}_1, v_1))}.$$
 Unter der Annahme, dass $\lim_{n \rightarrow \infty} \frac{p_n}{n} = c$ gilt
 $$\mathbb{P}\left[\lim_{n \rightarrow \infty} R^2(\widehat{v}_1, v_1) = R_{\infty}^2(\omega, c)\right] = 1$$
