@@ -1,43 +1,28 @@
-
-
-%----------------------------------------------------------------------------------------
-%	Lineare Algebra
-%----------------------------------------------------------------------------------------
-
-
-
 \chapter{Lineare Algebra}
 \label{linear_algebra}
 
-Die Mathematik der Hauptkomponentenanalyse beruht im Wesentlichen auf Methoden der linearen Algebra. Aufgrund des Anwendungsfalls werden wir uns auf die Einführung der Grundbegriffe in reellen Vektorräumen beschränken.
+Die Mathematik der Hauptkomponentenanalyse beruht im Wesentlichen auf Methoden der linearen Algebra. Daher stellen wir Grundbegriffe, Matrixzerlegungen sowie ausgewählte Approximationsprobleme zum Nachschlagen zur Verfügung. Aufgrund des Anwendungsfalls beschränken wir uns auf die Einführung der Grundbegriffe in reellen Vektorräumen.
 
 \section{Orthogonalität}
 \label{orthogonality}
 
 \begin{defn}[Skalarprodukt \cite{jaenich}]
-Sei $V$ ein reeller Vektorraum. Ein \textit{Skalarprodukt} in $V$ ist eine Abbildung $\inner{\cdot}{\cdot}: V \times V \longrightarrow \mathbb{R}$ mit den folgenden Eigenschaften:
+Sei $V$ ein reeller Vektorraum. Ein \textit{Skalarprodukt} in $V$ ist eine Abbildung $\inner{\cdot}{\cdot}: V \times V \longrightarrow \mathbb{R}$ mit den drei Eigenschaften:
 \begin{enumerate}[(i)]
-\item Für jedes $x \in V$ sind die Abbildungen
+\item Für jedes $x \in V$ sind die folgenden Abbildungen linear. $\quad$ (Bilinearität)
 \begin{align*}
 \inner{\cdot}{x}: V & \longrightarrow \mathbb{R} & \inner{x}{\cdot}: V & \longrightarrow \mathbb{R}\\
 v & \longmapsto \inner{v}{x} & v & \longmapsto \inner{x}{v}
 \end{align*}
-linear. $\quad$ (Bilinearität)
-\item $\inner{x}{y} = \inner{y}{x}$ für alle  $x,y \in V \quad$ (Symmetrie)
+\item \vspace{-0.3cm}$\inner{x}{y} = \inner{y}{x}$ für alle  $x,y \in V \quad$ (Symmetrie)
 \item $\inner{x}{x} > 0$ für alle $x \neq 0 \quad$ (Positive Definitheit)
 \end{enumerate}
 \end{defn}
 
 Allgemein versteht man unter einem \textit{euklidischem Vektorraum} ein Paar $(V, \inner{\cdot}{\cdot})$, welches aus einem reellem Vektorraum $V$ und einem Skalarprodukt $\inner{\cdot}{\cdot}$ auf $V$ besteht. Durch das Skalarprodukt wird eine Norm auf $V$ induziert
 $$\norm{v} \defeq \sqrt{\inner{v}{v}}.$$
-In den folgenden Kapiteln werden wir uns vor allem mit dem \textit{Standardskalarprodukt} im $\mathbb{R}^n$ beschäftigen. Dies ist gegeben durch 
-$$\inner{x}{y} = x_1y_1 + \cdots + x_ny_n.$$
-
-\begin{thm}[Verallgemeinerter Satz des Pythagoras \cite{anton}]
-\label{pythagoras}
-Für orthogonale Vektoren $u,v$ in einem euklidischem Vektorraum $V$ gilt
-$$\norm{u+v}^2 = \norm u^2 + \norm v^2.$$
-\end{thm}
+%In dieser Arbeit beschäftigen wir uns vor allem mit dem \textit{Standardskalarprodukt} im $\mathbb{R}^n$. Dies ist gegeben durch 
+%$$\inner{x}{y} = x_1y_1 + \cdots + x_ny_n.$$
 
 \begin{defn}[Orthogonalität \cite{jaenich}]
 Zwei Elemente $v, w$ eines euklidischen Vektorraumes $V$ heißen \textit{orthogonal} (geschrieben $v \perp w$) wenn ihr Skalarprodukt Null ist, d.h.
@@ -46,6 +31,12 @@ Eine Familie $(v_1, \ldots, v_n)$ in $V$ heißt \textit{orthogonal} oder \textit
 $$v_i \perp v_j \quad \text{für alle} \quad i \neq j.$$
 Gilt zusätzlich $\inner{v_i}{v_i} = 1$ für alle $1 \leq i \leq n$, so spricht man von einem \textit{Orthonormalsystem}.
 \end{defn}
+
+\begin{thm}[Verallgemeinerter Satz des Pythagoras \cite{anton}]
+\label{pythagoras}
+Für orthogonale Vektoren $u,v$ in einem euklidischem Vektorraum $V$ gilt
+$$\norm{u+v}^2 = \norm u^2 + \norm v^2.$$
+\end{thm}
 
 %\begin{defn}[Orthonormalbasis \cite{fischer}]
 %Sei $\inner{\cdot}{\cdot}: V \times V \longrightarrow \mathbb{R}$ ein Skalarprodukt. Ein System von Vektoren $(v_1, \ldots, v_n)$ in $V$ wird als \textit{Orthogonalbasis} (bzw. \textit{Orthonormalbasis}) bezeichnet, wenn folgende Bedingungen erfüllt sind:
@@ -65,12 +56,11 @@ $$\mat A^{\top} \mat A = \mathbb{1}_n.$$
 \end{defn}
 
 \begin{defn}[Orthogonalprojektion \cite{anton}]
-Eine \textit{Orthogonalprojektion} auf einen Untervektorraum $U$ eines Vektorraumes $V$ ist eine lineare Abbildung $P_U \colon V \rightarrow V$, die für alle Vektoren $v \in V$ die beiden Eigenschaften
+Eine \textit{Orthogonalprojektion} auf einen Untervektorraum $U$ eines Vektorraumes $V$ ist eine lineare Abbildung $P_U \colon V \rightarrow V$, die für alle Vektoren $v \in V$ die folgenden Eigenschaften erfüllt:
 \begin{enumerate}[(i)]
 \item $P_U(v) \in U \quad$ (Projektion)
 \item $\langle P_U(v) - v , u \rangle = 0$ für alle $u \in U \quad$ (Orthogonalität)
 \end{enumerate}
-erfüllt.
 \end{defn}
 
 Mithilfe einer Orthogonalbasis für $U$ lässt sich aus dieser Definition eine explizite Lösung für die Orthogonalprojektion $P_U(v)$ herleiten.
@@ -81,7 +71,7 @@ Ist $(u_1, \ldots, u_r)$ eine Orthogonalbasis von $U$, so gilt für alle $v \in 
 $$P_{U}(v) = \sum_{i=1}^r \frac{\langle v, u_i \rangle}{\langle u_i, u_i \rangle} u_i.$$
 \end{thm}
 
-Später werden wir die Orthogonalprojektion in einer anderen Form nutzen. Wir können die Projektion als Matrix-Vektor-Produkt auffassen. Verwenden wir das Standardskalarprodukt gilt mit einer Orthogonalbasis $(u_1, \ldots, u_r)$ von $U$
+In Kapitel \ref{pca} und \ref{sparse_pca} nutzen wir die Orthogonalprojektion in einer anderen Form. Wir können die Projektion als Matrix-Vektor-Produkt auffassen. Verwenden wir das Standardskalarprodukt gilt mit einer Orthogonalbasis $(u_1, \ldots, u_r)$ von $U$
 \begin{align}
 P_U(v) = \sum_{i=1}^r \frac{v^{\top} u_i}{u_i^{\top} u_i} u_i = \sum_{i=1}^r \frac{u_i u_i^{\top}}{u_i^{\top} u_i}v = \mat A \mat A^{\top} v,
 \end{align}
@@ -99,8 +89,6 @@ $$\norm{P_U(v) - v}^2 \leq \norm{u - v}^2 \quad \text{für alle } u \in U$$
 \section{Matrixzerlegungen}
 \label{matrix_decomposition}
 
-In diesem Abschnitt führen wir zwei wichtige Matrixzerlegungen ein, die auch in vielen Bereichen der Numerik Anwendung finden.
-
 \begin{defn}[Eigenwert, Eigenvektor \cite{anton}]
 Sei $\mat{A} \in \rnn$. Ein von Null verschiedener Vektor $x \in \rn$ heißt \textit{Eigenvektor} von $\mat{A}$, falls
 $$\mat{A}x = \lambda x$$
@@ -111,7 +99,7 @@ für einen Skalar $\lambda \in \mathbb{R}$. Die Zahl $\lambda$ heißt \textit{Ei
 Eine quadratische Matrix $\mat A \in \rnn$ heißt \textit{diagonalisierbar}, falls eine invertierbare Matrix $\mat V$ existiert, so dass $\mat{\Lambda} = \mat{V}^{-1}\mat{A}\mat{V}$ Diagonalgestalt hat.
 \end{defn}
 
-Es gibt verschiedene Kriterien für die Diagonalisierbarkeit von Matrizen. Für unsere spätere Anwendung interessieren wir uns vor allem für die Frage, ob es zu einer gegebenen Matrix $\mat{A} \in \rnn$ eine orthogonale Matrix $\mat{V}$ gibt, die $\mat{A}$ diagonalisiert. Eine derartige Diagonalisierung wird auch als \textit{Hauptachsentransformation} bezeichnet. Dieser Name stammt ursprünglich aus der Theorie der Kegelschnitte. Hierbei ist eine Hauptachsentransformation eine orthogonale Abbildung, welche die Koordinatenachsen in die Richtungen der beiden \textit{Hauptachsen} überführt. Wir wollen uns aber vorerst nicht mit dieser geometrischen Interpretation beschäftigen, sondern mit einem mathematisch äquivalenten, in den Anwendungen aber wichtigeren Problem.
+Es gibt verschiedene Kriterien für die Diagonalisierbarkeit von Matrizen. Für unsere Anwendung interessieren wir uns vor allem für die Frage, ob es zu einer gegebenen Matrix $\mat{A} \in \rnn$ eine orthogonale Matrix $\mat{V}$ gibt, die $\mat{A}$ diagonalisiert. Eine derartige Diagonalisierung wird auch als \textit{Hauptachsentransformation} bezeichnet. Dieser Name stammt ursprünglich aus der Theorie der Kegelschnitte. Hierbei ist eine Hauptachsentransformation eine orthogonale Abbildung, welche die Koordinatenachsen in die Richtungen der beiden \textit{Hauptachsen} überführt. Wir wollen uns aber nicht mit dieser geometrischen Interpretation beschäftigen, sondern mit einem mathematisch äquivalenten, in den Anwendungen aber wichtigeren Problem.
 
 \begin{thm}[Hauptachsentransformation \cite{jaenich}]
 Sei $\mat{A} \in \rnn$ eine symmetrische Matrix. Dann gibt es eine orthogonale Transformation $\mat{V}$, welche $\mat{A}$ in eine Diagonalmatrix $\mat{\Lambda} \defeq \mat{V}^{-1}\mat{A}\mat{V}$ der Gestalt
@@ -127,7 +115,7 @@ $$\mat{\Lambda} = \begin{bmatrix}
 überführt. Hierbei sind $\lambda_1, \ldots, \lambda_r$ die verschiedenen Eigenwerte von $\mat{A}$.
 \end{thm}
 
-Zusammenfassend besitzt eine symmetrische Matrix also immer eine Zerlegung $\mat A = \mat V \mat \Lambda \mat V^{\top}$. Man kann $\mat{V}$ konstruieren, so dass die Spalten genau den Eigenvektoren von $\mat{A}$ entsprechen. Wir werden diese Umformung in späteren Kapiteln unter dem Begriff \textit{Eigenwertzerlegung} (Englisch: \textit{Eigenvalue Decomposition}) verwenden. 
+Zusammenfassend besitzt eine symmetrische Matrix also immer eine Zerlegung $\mat A = \mat V \mat \Lambda \mat V^{\top}$. Man kann $\mat{V}$ konstruieren, so dass die Spalten genau den Eigenvektoren von $\mat{A}$ entsprechen. Im Rahmen dieser Arbeit werden wir diese Umformung unter dem Begriff \textit{Eigenwertzerlegung} (Englisch: \textit{Eigenvalue Decomposition}) verwenden. 
 
 Eine eng verwandte, aber vielseitigere Faktorisierung von Matrizen ist die \textit{Singulärwertzerlegung}. Sie ermöglicht eine allgemeine Zerlegung auch von nicht quadratischen oder nicht symmetrischen Matrizen.
 
@@ -147,7 +135,7 @@ Singulärwerte einer Matrix $\mat A$ sind eindeutig bestimmt und stehen durch $\
 \section{Matrix Approximation}
 \label{matrix_approximation}
 
-In diesem Abschnitt werden wir zwei Approximationsprobleme für Matrizen formulieren, die eine explizite Lösung besitzen. Zunächst führen wir dafür eine Matrixnorm ein, von welcher wir auch später sehr häufig Gebrauch machen werden.
+In diesem Abschnitt werden wir zwei Approximationsprobleme für Matrizen formulieren, die eine explizite Lösung besitzen. Zunächst führen wir dafür eine Matrixnorm ein, von welcher wir in dieser Arbeit sehr häufig Gebrauch machen.
 
 \begin{defn}[Frobeniusnorm \cite{schaback}]
 Für eine Matrix $\mat A \in \rmn$ ist die \textit{Frobeniusnorm} definiert durch
@@ -178,7 +166,7 @@ das Approximationsproblem
 wobei $\sigma_i$ die Singulärwerte von $\mat A$ sind. Der Minimierer $\widehat{\mat{A}}^*$ ist genau dann eindeutig, wenn $\sigma_{r+1} \neq \sigma_{r}$.
 \end{thm}
 
-Das Eckart-Young-Mirsky-Theorem wird es uns in Abschnitt \ref{pca_theorems} ermöglichen, eine wertvolle Eigenschaft der Hauptkomponentenanalyse zu zeigen. In Anwendung korrespondieren die Singulärwerte mit dem Rekonstruktionsfehler und die Rang-Bedingung an $\widehat{\mat A}$ mit der Komplexität des Modells.
+Das Eckart-Young-Mirsky-Theorem ermöglicht uns in Abschnitt \ref{pca_theorems} eine wertvolle Eigenschaft der Hauptkomponentenanalyse zu zeigen. In Anwendung korrespondieren die Singulärwerte mit dem Rekonstruktionsfehler und die Rang-Bedingung an $\widehat{\mat A}$ mit der Komplexität des Modells.
 
 Ein anderes Approximationsproblem für Matrizen ist das \textit{orthogonale Procrustes Rotationsproblem}. Hierbei sind uns zwei Matrizen $\mat M$ und $\mat N$ gegeben, welche durch eine orthogonale Transformation ineinander überführt werden sollen. Wieder hilft uns die Singulärwertzerlegung bei der Findung einer Lösung.
 
@@ -194,13 +182,11 @@ das Approximationsproblem
 \end{gathered}
 \end{align}
 \end{thm}
-
-In Abschnitt \ref{spca_numerical_solution} wird sich (\ref{procrustes_rotation}) als Subproblem der dünnbesetzten Hauptkomponentenanalyse herausstellen.
+In Abschnitt \ref{spca_numerical_solution} stellt sich (\ref{procrustes_rotation}) als Subproblem der dünnbesetzten Hauptkomponentenanalyse heraus.
 
 \section{Pseudoinverse}
 
-In vielen Anwendungen der numerischen Mathematik benötigt man für die Angabe einer expliziten Lösung die Inverse einer Matrix. Allerdings sind diese nur für quadratische, nichtsinguläre Matrizen definiert. Daher ist eine Verallgemeinerung des Konzepts nötig. Verallgemeinerte Inversen werden in der Literatur nicht einheitlich gehandhabt und orientieren sich häufig an der zu lösenden Aufgabenstellung. Für unseren Anwendungsfall in Kapitel \ref{sparse_pca} benutzen wir die \textit{Moore-Penrose-Inverse}. Wir werden die beiden Begriffe Pseudoinverse und Moore-Penrose-Inverse daher synonym verwenden.
-
+In vielen Anwendungen der numerischen Mathematik benötigt man für die Angabe einer expliziten Lösung die Inverse einer Matrix. Allerdings sind diese nur für quadratische, nichtsinguläre Matrizen definiert. Daher ist eine Verallgemeinerung des Konzepts nötig. Verallgemeinerte Inversen werden in der Literatur nicht einheitlich gehandhabt und orientieren sich häufig an der zu lösenden Aufgabenstellung. Für unseren Anwendungsfall in Kapitel \ref{sparse_pca} benutzen wir die \textit{Moore-Penrose-Inverse}. in dieser Arbeit verwenden wir die beiden Begriffe Pseudoinverse und Moore-Penrose-Inverse daher synonym.
 \begin{defn}[Moore-Penrose-Inverse \cite{israel}]
 Die \textit{Moore-Penrose-Inverse} einer Matrix $\mat A \in \mathbb{R}^{m \times n}$ ist die eindeutig bestimmte Matrix $\mat{A}^+ \in \mathbb{R}^{n \times m}$, welche die folgenden vier Eigenschaften erfüllt
 \begin{enumerate}[(i)]

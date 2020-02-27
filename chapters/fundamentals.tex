@@ -1,22 +1,18 @@
 % Main chapter title
-\chapter{Mathematische Grundlagen}
+\chapter{Generalisierte lineare Modelle}
 
 % Chapter label
 \label{fundamentals}
 
-In diesem Kapitel werden wir die wichtigsten mathematischen Grundlagen, die wir für die Formulierung der dünnbesetzten Hauptkomponentenanalyse benötigen, einführen. Dazu beschäftigen wir uns zunächst mit Grundbegriffen aus des linearen Algebra, Matrixzerlegungen und ausgewählten Approximationsproblemen in Abschnitt \ref{linear_algebra}. Ein Großteil dieses Kapitels ist verallgemeinerten linearen Regressionsmodellen gewidmet. Ab Abschnitt \ref{ridge_regression} werden wir die Modelle zu Zwecken der Regularisierung mit Straftermen versehen. Anhand eines Beispiel-Datensatzes werden wir in der Lage sein, deren Effekte visuell nachzuvollziehen. Für den weiteren Verlauf dieser Arbeit ist das Verständnis der Strafterme von entscheidender Bedeutung.
+In diesem Kapitel werden wir die wichtigsten mathematischen Grundlagen, welche wir im Rahmen dieser Arbeit benötigen, einführen. Ein Großteil dieses Kapitels ist generalisierten linearen Regressionsmodellen gewidmet, welche sowohl eine sehr enge Verbindung zur klassischen als auch zur dünnbesetzten Hauptkomponentenanalyse aufweisen. Für die Einführung generalisierter linearer Modelle sowie die Angabe von Resultaten richten wir uns vor allem nach dem Buch von Hastie et al. \cite{hastie_elements}. Ab Abschnitt \ref{ridge_regression} werden wir die Modelle zu Zwecken der Regularisierung mit verschiedenen \textit{Straftermen} versehen. Anhand eines Beispiel-Datensatzes, welchen wir in Abschnitt \ref{comparison_linear_models} vorstellen, können wir deren Effekte visuell nachzuvollziehen und miteinander vergleichen. Für den weiteren Verlauf dieser Arbeit ist das Verständnis der Strafterme von entscheidender Bedeutung.
 
 
 %----------------------------------------------------------------------------------------
-%	Generalisierte lineare Modelle
+%	Norm
 %----------------------------------------------------------------------------------------
 
-\section{Generalisierte lineare Modelle}
-\label{generalized_linear_models}
 
-Es existiert eine sehr enge Verbindung zwischen der Hauptkomponentenanalyse, die wir in Kapitel \ref{pca} näher kennenlernen werden, und der Regressionsanalyse. Viele der Ideen und Ansätze im folgendem Abschnitt werden wir später gebrauchen und spielen eine maßgebliche Rolle bei der Formulierung der dünnbesetzten Hauptkomponentenanalyse. Für die Einführung generalisierter linearer Modelle richten wir uns vor allem nach \cite{hastie_elements}.
-
-\subsection{Norm}
+\section{Norm}
 
 \begin{defn}[\cite{hieber}]
 \label{norm}
@@ -48,7 +44,13 @@ Die übliche Schreibweise $\norm{x}_0$ - die Notation $\norm{x}_{0}^{0}$ wäre a
 $$\norm{x}_{q}^{q} = \sum_{i=1}^{n} \abs{x_i}^q \quad \underset{q \rightarrow 0}{\longrightarrow} \quad \sum_{i=1}^{n} \mathbf{1}_{\{x_i \neq 0\}} = \left|\{i \colon \enspace x_i \neq 0\, , \quad 1 \leq i \leq n\}\right|$$
 Wir wollen betonen, dass die $\ell_0$-\q{Norm} keine wirkliche Norm ist, da die Abbildung nicht homogen ist. Trotzdem ist diese \q{Norm} in der Theorie der komprimierten Erfassung sehr nützlich. Des Weiteren werden wir die Notation $\norm{\cdot}_q$ gemäß der Definition in \ref{lp_norm} auch für Werte $0 < q < 1$ verwenden, obwohl durch diese Abbildung ebenfalls keine Norm gegeben ist.
 
-\subsection{Grundlagen aus der Statistik}
+
+%----------------------------------------------------------------------------------------
+%	Grundlagen aus der Statistik
+%----------------------------------------------------------------------------------------
+
+
+\section{Grundlagen aus der Statistik}
 
 \begin{defn}[Stichprobenkovarianz \cite{rueschendorf}]
 Seien $(x_1, y_1), \ldots (x_n, y_n)$ zweidimensionale Daten. Dann ist die \textit{Stichprobenkovarianz} durch
@@ -101,7 +103,7 @@ Die Frage nach einem günstigen Modell liegt also in der Modellkomplexität und 
 %----------------------------------------------------------------------------------------
 
 
-\subsection{Lineare Regression}
+\section{Lineare Regression}
 
 Bei der Regressionsanalyse werden Zusammenhänge zwischen
 mehreren Merkmalen untersucht. Man versucht eine unabhängige Variable $Y$ durch eine oder mehrere abhängige Variablen $X_1, \ldots, X_p$ zu erklären. Ein lineares Regressionsmodell hat also die Form
@@ -148,14 +150,15 @@ Ein naheliegender Ansatz zur Lösung dieser Probleme wäre es zu versuchen, eine
 %----------------------------------------------------------------------------------------
 
 
-\subsection{Ridge Regression}
+\section{Ridge Regression}
+\label{ridge_regression}
 
 Zu diesem Zweck kann die \textit{Tikhonov Regularisierung}, die auch unter dem Namen \textit{Ridge Regression} bekannt ist, genutzt werden. Mithilfe eines \textit{Ridge-Strafterms} opfern wir einen Teil des Bias für verbesserte Vorhersagen im Sinne des Verzerrung-Varianz-Dilemmas. Wir formulieren das Ridge Regression Problem in der Lagrange Form
 \begin{align}
-\label{ridge_regression}
+\label{ridge_regression_formulation}
 \hat{\beta}^{\text{ridge}} = \argmin_{\beta} \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda_2\sum_{j=1}^p \beta_j^2,
 \end{align}
-wobei $\lambda_2 \geq 0$ ein Hyperparameter ist, der die Stärke der Schrumpfung der Regressionskoeffizienten kontrolliert. Hyperparameter werden zur Steuerung des Trainingsalgorithmus verwendet und müssen vorab festgelegt werden. Je größer $\lambda_2$, desto stärker ist die Schrumpfung der $\beta_j$. Durch die Einführung des $\ell_2$-Strafterms garantiert (\ref{ridge_regression}) auch für $p > n$ eine eindeutige Lösung, da $\norm{\cdot}_{2}^{2}$ streng konvex ist. Da $\beta_0$ nicht im Strafterm vorkommt, schätzen wir zunächst $\beta_0 = \bar{y} = \frac{1}{n}\sum_{i=1}^{n} y_i$ und zentrieren die Eingaben $x_{ij} = x_{ij} - \bar{x}_j$. Die eindeutige Lösung der zentrierten Version von (\ref{ridge_regression}) ist dann durch
+wobei $\lambda_2 \geq 0$ ein Hyperparameter ist, der die Stärke der Schrumpfung der Regressionskoeffizienten kontrolliert. Hyperparameter werden zur Steuerung des Trainingsalgorithmus verwendet und müssen vorab festgelegt werden. Je größer $\lambda_2$, desto stärker ist die Schrumpfung der $\beta_j$. Durch die Einführung des $\ell_2$-Strafterms garantiert (\ref{ridge_regression_formulation}) auch für $p > n$ eine eindeutige Lösung, da $\norm{\cdot}_{2}^{2}$ streng konvex ist. Da $\beta_0$ nicht im Strafterm vorkommt, schätzen wir zunächst $\beta_0 = \bar{y} = \frac{1}{n}\sum_{i=1}^{n} y_i$ und zentrieren die Eingaben $x_{ij} = x_{ij} - \bar{x}_j$. Die eindeutige Lösung der zentrierten Version von (\ref{ridge_regression_formulation}) ist dann durch
 \begin{align}
 \hat{\beta}^{\text{ridge}}  = (\mat X^{\top} \mat X + \lambda_2\mat{\mathbb{1}})^{-1}\mat{X}^{\top}y
 \end{align}
@@ -167,7 +170,7 @@ gegeben, wobei $\beta = (\beta_1, \ldots, \beta_p)$ und $\mat{X} \in \mathbb{R}^
 %----------------------------------------------------------------------------------------
 
 
-\subsection{Lasso}
+\section{Lasso}
 \label{lasso}
 
 Um eine bessere Interpretation des Modells zu ermöglichen, versucht man bei der \textit{Lasso} Regression eine Lösung zu finden, bei welcher viele Koeffizienten gleich Null sind. Das Lasso wurde erstmals von Tibshirani in \cite{tibshirani_lasso} eingeführt und ist in der Signalanalyse unter dem Namen \textit{Basis Pursuit} \cite{chen} bekannt. Mathematisch gesehen erreichen wir eine Dünnbesetzung durch Einbettung eines $\ell_1$-Strafterms
@@ -175,7 +178,7 @@ Um eine bessere Interpretation des Modells zu ermöglichen, versucht man bei der
 \label{lasso_formulation}
 \hat{\beta}^{\text{lasso}} = \argmin_{\beta} \sum_{i=1}^{n}(y_i - \beta_0 - \sum_{j=1}^p x_{ij}\beta_j)^2 + \lambda_1\sum_{j=1}^p \left|\beta_j\right|.
 \end{align}
-Es wird also im Vergleich zu (\ref{ridge_regression}) lediglich die $\ell_2$-Norm durch eine $\ell_1$-Norm ausgetauscht. Bevor wir uns mit der Lösung dieses Problems beschäftigen, möchten wir erklären, warum die $\ell_1$-Norm eine Dünnbesetzung der Koeffizienten hervorruft. Zunächst geben wir eine geometrische Erklärung, welche in Abbildung \ref{lasso_ridge_regression_figure} zu sehen ist. Dort sind die $\ell_1$- und $\ell_2$-Beschränkungen, sowie die Höhenlinien der RSS-Funktion in zwei Dimensionen aufgezeichnet. Die optimalen Koeffizienten von Ridge und Lasso Regression ergeben sich nun aus dem Schnittpunkt der Höhenlinien mit der Begrenzung der jeweiligen Norm. Wählen wir die $\ell_1$-Norm, ist dieser Schnittpunkt mit einer hohen Wahrscheinlichkeit an eine der Ecken, so dass einer der beiden Koeffizienten auf Null gesetzt wird. Im Gegensatz dazu gibt es bei einer $\ell_2$-Begrenzung keine Ecken, weshalb jeder Randpunkt der Begrenzung als Schnittpunkt in Frage kommt. Dadurch wird keine Dünnbesetzung, sondern lediglich eine kontinuierliche Schrumpfung der Koeffizienten hervorgerufen. Dieser Effekt verstärkt sich in höheren Dimensionen.
+Es wird also im Vergleich zu (\ref{ridge_regression_formulation}) lediglich die $\ell_2$-Norm durch eine $\ell_1$-Norm ausgetauscht. Bevor wir uns mit der Lösung dieses Problems beschäftigen, möchten wir erklären, warum die $\ell_1$-Norm eine Dünnbesetzung der Koeffizienten hervorruft. Zunächst geben wir eine geometrische Erklärung, welche in Abbildung \ref{lasso_ridge_regression_figure} zu sehen ist. Dort sind die $\ell_1$- und $\ell_2$-Beschränkungen, sowie die Höhenlinien der RSS-Funktion in zwei Dimensionen aufgezeichnet. Die optimalen Koeffizienten von Ridge und Lasso Regression ergeben sich nun aus dem Schnittpunkt der Höhenlinien mit der Begrenzung der jeweiligen Norm. Wählen wir die $\ell_1$-Norm, ist dieser Schnittpunkt mit einer hohen Wahrscheinlichkeit an eine der Ecken, so dass einer der beiden Koeffizienten auf Null gesetzt wird. Im Gegensatz dazu gibt es bei einer $\ell_2$-Begrenzung keine Ecken, weshalb jeder Randpunkt der Begrenzung als Schnittpunkt in Frage kommt. Dadurch wird keine Dünnbesetzung, sondern lediglich eine kontinuierliche Schrumpfung der Koeffizienten hervorgerufen. Dieser Effekt verstärkt sich in höheren Dimensionen.
 
 \begin{figure}
 \centering
@@ -262,7 +265,7 @@ Es wurde herausgearbeitet, dass das Lasso zwei wesentliche Nachteile besitzt. Fa
 %----------------------------------------------------------------------------------------
 
 
-\subsection{Elastic Net}
+\section{Elastic Net}
 \label{elastic_net}
 
 Damit im Fall $p > n$ mehr als $n$ Variablen für das Modell selektiert werden können, betrachten wir eine Kombination von Lasso und Ridge Regression. Durch die Einbettung einer $\ell_1$ und $\ell_2$-Norm erhalten wir das sog. \textit{Elastic Net} \cite{zou_elasticnet}
@@ -325,7 +328,7 @@ Auch wenn klassische Kriterien für die Konvergenz von Koordinaten-Abstiegsverfa
 %----------------------------------------------------------------------------------------
 
 
-\subsection{Vergleich der Regressionsmethoden}
+\section{Vergleich der Regressionsmethoden}
 \label{comparison_linear_models}
 
 Zur Veranschaulichung der oben eingeführten Methoden werden wir diese nun anwenden. Dabei greifen wir auf einen durch scikit-learn \cite{scikit_learn} bereitgestellten Datensatz, der erstmals durch \cite{efron_lars} öffentlich gemacht worden ist, zurück. Ein Ausschnitt des Datensatzes befindet sich in Tabelle \ref{diabetes_data_set}.
