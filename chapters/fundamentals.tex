@@ -4,7 +4,7 @@
 % Chapter label
 \label{fundamentals}
 
-In diesem Kapitel werden wir die wichtigsten mathematischen Grundlagen, welche wir im Rahmen dieser Arbeit benötigen, einführen. Ein Großteil dieses Kapitels ist generalisierten linearen Regressionsmodellen gewidmet, welche sowohl eine sehr enge Verbindung zur klassischen als auch zur dünnbesetzten Hauptkomponentenanalyse aufweisen. Für die Einführung generalisierter linearer Modelle sowie die Angabe von Resultaten richten wir uns vor allem nach dem Buch von Hastie et al. \cite{hastie_elements}. Ab Abschnitt \ref{ridge_regression} werden wir die Modelle zu Zwecken der Regularisierung mit verschiedenen \textit{Straftermen} versehen. Anhand eines Beispiel-Datensatzes, welchen wir in Abschnitt \ref{comparison_linear_models} vorstellen, können wir deren Effekte visuell nachzuvollziehen und miteinander vergleichen. Für den weiteren Verlauf dieser Arbeit ist das Verständnis der Strafterme von entscheidender Bedeutung.
+In diesem Kapitel werden wir die wichtigsten mathematischen Grundlagen, welche wir im Rahmen dieser Arbeit benötigen, einführen. Ein Großteil dieses Kapitels ist generalisierten linearen Regressionsmodellen gewidmet, welche sowohl eine sehr enge Verbindung zur klassischen als auch zur dünnbesetzten Hauptkomponentenanalyse aufweisen. Für die Einführung generalisierter linearer Modelle sowie die Angabe von Resultaten richten wir uns vor allem nach dem Buch von Hastie et al. \cite{hastie_elements}. Ab Abschnitt \ref{ridge_regression} werden wir die Modelle zu Zwecken der Regularisierung mit verschiedenen \textit{Straftermen} versehen. Anhand eines Beispiel-Datensatzes, welchen wir in Abschnitt \ref{comparison_linear_models} vorstellen, können wir deren Effekte visuell nachvollziehen und miteinander vergleichen. Für den weiteren Verlauf dieser Arbeit ist das Verständnis der Strafterme von entscheidender Bedeutung.
 
 
 %----------------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ $$\norm{x}_{\infty} \defeq \max_{1 \leq i \leq n} \abs{x_i} \quad x \in \mathbb{
 Im Fall $p = \infty$ spricht man auch von der \textit{Maximumsnorm} und im Fall $p = 2$ von der \textit{euklidischen Norm}.
 \end{defn}
 
-Um Verwirrung auszuschließen werden wir im Folgenden von der $\ell_q$-Norm sprechen, da wir mit $p$ die Anzahl an Variablen in einem Modell bezeichnen. Eine weitere wichtige Norm, die wir im Zuge dieser Arbeit verwenden werden ist die $\ell_0$-\q{Norm}. Diese zählt die von Null verschiedenen Einträge eines Vektors und misst, ob ein Vektor dünnbesetzt ist.
+Um Verwirrung auszuschließen, werden wir im Folgenden von der $\ell_q$-Norm sprechen, da wir mit $p$ die Anzahl an Variablen in einem Modell bezeichnen. Eine weitere wichtige Norm, die wir im Zuge dieser Arbeit verwenden werden ist die $\ell_0$-\q{Norm}. Diese zählt die von Null verschiedenen Einträge eines Vektors und misst, ob ein Vektor dünnbesetzt ist.
 
 \begin{defn}[$\ell_0$-\q{Norm} \cite{foucart}]
 Die sogenannte $\ell_0$-\q{Norm} ist definiert durch
@@ -41,7 +41,7 @@ $$\norm{x}_{0} \defeq \left|\{i \colon \enspace x_i \neq 0 , \quad 1 \leq i \leq
 \end{defn}
 
 Die übliche Schreibweise $\norm{x}_0$ - die Notation $\norm{x}_{0}^{0}$ wäre angemessener - entspringt der Beobachtung, dass 
-$$\norm{x}_{q}^{q} = \sum_{i=1}^{n} \abs{x_i}^q \quad \underset{q \rightarrow 0}{\longrightarrow} \quad \sum_{i=1}^{n} \mathbf{1}_{\{x_i \neq 0\}} = \left|\{i \colon \enspace x_i \neq 0\, , \quad 1 \leq i \leq n\}\right|$$
+$$\norm{x}_{q}^{q} = \sum_{i=1}^{n} \abs{x_i}^q \quad \underset{q \rightarrow 0}{\longrightarrow} \quad \sum_{i=1}^{n} \mathbf{1}_{\{x_i \neq 0\}} = \left|\{i \colon \enspace x_i \neq 0\, , \quad 1 \leq i \leq n\}\right|.$$
 Wir wollen betonen, dass die $\ell_0$-\q{Norm} keine wirkliche Norm ist, da die Abbildung nicht homogen ist. Trotzdem ist diese \q{Norm} in der Theorie der komprimierten Erfassung sehr nützlich. Des Weiteren werden wir die Notation $\norm{\cdot}_q$ gemäß der Definition in \ref{lp_norm} auch für Werte $0 < q < 1$ verwenden, obwohl durch diese Abbildung ebenfalls keine Norm gegeben ist.
 
 
@@ -136,7 +136,7 @@ besitzt. Die Zielgröße $\hat{y}$ ergibt sich dann durch
 \begin{align}
 \hat{y} = \mat X \hat{\beta}^{\text{OLS}} = \mat X (\mat X^{\top}\mat X)^{-1}\mat X^{\top} y
 \end{align}
-Die Matrix $\mat P = \mat X (\mat X^{\top}\mat X)^{-1}\mat X^{\top}$ haben wir bereits in Abschnitt \ref{orthogonality} kennengelernt. Sie projiziert $y$ orthogonal auf den durch die Spalten von $\mat X$ aufgespannten Unterraum. Dies ermöglicht eine geometrische Interpretation der linearen Regression.
+Die Matrix $\mat P = \mat X (\mat X^{\top}\mat X)^{-1}\mat X^{\top}$ kennen wir bereits aus Abschnitt \ref{orthogonality}. Sie projiziert $y$ orthogonal auf den durch die Spalten von $\mat X$ aufgespannten Unterraum. Dies ermöglicht eine geometrische Interpretation der linearen Regression.
 
 Wenn $\mat X$ keinen vollen Rang hat, ist die Lösung von (\ref{least_squares}) nicht mehr eindeutig. Dieser Art Probleme ereignen sich häufig in der Bild- und Signalanalyse, bei welcher wir meist über mehr Variablen als Beobachtungen verfügen. Um ein gewünschtes Verhalten der Regression zu gewährleisten, bestehen verschiedene Möglichkeiten der Filterung oder Regularisierung. In letzterem Fall versehen wir den Regressionsterm mit sog. \textit{Straftermen}, welche eine bedeutende Rolle in den folgenden Kapitel spielen werden. Wir möchten diese mithilfe der linearen Regression einführen.
 
@@ -257,7 +257,7 @@ Für den allgemeinen Fall wird (\ref{lasso_formulation}) mithilfe von Näherungs
 \label{thresholding_figure}
 \end{figure}
 
-Es wurde herausgearbeitet, dass das Lasso zwei wesentliche Nachteile besitzt. Falls es im Datensatz Gruppen stark korrelierter Variablen gibt, tendiert die Methode dazu nur eine Variable je Gruppe statt die Gruppe als Ganzes auszuwählen. Zum Beispiel bei der Suche nach Genen, welche mit einer bestimmten Krankheit verbunden sind, ist man aber daran interessiert, alle assoziierten Koeffizienten zu finden. Darüber hinaus führt dieser Effekt zu verschlechterten Vorhersagen. Um diesem Problem zu begegnen, kann man das sog. \textit{Group Lasso} verwenden \cite{yuan}, bei welcher man Gruppen vorab im Datensatz festlegen kann. Der im Zuge dieser Arbeit aber wichtigere Nachteil ist, dass das Lasso maximal $n$ Variablen selektieren kann, falls $p > n$ ist. In diesem Fall hat $\mat X$ maximal Rang $n$ hat, weshalb wir $y$ mithilfe von $n$ Variablen perfekt vorhersagen können. Das Lasso wählt dann die $n$ Variablen, welche $\lambda_1\norm{\beta}_1$ minimieren. Für moderne Datensätze mit $p \gg n$ ist es aber oft nicht ausreichend, nur $n$ von Null verschiedene Koeffizienten zuzulassen.
+Es wurde herausgearbeitet, dass das Lasso zwei wesentliche Nachteile besitzt. Falls es im Datensatz Gruppen stark korrelierter Variablen gibt, tendiert die Methode dazu nur eine Variable je Gruppe statt die Gruppe als Ganzes auszuwählen. Zum Beispiel bei der Suche nach Genen, welche mit einer bestimmten Krankheit verbunden sind, ist man aber daran interessiert, alle assoziierten Koeffizienten zu finden. Darüber hinaus führt dieser Effekt zu verschlechterten Vorhersagen. Um diesem Problem zu begegnen, kann man das sog. \textit{Group Lasso} verwenden \cite{yuan}, bei welcher man Gruppen vorab im Datensatz festlegen kann. Der im Zuge dieser Arbeit aber wichtigere Nachteil ist, dass das Lasso maximal $n$ Variablen selektieren kann, falls $p > n$ ist. In diesem Fall hat $\mat X$ maximal Rang $n$, weshalb wir $y$ mithilfe von $n$ Variablen perfekt vorhersagen können. Das Lasso wählt dann die $n$ Variablen, welche $\lambda_1\norm{\beta}_1$ minimieren. Für moderne Datensätze mit $p \gg n$ ist es aber oft nicht ausreichend, nur $n$ von Null verschiedene Koeffizienten zuzulassen.
 
 
 %----------------------------------------------------------------------------------------

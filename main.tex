@@ -55,6 +55,7 @@ headsepline, % Uncomment to get a line under the header
 \externaldocument[implementation_]{chapters/implementation}
 \externaldocument[application_]{chapters/application}
 \externaldocument[conclusion_]{chapters/conclusion}
+\externaldocument[appendix_]{chapters/appendix}
 
 % Declare theorem style and numbering
 \theoremstyle{plain}
@@ -65,6 +66,7 @@ headsepline, % Uncomment to get a line under the header
 \newtheorem{defn}[thm]{Definition}
 \newtheorem{ex}[thm]{Beispiel}
 
+\newcommand{\theadc}[1]{\multicolumn{1}{c}{\textbf{#1}}}
 \newcommand{\q}[1]{"#1"}
 \newcommand{\mat}[1]{\mathbf{#1}} 
 \DeclareMathOperator*{\argmax}{arg\,max}

@@ -49,14 +49,11 @@ Es wird sich zeigen, dass der Algorithmus für die dünnbesetzte Hauptkomponente
 \section{Anwendung auf Frequenzdaten}
 \label{application_frequency_data}
 
-In Abschnitt \ref{numerical_solution_p_greater_n} haben wir uns mit einem Spezialfall des Algorithmus für die dünnbesetzte Hauptkomponentenanalyse beschäftigt, welcher im Fall $p \gg n$ genutzt werden kann. Allerdings ist vorab unklar, ob er in diesem Zusammenhang Verwendung finden sollte, da Variablen als unabhängig angenommen werden. Für die uns nach \ref{preprocessing} vorliegenden Frequenzen gibt es diesbezüglich zwei Abhängigkeiten zu berücksichtigen. Einerseits, können Obertöne
-ist eine derartige Annahme aber nicht sinnvoll. Zwei Effekte sind von entscheidender Bedeutung. Andererseits, kommt es bei einer diskreten Fouriertransformation zum \textit{Leck-Effekt}, bei welcher Frequenzen lokal verschmieren \cite{kiencke}. Aufgrund eines endlich diskreten Beobachtungszeitraums ist ein derartiger Effekt zu erwarten. Folglich können Frequenz lokal stark korrelieren. Um ein generelles Bild der dünnbesetzten Hauptkomponentenanalyse zu vermitteln, haben wir uns im Rahmen dieser Arbeit dazu entschieden, den allgemeinen Algorithmus im Folgenden zu verwenden. In Abschnitt \ref{comparison_special_case} werden wir kurz darauf eingehen, wie die Ergebnisse sich unter Verwendung des Spezialfalls ändern.
+In Abschnitt \ref{numerical_solution_p_greater_n} haben wir uns mit einem Spezialfall des Algorithmus für die dünnbesetzte Hauptkomponentenanalyse beschäftigt, welcher im Fall $p \gg n$ genutzt werden kann. Allerdings ist aufgrund der Unabhängigkeitsannahme der Variablen zunächst unklar, ob er in diesem Zusammenhang Verwendung finden sollte. Für die uns nach \ref{preprocessing} vorliegenden Frequenzen gibt es diesbezüglich zwei Details zu berücksichtigen. Einerseits, können Abhängigkeiten durch Obertöne auftreten. Trifft ein Partikel während des Mahlprozesses auf die Maschinenwand, wird meist eine Kombination aus harmonischen und unharmonischen Frequenzen angeregt. Andererseits, kommt es bei einer diskreten Fouriertransformation zum \textit{Leck-Effekt} \cite{kiencke}. Aufgrund eines endlichen, diskreten Beobachtungszeitraums können Frequenzen lokal verschmieren, so dass Variablen lokal stark korrelieren können. Um ein allgemeines Bild der dünnbesetzten Hauptkomponentenanalyse zu vermitteln, haben wir uns im Rahmen dieser Arbeit dazu entschieden, den nicht modifizierten Algorithmus zu verwenden. In Abschnitt \ref{comparison_special_case} werden wir kurz darauf eingehen, wie sich die Ergebnisse unter Verwendung der Modifikation verändern.
 
 Unsere allgemeine Implementierung ermöglicht eine Wahl verschiedener Parameter bezüglich des Modells bzw. des Algorithmus. Für eine Beschränkung der Laufzeit setzen wir eine maximale Anzahl an Iterationen von $500$ und eine Toleranz von $10^{-4}$. Falls nach $500$ Iterationen die vorgegebene Toleranz noch immer nicht erreicht ist, werden wir dies im Folgenden kenntlich machen. Ein Modellparameter, den es zu wählen gilt, ist die Anzahl zu berechnender Hauptkomponenten. Wie bereits in \ref{choice_of_tuning_parameters} beschrieben, wird dazu meist das Ergebnis einer klassischen Hauptkomponentenanalyse verwendet. Hierbei hat sich gezeigt, dass $2$ Hauptkomponenten für die meisten Sensoren ausreichen, um einen Großteil des Datensatzes zu erklären. Zu Analysezwecken haben wir uns entschieden einen Durchlauf mit $2$ und einen mit $10$ Hauptkomponenten zu starten. 
 
-Interessanter ist die Wahl der Hyperparameter $\lambda$ und $\alpha$, welche wesentlichen Einfluss auf die Ergebnisse besitzen. Auch wenn prinzipiell die Möglichkeit besteht, differenzierte Bestrafungen je Hauptkomponente $\lambda_{1,j}$ auszuwählen, beschränken wir uns der Einfachheit halber auf eine einheitliche Bestrafung. Für die Wahl von $\lambda$ haben wir sowohl mehrere Werte ausprobiert, als auch eine Rastersuche bezüglich der in \ref{choice_of_tuning_parameters} beschriebenen BIC-Kriterien durchgeführt. Dafür verwenden wir auf einer log-Skala gleichverteilte Werte im Bereich zwischen $10^{-7}$ und $10^0$. Dagegen wählen wir für das Verhältnis zwischen Lasso und Ridge-Bestrafung die Werte $[0.1,\, 0.5,\, 0.7,\, 0.9,\, 0.95,\, 0.99,\, 1]$. Mithilfe des BIC-Kriteriums können wir zeitgleich über $\lambda$ und $\alpha$ optimieren. Es hat sich in den Anwendungen gezeigt, dass eine geeignete Liste für $\alpha$ mehr Werte nahe $1$ hat, da sich dort die größten Änderungen ergeben. Damit stärken wir den Lasso-Strafterm im Vergleich zum Ridge-Strafterm.
-
-Exemplarisch werden wir uns nun mit einem der Beschleunigungssensoren weiter beschäftigen. An dieser Stelle möchten wir erwähnen, dass wir die Sensoren getrennt betrachten, d.h. die dünnbesetzte Hauptkomponentenanalyse auf die Sensoren einzeln anwenden. Dies ist aufgrund der Unterschiedlichkeit der Sensoren sinnvoll. Wir werden nun ausgewählte Ergebnisse vorstellen. 
+Interessanter ist die Wahl der Hyperparameter $\lambda$ und $\alpha$, welche wesentlichen Einfluss auf die Ergebnisse besitzen. Auch wenn prinzipiell die Möglichkeit besteht, differenzierte Bestrafungen je Hauptkomponente $\lambda_{1,j}$ auszuwählen, beschränken wir uns der Einfachheit halber auf eine einheitliche Bestrafung. Für die Wahl von $\lambda$ haben wir sowohl mehrere Werte ausprobiert, als auch eine Rastersuche bezüglich der in \ref{choice_of_tuning_parameters} beschriebenen BIC-Kriterien durchgeführt. Dafür verwenden wir auf einer log-Skala gleichverteilte Werte im Bereich zwischen $10^{-7}$ und $10^0$. Dagegen wählen wir für das Verhältnis zwischen Lasso und Ridge-Bestrafung die Werte $[0.1,\, 0.5,\, 0.7,\, 0.9,\, 0.95,\, 0.99,\, 1]$. Mithilfe des BIC-Kriteriums können wir zeitgleich über $\lambda$ und $\alpha$ optimieren. Es hat sich in den Anwendungen gezeigt, dass eine geeignete Liste für $\alpha$ mehr Werte nahe $1$ hat, da sich dort die größten Änderungen ergeben. Damit stärken wir den Lasso-Strafterm im Vergleich zum Ridge-Strafterm.  
 
 
 %----------------------------------------------------------------------------------------
@@ -67,7 +64,7 @@ Exemplarisch werden wir uns nun mit einem der Beschleunigungssensoren weiter bes
 \section{Auswertung der Ergebnisse}
 \label{evaluation}
 
-Im Rahmen dieser Arbeit können wir nun einen begrenzten Teil der Ergebnisse präsentieren. Ziel wird es sein, wesentliche Ergebnisse und Effekte des Algorithmus zu erläutern, um ein transparentes Modell zu entwickeln.
+Im Rahmen dieser Arbeit können wir nun einen begrenzten Teil der Ergebnisse präsentieren. Dennoch versuchen wir einen allgemeinen Überblick zu geben und alle wesentlichen Effekte zu erläutern. Exemplarisch werden wir uns nun mit einem der Beschleunigungssensoren weiter beschäftigen. 
 
 
 %----------------------------------------------------------------------------------------
@@ -142,7 +139,7 @@ Abbildung \ref{results_parameter_benchmark_degrees_of_freedom} zeigt wie sich $\
 
 Interessant ist nun, wie sich die erklärte Varianz des Datensatzes im Vergleich verhält, welche in Abbildung \ref{results_parameter_benchmark_explained_variance} zu sehen ist.  Auffällig ist, dass sich für $\lambda$ im Bereich von $[10^{-7}, 10^{-3}]$ kaum Änderungen in der Varianz ergeben. In diesem Bereich sind wir nur leicht unter dem Niveau der klassischen Variante. Im Umkehrschluss können wir aufgrund der kontinuierlichen Stagnation der Freiheitsgrade die Modellkomplexität verringern, aber zeitgleich den Rekonstruktionsfehler auf konstantem Niveau halten. Erst nahe $\lambda \approx 10^{-2}$ für $\alpha > 0.5$ bzw. bei $\lambda \approx 10^{-1}$ für $\alpha = 0.1$ zeichnet sich ein deutlicher Einbruch ab. Dieser ist dadurch zu erklären, dass die Hauptachsen dann dem Nullvektor entsprechen. Aus der Kombination der beiden Abbildungen können wir schließen, dass nur wenige Frequenzen wirklich wichtig zur Erklärung der Varianz des Datensatzes notwendig sind.
 
-Um eine automatisierte Wahl von $\lambda$ und $\alpha$ zu ermöglichen, haben wir in Abschnitt \ref{choice_of_tuning_parameters} Vorgehensweisen mithilfe eines BIC-Kriteriums beschrieben. Eine Anwendung des Kriteriums nach \cite{croux, guo} befindet sich in Abbildung \ref{results_parameter_benchmark_bic}. Hier zeichnet sich ein Minimum im Bereich von $\lambda \in [10^{-4}, 10^{-3}]$ für $\alpha > 0.5$ bzw. nahe $\lambda \approx 10^{-2}$ für $\alpha = 0.1$ ab, welches wir nach obiger Analyse erwarten konnten. Es wird ein Punkt gewählt, an welchem die erklärte Varianz gerade noch auf sehr hohem Niveau, aber die Modellkomplexität gering ist. Letztere Abbildung ist also eine Kombination der Erkenntnisse und kann genutzt werden, um eine Balance zwischen Dünnbesetzung und erklärter Varianz zu finden. An dieser Stelle möchten wir erwähnen, dass die Resultate des BIC-Kriteriums nicht für alle Sensoren zufriedenstellend waren. Genauer gesagt sehen wir in manchen Fällen, dass die Gewichtung zwischen Modellkomplexität und Rekonstruktionsfehler nicht passend gewählt ist. Dies kann daran liegen, dass BIC-Kriterien in hochdimensionalen Fällen versagen können \cite{giraud}. Für unsere Zwecke haben wir daher die betroffenen Sensoren mit manuellen Gewichten korrigiert.
+Um eine automatisierte Wahl von $\lambda$ und $\alpha$ zu ermöglichen, haben wir in Abschnitt \ref{choice_of_tuning_parameters} Vorgehensweisen mithilfe eines BIC-Kriteriums beschrieben. Eine Anwendung des Kriteriums nach \cite{croux, guo} befindet sich in Abbildung \ref{results_parameter_benchmark_bic}. Hier zeichnet sich ein Minimum im Bereich von $\lambda \in [10^{-4}, 10^{-3}]$ für $\alpha > 0.5$ bzw. nahe $\lambda \approx 10^{-2}$ für $\alpha = 0.1$ ab, welches wir nach obiger Analyse erwarten konnten. Es wird ein Punkt gewählt, an welchem die erklärte Varianz gerade noch auf sehr hohem Niveau, aber die Modellkomplexität gering ist. Letztere Abbildung ist also eine Kombination der Erkenntnisse und kann genutzt werden, um eine Balance zwischen Dünnbesetzung und erklärter Varianz zu finden. An dieser Stelle möchten wir erwähnen, dass die Resultate des BIC-Kriteriums nicht für alle Sensoren zufriedenstellend waren. Genauer gesagt sehen wir in manchen Fällen, dass die Gewichtung zwischen Modellkomplexität und Rekonstruktionsfehler nicht passend gewählt ist. Dies mag daran liegen, dass BIC-Kriterien in hochdimensionalen Fällen versagen können \cite{giraud}. Für unsere Zwecke haben wir daher die betroffenen Sensoren mit manuellen Gewichten korrigiert.
 
 \begin{figure}
 \centering
@@ -178,13 +175,13 @@ Um eine automatisierte Wahl von $\lambda$ und $\alpha$ zu ermöglichen, haben wi
 
 \subsection{Verhalten des Algorithmus}
 
-Im Zuge dieser Arbeit möchten wir nicht nur die Ergebnisse einiger Experimente, sondern auch das Verhalten des Algorithmus an sich beschreiben. Dafür sehen wir uns verschiedene Größen wie Laufzeit, Anzahl an Iterationen und Toleranz an. Um ein Gefühl für die dünnbesetzte Hauptkomponentenanalyse zu bekommen, haben wir einen Überblick dieser Größen in Tabelle \ref{algorithm_analysis_table} erstellt. Interessant dabei ist vor allem die Abhängigkeit vom Hyperparameter $\lambda$. Je kleiner wir die Bestrafung wählen, desto länger dauert der Algorithmus und desto mehr Iterationen werden benötigt. Da bei kleinem $\lambda$ mehr von Null verschiedene Einträge $j$ in den Hauptachsen erlaubt werden, stimmen diese Beobachtung mit unseren Erwartungen überein. Der Anstieg der Zahl der Iterationen ist dadurch zu erklären, dass sich das Konvergenzkriterium auf alle Koeffizienten bezieht. Somit müssen bei einer Erhöhung von $j$ effektiv mehr Bedingungen erfüllt werden. Bezüglich der Laufzeit stimmen die Ergebnisse mit der Komplexität des Algorithmus von Abschnitt \ref{complexity} überein. Diese wird dabei nicht überraschend von der Lösung der Elastic Nets dominiert. Hingegen sind die Kosten für das Minimieren über $\mat A$ unabhängig von den Hyperparametern und im Wesentlichen durch eine Singulärwertzerlegung bestimmt, welche für diesen Datensatz in einem Bruchteil einer Sekunde gelöst werden kann. Ein Blick auf Tabelle \ref{algorithm_analysis_profiler} zeigt die Ergebnisse eines Profilers und bestätigt unsere Behauptungen.
+Im Zuge dieser Arbeit möchten wir nicht nur die Ergebnisse einiger Experimente, sondern auch das Verhalten des Algorithmus an sich beschreiben. Dafür sehen wir uns verschiedene Größen wie Laufzeit, Anzahl an Iterationen und Toleranz an. Um ein Gefühl für die dünnbesetzte Hauptkomponentenanalyse zu bekommen, haben wir einen Überblick dieser Größen in Tabelle \ref{algorithm_analysis_table} erstellt. Interessant dabei ist vor allem die Abhängigkeit vom Hyperparameter $\lambda$. Je kleiner wir die Bestrafung wählen, desto länger dauert der Algorithmus und desto mehr Iterationen werden benötigt. Da bei kleinem $\lambda$ mehr von Null verschiedene Einträge $j$ in den Hauptachsen erlaubt werden, stimmen diese Beobachtung mit unseren Erwartungen überein. Der Anstieg der Zahl der Iterationen ist dadurch zu erklären, dass sich das Konvergenzkriterium auf alle Koeffizienten bezieht. Somit müssen bei einer Erhöhung von $j$ effektiv mehr Bedingungen erfüllt werden. Bezüglich der Laufzeit stimmen die Ergebnisse mit der Komplexität des Algorithmus von Abschnitt \ref{complexity} überein. Diese wird dabei nicht überraschend von der Lösung der Elastic Nets dominiert. Hingegen sind die Kosten für das Minimieren über $\mat A$ unabhängig von den Hyperparametern und im Wesentlichen durch eine Singulärwertzerlegung bestimmt, welche für diesen Datensatz in einem Bruchteil einer Sekunde gelöst werden kann. Ein Blick auf Tabelle \ref{algorithm_analysis_profiler} zeigt die Ergebnisse eines Profilers und bestätigt unsere Behauptungen. Während insgesamt jeweils eine Sekunde für die Singulärwertzerlegungen (Zeile 3) und für die Multiplikationen $\mat X^{\top} (\mat X \mat B)$ (Zeile 4) benötigt werden, sind es fast $1000$ Sekunden beim Koordinatenabstiegsverfahren (Zeile 1) für die Lösung der Elastic Net Probleme.
 
 \setlength{\tabcolsep}{10pt}
 \begin{table}
 \centering
 \begin{tabular}{rrrr}
-\boldmath$\lambda$ & \textbf{Laufzeit} & \textbf{Iterationen} & \textbf{Toleranz}\\\hline\addlinespace
+\multicolumn{1}{c}{\boldmath$\lambda$} & \theadc{Laufzeit} & \theadc{Iterationen} & \theadc{Toleranz}\\\hline\addlinespace
 $10^{-6}$ & $65235.76$ sec & $>500$ & $2.271780 \cdot 10^{-1}$\\
 $10^{-5}$ & $9158.24$ sec & $>500$ & $4.132993 \cdot 10^{-4}$\\
 $10^{-4}$ & $777.36$ sec & $99$ & $4.233382 \cdot 10^{-5}$\\
@@ -198,16 +195,14 @@ $10^{-1}$ & $4.65$ sec & $1$ & $0$\\
 
 \begin{table}
 \centering
-\begin{tabular}{rrrrr}
-\textbf{ncalls} & \textbf{tottime} & \textbf{percall} & \textbf{cumtime} & \textbf{filename:lineno(function)}\\\hline\addlinespace
-$5010$ & $4892.863$ & $0.977$ & $4896.461$ & \_coordinate\_descent.py:266(enet\_path)\\
-$26075$ & $4.948$ & $0.000$ & $4.948$ & \{method 'reduce' of 'numpy.ufunc' objects\}\\
-$6524$ & $1.753$ & $0.000$ & $1.753$ & \{method 'dot' of 'numpy.ndarray' objects\}\\
-$76211$ & $1.749$ & $0.000$ & $1.749$ & \{built-in method numpy.array\}\\
-$502$ & $0.619$ & $0.001$ & $0.631$ & linalg.py:1458(svd)\\
-$5010$ & $0.412$ & $0.000$ & $0.942$ & validation.py:800(check\_random\_state)\\
+\begin{tabular}{rrrrl}
+\theadc{ncalls} & \theadc{tottime} & \theadc{percall} & \theadc{cumtime} & \theadc{filename:lineno(function)}\\\hline\addlinespace
+$5010$ & $979.584$ & $0.196$ & $985.357$ & \_coordinate\_descent.py:266(enet\_path)\\
+$26073$ & $7.443$ & $0.000$ & $7.443$ & {method 'reduce' of 'numpy.ufunc' objects}\\
+$502$ & $1.149$ & $0.002$ & $1.165$ & linalg.py:1468(svd)\\
+$6524$ & $1.090$ & $0.000$ & $1.090$ & {method 'dot' of 'numpy.ndarray' objects}\\
 \end{tabular}
-\caption{Die Tabelle zeigt die Ergebnisse eines Profilers für die eigene Implementierung mit $\lambda = 10^{-5}$ und $\alpha = 0.5$.\\Gerechnet wurde auf einem Intel Xeon Gold 6130F@2.10GHz.}
+\caption{Die Tabelle zeigt die Ergebnisse eines Profilers für die eigene Implementierung mit $\lambda = 10^{-4}$, $\alpha = 0.9$ und $k = 10$.\\Gerechnet wurde auf einem Intel Xeon Gold 6130F@2.10GHz.}
 \label{algorithm_analysis_profiler}
 \end{table}
 
@@ -224,22 +219,22 @@ Da wir eine maximale Anzahl von $500$ Iterationen festgelegt haben, kommt es bei
 
 
 %----------------------------------------------------------------------------------------
-%	Veränderung des Ergebnisse für speziellen Algorithmus
+%	Veränderung des Ergebnisse bei modifiziertem Algorithmus
 %----------------------------------------------------------------------------------------
 
 
-\subsection{Veränderung der Ergebnisse für speziellen Algorithmus}
+\subsection{Veränderung der Ergebnisse bei modifiziertem Algorithmus}
 \label{comparison_special_case}
 
-Eine Reduktion der Laufzeit kann auch durch die Nutzung des in Abschnitt \ref{numerical_solution_p_greater_n} beschriebenen Vorgehens erreicht werden. Selbst unter Verwendung der gesamten Zeitreihe benötigt Algorithmus \ref{spca_algorithm}$^*$ meist unter einer Sekunde. Aufgrund der stark vereinfachenden Annahmen haben wir uns bisher ausschließlich mit der allgemeinen Variante auseinandergesetzt. An dieser Stelle möchten wir erwähnen, wie sich die Ergebnisse bei Verwendung von Algorithmus \ref{spca_algorithm}$^*$ verändern.
+Eine Reduktion der Laufzeit kann auch durch die Nutzung des in Abschnitt \ref{numerical_solution_p_greater_n} beschriebenen Vorgehens erreicht werden. Selbst unter Verwendung der gesamten Zeitreihe benötigt Algorithmus \ref{spca_algorithm}$^*$ meist unter einer Sekunde. Aufgrund der vereinfachenden Annahmen haben wir uns bisher ausschließlich mit der allgemeinen Variante auseinandergesetzt. An dieser Stelle möchten wir erwähnen, wie sich die Ergebnisse für Algorithmus \ref{spca_algorithm}$^*$ verändern.
 
-In der Praxis haben sich für unseren Datensatz ähnliche Ergebnisse ergeben. Tabelle \ref{comparison_special_algorithm_results} zeigt, wie sich die erklärte Varianz bei gleichbleibendem Freiheitsgrad $\operatorname{df}$ zwischen den beiden Varianten verändert. Zu erkennen ist, dass die Resultate für alle Sensoren nur geringfügig schlechter sind. 
+In der Praxis haben sich für unseren Datensatz meist sehr ähnliche Ergebnisse ergeben. Tabelle \ref{comparison_special_algorithm_results} zeigt, wie sich die erklärte Varianz bei gleichbleibendem Freiheitsgrad $\operatorname{df}$ zwischen den beiden Varianten verändert. Zu erkennen ist, dass die Resultate für alle Sensoren nur geringfügig schlechter sind. In unserer Anwendung interessieren wir uns zusätzlich dafür, ob sich wichtige Frequenzen im Kontext herausfiltern lassen. Vergleichen wir die entstehenden dünnbesetzten Hauptachsen, sind viele Peaks bei den gleichen Frequenzen zu verzeichnen. Meist ergeben sich kleinere Unterschiede in den Frequenzen mit geringerem Beitrag zur Hauptachse. Die leicht veränderten Hauptachsen sind Grund für den Varianzverlust aus Tabelle \ref{comparison_special_algorithm_results}. 
 
 \begin{table}
 \centering
 \begin{tabular}{c|rrr|rr}
 & \multicolumn{3}{c|}{\textbf{Sparse PCA}} & \multicolumn{2}{c}{\textbf{PCA}}\\
-\textbf{Sensor} & \textbf{df} & \textbf{ev} & \textbf{ev-special} & \textbf{df} & \textbf{ev}\\\hline\rule{0pt}{1.1\normalbaselineskip}
+\textbf{Sensor} & \theadc{df} & \theadc{ev} & \multicolumn{1}{c|}{\textbf{ev$^*$}} & \theadc{df} & \theadc{ev}\\\hline\rule{0pt}{1.1\normalbaselineskip}
 $0$ & $3$ & $72.6$\% & $72.3$\% & $20000$ & $84.3$\%\\
 $1$ & $4$ & $45.1$\% & $42.6$\% & $20000$ & $62.54$\%\\
 $2$ & $50$ & $7.2$\% & $6.3$\% & $15000$ & $58.36$\%\\
@@ -247,14 +242,12 @@ $3$ & $50$ & $7.6$\% & $5.3$\% & $15000$ & $57.83$\%\\
 $4$ & $50$ & $2.9$\% & $2.9$\% & $15000$ & $68.95$\%\\
 $5$ & $50$ & $3.9$\% & $3.8$\% & $15000$ & $69.46$\%\\
 \end{tabular}
-\caption{Für eine bessere Einordnung wird zusätzlich das Resultat einer klassischen Hauptkomponentenanalyse gegenübergestellt.}
+\caption{Die Tabelle zeigt die unterschiedlichen Ergebnisse bezüglich der erklärten Varianz (ev) des Datensatzes bei vorgegebenem Freiheitsgrad $\operatorname{df}$. Der Stern bei ev$^*$ kennzeichnet die Verwendung der modifizierten Algorithmus. Um eine bessere Einordnung zu ermöglichen, wird zusätzlich das Resultat einer klassischen Hauptkomponentenanalyse gegenübergestellt.}
 \label{comparison_special_algorithm_results}
 \end{table}
 \setlength{\tabcolsep}{6pt}
 
-In unserer Anwendung interessieren wir uns aber nicht nur für die erklärte Varianzen, sondern dafür, ob sich ebenfalls Frequenzen mit Bedeutung im Kontext herausfiltern lassen. Vergleichen wir die entstehenden dünnbesetzten Hauptachsen sind Ähnlichkeiten zu erkennen. In vielen Fällen
-Zusammenfassend können wir bestätigen, dass Algorithmus \ref{spca_algorithm}$^*$ trotz theoretischer Bedenken zufriedenstellende empirische Ergebnisse liefert. Die Aussagekraft des Modells ist allerdings kritisch zu hinterfragen und hängt vom Anwendungsfall ab. 
-
+Da eine vollständige Analyse des modifizierten Verfahrens wie in den vorangegangenen Abschnitten den Rahmen dieser Arbeit sprengen würde, beschränken wir uns auf die Angabe dieser Erkenntnisse. Zusammenfassend können wir bestätigen, dass Algorithmus \ref{spca_algorithm}$^*$ trotz theoretischer Bedenken zufriedenstellende empirische Ergebnisse liefert. Die Aussagekraft des Modells ist allerdings kritisch zu hinterfragen und ein Abgleich mit der allgemeinen Variante sinnvoll. 
 
 
 %----------------------------------------------------------------------------------------
@@ -269,11 +262,11 @@ In Abschnitt \ref{adjustment_of_variances} haben wir unterschiedliche Wege zur B
 \item TotQR: $\quad \frac{\sum_{j=1}^k R_{jj}^2 + \spur{\widehat{\mat E}^{\top}\widehat{\mat E}}}{\spur{\mat X^{\top}\mat X}} \quad$ (Vorgehensweies Zou et al.)
 \item TotZB: $\quad \frac{\spur{\widehat{\mat B} \widehat{\mat Z}^{\top} \widehat{\mat Z} \widehat{\mat B}^{\top}} + \spur{\widehat{\mat E}^{\top}\widehat{\mat E}}}{\spur{\mat X^{\top}\mat X}} \quad$ (Vorgehensweise Camacho et al.)
 \end{itemize}
-Bezüglich der Notation haben wir uns an Abschnitt \ref{adjustment_of_variances} gehalten. Zwei weitere Kriterien TotQR* und TotZB* ergeben sich durch die Korrektur der Hauptkomponenten mit der Moore-Penrose-Inverse $\widehat{\mat Z}^* = \mat X \widehat{\mat B} (\widehat{\mat B}^{\top}\widehat{\mat B})^+$. Falls alle Vorgehensweisen korrekt sind, können wir erwarten, dass jedes Kriterium den Wert $1$ hat. In Abbildung \ref{total_variance_validation} haben wir die Kriterien für unsere Experimente berechnet. Klar zu sehen ist, dass ohne eine Korrektur mit der Moore-Penrose-Inversen beide Varianten für die Varianzberechnung im Allgemeinem falsch sind. Auch wenn wir die Hauptkomponenten korrigieren, liefert die QR-Zerlegung keine richtigen Ergebnisse. Nur TotZB* hat in allen Fällen den Wert $1$ und ist damit der einzig korrekte Weg, Hauptkomponenten und Varianzen zu berechnen. Die von Zou et al. \cite{zou_sparsepca} vorgeschlagenen Varianten sind also falsch und sollten nicht verwendet werden. Somit können wir die Erkenntnisse aus \cite{camacho} experimentell bestätigen.
+Bezüglich der Notation haben wir uns an Abschnitt \ref{adjustment_of_variances} gehalten. Zwei weitere Kriterien TotQR* und TotZB* ergeben sich durch die Korrektur der Hauptkomponenten mit der Moore-Penrose-Inverse $\widehat{\mat Z}^* = \mat X \widehat{\mat B} (\widehat{\mat B}^{\top}\widehat{\mat B})^+$. Falls alle Vorgehensweisen korrekt sind, können wir erwarten, dass jedes Kriterium den Wert $1$ hat. In Abbildung \ref{total_variance_validation} haben wir die Kriterien für unsere Experimente berechnet. Klar zu sehen ist, dass ohne eine Korrektur mit der Moore-Penrose-Inversen beide Varianten für die Varianzberechnung im Allgemeinem falsch sind. Auch wenn wir die Hauptkomponenten korrigieren, liefert die QR-Zerlegung keine richtigen Ergebnisse. Nur TotZB* hat in allen Fällen den Wert $1$ und ist damit der einzig korrekte Weg, Hauptkomponenten und Varianzen zu berechnen. Die von Zou et al. in \cite{zou_sparsepca} vorgeschlagenen Varianten sind also falsch und sollten nicht verwendet werden. Somit können wir die Erkenntnisse aus \cite{camacho} experimentell bestätigen.
 
 \begin{figure}
 \centering
 \includegraphics[width = 0.9\textwidth]{figures/total_variance_validation.png}
-\caption{Zu sehen sind die Ergebnisse der unterschiedlichen Vorgehensweise bei der Berechnung der Hauptkomponenten und der erklärten Varianz. Nur die von Camacho et al. vorgeschlagene Variante TotZB* errechnet diese korrekt. Jeder Punkt entspricht eines unserer Experimente aus Abschnitt \ref{application_frequency_data}.}
+\caption{Zu sehen sind die Ergebnisse der unterschiedlichen Vorgehensweise bei der Berechnung der Hauptkomponenten und der erklärten Varianz. Jeder Punkt entspricht eines unserer Experimente aus Abschnitt \ref{application_frequency_data}.}
 \label{total_variance_validation}
 \end{figure}

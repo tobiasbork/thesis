@@ -51,7 +51,7 @@ Fixieren wir die Matrix $\mat B$, können wir uns auf das Minimieren der Verlust
 \text{unter der Nebenbedingung, dass } \mat A^{\top} \mat A = \mat{\mathbb{1}}_{k \times k}.
 \end{gathered}
 \end{align}
-Für dieses Optimierungsproblem lässt sich eine explizite Lösung angeben. Es ist eine Form von Procrustes Rotationsproblem, welches wir ebenfalls in Kapitel \ref{fundamentals} beschrieben haben. Die Matrix $\mat X \mat B$ soll durch Multiplikation mit einer orthogonalen Matrix $\mat A$ in $\mat X$ überführt werden. Berechnen wir eine Singulärwertzerlegung von $(\mat X^{\top} \mat X) \mat B = \mat U \mat D \mat V^{\top},$ ist die Lösung für (\ref{sub_problem_procrustes}) gegeben durch
+Für dieses Optimierungsproblem lässt sich eine explizite Lösung angeben. Es ist eine Form von Procrustes Rotationsproblem, welches wir in Abschnitt \ref{matrix_approximation} beschrieben haben. Die Matrix $\mat X \mat B$ soll durch Multiplikation mit einer orthogonalen Matrix $\mat A$ in $\mat X$ überführt werden. Berechnen wir eine Singulärwertzerlegung von $(\mat X^{\top} \mat X) \mat B = \mat U \mat D \mat V^{\top},$ ist die Lösung von (\ref{sub_problem_procrustes}) gegeben durch
 \begin{align}
 \widehat{\mat A} = \mat U \mat V^{\top}.
 \end{align}
@@ -134,7 +134,7 @@ Für diesen Fall ist eine Berechnung der Kovarianzmatrix $\mat X^{\top}\mat X$ n
 %	Numerische Lösung im Fall p >> n
 %----------------------------------------------------------------------------------------
 
-\section{Numerische Lösung im Fall $\mathbf{p \gg n}$}
+\section{Numerische Lösung in hochdimensionalen Fällen}
 \label{numerical_solution_p_greater_n}
 
 Für viele Anwendungen kann die Menge an Variablen die Anzahl an Beobachtungen deutlich übersteigen. Um auch in diesem Fall eine effiziente Berechnung zu ermöglichen, formulieren wir einen Spezialfall von Algorithmus \ref{spca_algorithm}. Dazu beobachten wir, dass Theorem \ref{pca_regression_formulation_ridge} für alle $\lambda_2 > 0$ gilt. Für $\lambda_2 \to \infty$ erhalten wir eine interessante Charakterisierung.
@@ -155,14 +155,14 @@ Daher können wir das vereinfachte Optimierungsproblem (\ref{spca_p_greater_n_pr
 \label{spca_p_greater_n_problem_fixed_A}
 \widehat{\beta}_j = \argmin_{\beta_j} -2 \alpha_j^{\top}(\mat X^{\top}\mat X)\beta_j + \norm{\beta_j}_{2}^{2} + \lambda_{1,j}\norm{\beta_j}_1.
 \end{align}
-Für (\ref{spca_p_greater_n_problem_fixed_A}) können wir aufgrund des Wegfalls von $\lambda_2$ eine explizite Lösung angeben
+Für (\ref{spca_p_greater_n_problem_fixed_A}) existiert aufgrund des Wegfalls von $\lambda_2$ eine explizite Lösung
 \begin{align}
 \label{spca_p_greater_n_solution}
 \widehat{\beta}_j = \operatorname{soft}_{\frac{\lambda_{1,j}}{2}}(\alpha_j^{\top}\mat X^{\top}\mat X) = \left(|\alpha_j^{\top}\mat X^{\top}\mat X| - \frac{\lambda_{1,j}}{2}\right)_+ \operatorname{Sign}(\alpha_j^{\top}\mat X^{\top}\mat X).
 \end{align}
-Somit können wir die Berechnung in Schritt 4 von Algorithmus \ref{spca_algorithm} durch (\ref{spca_p_greater_n_solution}) ersetzen. Für den hochdimensionalen Fall kann durch das Wegfallen der Berechnung von $k$ Elastic Net Problemen ein effizientes Verfahren gewährleistet werden. Im Folgenden werden wir den modifizierten Algorithmus für $p \gg n$ mit \ref{spca_algorithm}$^*$ bezeichnen.
+Somit können wir die Berechnung in Schritt 4 von Algorithmus \ref{spca_algorithm} durch (\ref{spca_p_greater_n_solution}) ersetzen. Folglich müssen keine Elastic Net Probleme berechnet werden, weshalb wir ein effizientes Verfahren im hochdimensionalen Fall gewährleisten können. Diese Modifikation werden wir im Folgenden mit Algorithmus \ref{spca_algorithm}$^*$ bezeichnen.
 
-Bei dieser Ersetzung ist aber besondere Vorsicht zu genießen. Wir möchten kurz erklären, was dieser Spezialfall in Anwendung bewirkt. Durch die Ersetzung mit (\ref{spca_p_greater_n_solution}) wird im Wesentlichen der soft-thresholding-Operator auf die klassischen Hauptachsen angewendet. Alle Einträge in den Hauptachsen, welche im Betrag kleiner als $\frac{\lambda_{1,j}}{2}$ sind, werden dadurch auf Null gesetzt. Mit $\lambda_{1,j}$ kontrollieren wir also weiterhin den Grad der Dünnbesetzung. Allerdings werden Abhängigkeiten zwischen Variablen dabei völlig außer Acht gelassen und die Variablen als unabhängig angenommen. Auch wenn dies unzulässig scheinen mag, findet man ein derartiges Vorgehen auch in anderen Verfahren wieder \cite{tibshirani_diagnosis}. Eine Rechtfertigung dieses Ansatzes beruht allein auf guten empirischen Ergebnissen. Daher muss im Anwendungsfall entschieden werden, ob eine Verwendung von Algorithmus \ref{spca_algorithm}$^*$ sinnvoll ist.
+Bei einer derartigen Ersetzung ist aber besondere Vorsicht zu genießen. Wir möchten kurz erklären, was die Modifikation in Anwendung bewirkt. Mit (\ref{spca_p_greater_n_solution}) wird im Wesentlichen der soft-thresholding-Operator auf die $j$-te Hauptachse angewendet. Alle Einträge in der Hauptachse, welche im Betrag kleiner als $\frac{\lambda_{1,j}}{2}$ sind, werden dadurch auf Null gesetzt. Mit $\lambda_{1,j}$ kontrollieren wir also weiterhin den Grad der Dünnbesetzung. Allerdings werden Abhängigkeiten zwischen Variablen dabei völlig außer Acht gelassen und die Variablen als unabhängig angenommen. Auch wenn dies zunächst unzulässig scheinen mag, findet man ein derartiges Vorgehen auch in anderen Verfahren wieder \cite{tibshirani_diagnosis}. Eine Rechtfertigung dieses Ansatzes beruht vor allem auf guten empirischen Ergebnissen. Daher muss im Anwendungsfall entschieden werden, ob eine Verwendung von Algorithmus \ref{spca_algorithm}$^*$ sinnvoll ist.
 
 
 %----------------------------------------------------------------------------------------
