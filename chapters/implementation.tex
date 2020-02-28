@@ -138,7 +138,7 @@ Für diesen Fall ist eine Berechnung der Kovarianzmatrix $\mat X^{\top}\mat X$ n
 \label{numerical_solution_p_greater_n}
 
 Für viele Anwendungen kann die Menge an Variablen die Anzahl an Beobachtungen deutlich übersteigen. Um auch in diesem Fall eine effiziente Berechnung zu ermöglichen, formulieren wir einen Spezialfall von Algorithmus \ref{spca_algorithm}. Dazu beobachten wir, dass Theorem \ref{pca_regression_formulation_ridge} für alle $\lambda_2 > 0$ gilt. Für $\lambda_2 \to \infty$ erhalten wir eine interessante Charakterisierung.
-\begin{thm} \label{spca_p_greater_n}
+\begin{thm}[\cite{zou_sparsepca}] \label{spca_p_greater_n}
 Seien $\frac{\widehat{\beta}_j(\lambda_2)}{\norm{\widehat{\beta}_j(\lambda_2)}}$ die dünnbesetzten Hauptachsen aus (\ref{spca_criterion}) in Abhängigkeit von $\lambda_2$
 und $(\tilde{\mat A}, \tilde{\mat B})$ die Lösung des Optimierungsproblems
 \begin{align}
